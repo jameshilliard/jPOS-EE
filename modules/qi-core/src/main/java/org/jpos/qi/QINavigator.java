@@ -18,8 +18,8 @@
 
 package org.jpos.qi;
 
-import com.vaadin.data.Validator;
-import com.vaadin.data.validator.RegexpValidator;
+import com.vaadin.v7.data.Validator;
+import com.vaadin.v7.data.validator.RegexpValidator;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewProvider;

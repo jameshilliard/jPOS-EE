@@ -21,7 +21,7 @@ package org.jpos.qi.system;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.jpos.core.Configurable;
@@ -215,7 +215,6 @@ public class LogListenerView extends CssLayout
                 resume();
             }
         });
-        slider.setImmediate(true);
         return slider;
     }
 }

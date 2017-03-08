@@ -18,8 +18,8 @@
 
 package org.jpos.qi.system;
 
-import com.vaadin.data.fieldgroup.FieldGroupFieldFactory;
-import com.vaadin.ui.Grid;
+import com.vaadin.v7.data.fieldgroup.FieldGroupFieldFactory;
+import com.vaadin.v7.ui.Grid;
 import org.jpos.ee.SysLog;
 import org.jpos.qi.QIEntityView;
 import org.jpos.qi.QIHelper;

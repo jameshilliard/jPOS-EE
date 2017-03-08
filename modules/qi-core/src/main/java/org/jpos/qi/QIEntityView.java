@@ -18,26 +18,34 @@
 
 package org.jpos.qi;
 
-import com.vaadin.data.Container;
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroupFieldFactory;
-import com.vaadin.data.util.BeanItem;
-import com.vaadin.data.util.GeneratedPropertyContainer;
-import com.vaadin.data.util.converter.StringToBooleanConverter;
-import com.vaadin.data.util.converter.StringToDateConverter;
+import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.data.Container;
+import com.vaadin.v7.data.Validator;
+import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.v7.data.fieldgroup.FieldGroup;
+import com.vaadin.v7.data.fieldgroup.FieldGroupFieldFactory;
+import com.vaadin.v7.data.util.BeanItem;
+import com.vaadin.v7.data.util.GeneratedPropertyContainer;
+import com.vaadin.v7.data.util.converter.StringToBooleanConverter;
+import com.vaadin.v7.data.util.converter.StringToDateConverter;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.*;
-import com.vaadin.ui.renderers.DateRenderer;
-import com.vaadin.ui.renderers.NumberRenderer;
-import com.vaadin.ui.renderers.Renderer;
-import com.vaadin.ui.themes.ValoTheme;
+
+import com.vaadin.v7.shared.ui.label.ContentMode;
+import com.vaadin.v7.ui.*;
+import com.vaadin.v7.ui.Grid;
+import com.vaadin.v7.ui.HorizontalLayout;
+import com.vaadin.v7.ui.Label;
+import com.vaadin.v7.ui.TextField;
+import com.vaadin.v7.ui.VerticalLayout;
+import com.vaadin.v7.ui.renderers.DateRenderer;
+import com.vaadin.v7.ui.renderers.NumberRenderer;
+import com.vaadin.v7.ui.renderers.Renderer;
 import org.jpos.core.Configurable;
 import org.jpos.core.Configuration;
 import org.jpos.ee.BLException;
@@ -459,7 +467,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
                     fieldGroup.bind(optionGroup,fieldId);
                 }
                 if (regex != null)
-                    field.addValidator(new RegexpValidator(regex, getApp().getMessage("errorMessage.invalidField", field.getCaption())));
+                    field.addValidator((Validator) new RegexpValidator(regex, getApp().getMessage("errorMessage.invalidField", field.getCaption())));
                 if (field instanceof TextField && length > 0)
                     ((TextField) field).setMaxLength(length);
             }

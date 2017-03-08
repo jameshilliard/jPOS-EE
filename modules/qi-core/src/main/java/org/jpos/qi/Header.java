@@ -18,10 +18,13 @@
 
 package org.jpos.qi;
 
-import com.vaadin.data.validator.RegexpValidator;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.*;
+import com.vaadin.v7.data.validator.RegexpValidator;
+import com.vaadin.server.FontAwesome;
+import com.vaadin.v7.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.ui.HorizontalLayout;
+import com.vaadin.v7.ui.TextField;
 import org.jdom2.Element;
 
 public class Header extends HorizontalLayout {

@@ -18,10 +18,10 @@
 
 package org.jpos.qi.system;
 
-import com.vaadin.data.Container;
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroup;
-import com.vaadin.data.util.converter.Converter;
+import com.vaadin.v7.data.Container;
+import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.v7.data.fieldgroup.FieldGroup;
+import com.vaadin.v7.data.util.converter.Converter;
 import org.jpos.ee.BLException;
 import org.jpos.ee.DB;
 import org.jpos.ee.Revision;

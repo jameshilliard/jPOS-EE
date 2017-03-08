@@ -18,14 +18,14 @@
 
 package org.jpos.qi.system;
 
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroupFieldFactory;
-import com.vaadin.event.ItemClickEvent;
-import com.vaadin.ui.Field;
-import com.vaadin.ui.Grid;
+import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.v7.data.fieldgroup.FieldGroup;
+import com.vaadin.v7.data.fieldgroup.FieldGroupFieldFactory;
+import com.vaadin.v7.event.ItemClickEvent;
+import com.vaadin.v7.ui.Field;
+import com.vaadin.v7.ui.Grid;
 import com.vaadin.ui.Layout;
-import com.vaadin.ui.renderers.HtmlRenderer;
+import com.vaadin.v7.ui.renderers.HtmlRenderer;
 import org.jpos.ee.Revision;
 import org.jpos.ee.User;
 import org.jpos.qi.QIEntityView;

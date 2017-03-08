@@ -18,15 +18,21 @@
 
 package org.jpos.qi.login;
 
-import com.vaadin.data.Validator;
-import com.vaadin.data.validator.RegexpValidator;
+import com.vaadin.ui.*;
+import com.vaadin.v7.data.validator.RegexpValidator;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.server.Page;
 import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.*;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.data.Validator;
+import com.vaadin.v7.shared.ui.label.ContentMode;
+import com.vaadin.v7.ui.CheckBox;
+import com.vaadin.v7.ui.HorizontalLayout;
+import com.vaadin.v7.ui.Label;
+import com.vaadin.v7.ui.PasswordField;
+import com.vaadin.v7.ui.TextField;
+import com.vaadin.v7.ui.VerticalLayout;
 import org.jpos.ee.*;
 import org.jpos.qi.QI;
 import org.jpos.qi.QIResources;
@@ -161,7 +167,6 @@ public class LoginView extends VerticalLayout {
                 }
         );
         loginBtn.addStyleName(ValoTheme.BUTTON_PRIMARY);
-        loginBtn.setImmediate(true);
         loginBtn.addShortcutListener(
                 new ShortcutListener("Sign In", ShortcutAction.KeyCode.ENTER, null) {
                     @Override
@@ -176,7 +181,7 @@ public class LoginView extends VerticalLayout {
     }
 
     private Label createErrorLabel() {
-        errorLabel = new Label("",ContentMode.HTML);
+        errorLabel = new Label("", ContentMode.HTML);
         errorLabel.addStyleName("error");
         errorLabel.setSizeUndefined();
         errorLabel.addStyleName("light");
@@ -208,6 +213,7 @@ public class LoginView extends VerticalLayout {
         FormLayout formLayout = new FormLayout();
         formLayout.setMargin(false);
         formLayout.setSizeUndefined();
+
         username = new TextField (app.getMessage("login.username"));
         username.setRequired(true);
         username.setRequiredError(app.getMessage("errorMessage.req", username.getCaption()));

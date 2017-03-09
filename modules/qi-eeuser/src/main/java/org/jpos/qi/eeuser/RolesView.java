@@ -18,9 +18,11 @@
 
 package org.jpos.qi.eeuser;
 
-import com.vaadin.data.fieldgroup.FieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroupFieldFactory;
+import com.vaadin.v7.data.fieldgroup.FieldGroup;
+import com.vaadin.v7.data.fieldgroup.FieldGroupFieldFactory;
 import com.vaadin.ui.*;
+import com.vaadin.v7.ui.Field;
+import com.vaadin.v7.ui.OptionGroup;
 import org.jpos.ee.*;
 import org.jpos.qi.QIEntityView;
 import org.jpos.qi.QIHelper;
@@ -92,7 +94,7 @@ public class RolesView extends QIEntityView {
     @Override
     protected Layout addFields(FieldGroup fieldGroup) {
         Layout l = super.addFields(fieldGroup);
-        Field name = fieldGroup.getField("name");
+        com.vaadin.v7.ui.Field<?> name = fieldGroup.getField("name");
         name.setRequired(true);
         name.setRequiredError(getApp().getMessage("errorMessage.req", name.getCaption()));
         return l;

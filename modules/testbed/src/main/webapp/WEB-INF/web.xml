@@ -27,10 +27,10 @@
       <param-name>productionMode</param-name>
       <param-value>false</param-value>
     </init-param>
-    <init-param>
-      <param-name>pushmode</param-name>
-      <param-value>manual</param-value>
-    </init-param>
+    <!--<init-param>-->
+      <!--<param-name>pushmode</param-name>-->
+      <!--<param-value>manual</param-value>-->
+    <!--</init-param>-->
     <async-supported>true</async-supported>
   </servlet>
   <servlet-mapping>

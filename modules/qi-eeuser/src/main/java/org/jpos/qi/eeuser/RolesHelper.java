@@ -18,11 +18,11 @@
 
 package org.jpos.qi.eeuser;
 
-import com.vaadin.data.Container;
-import com.vaadin.data.Validator;
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroup;
-import com.vaadin.data.util.BeanItem;
+import com.vaadin.v7.data.Container;
+import com.vaadin.v7.data.Validator;
+import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.v7.data.fieldgroup.FieldGroup;
+import com.vaadin.v7.data.util.BeanItem;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.jpos.ee.*;

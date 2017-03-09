@@ -18,19 +18,23 @@
 
 package org.jpos.qi.eeuser;
 
-import com.vaadin.data.Validator;
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroupFieldFactory;
-import com.vaadin.data.util.ObjectProperty;
-import com.vaadin.data.util.PropertysetItem;
-import com.vaadin.data.validator.EmailValidator;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Layout;
+import com.vaadin.v7.data.Validator;
+import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.v7.data.fieldgroup.FieldGroup;
+import com.vaadin.v7.data.fieldgroup.FieldGroupFieldFactory;
+import com.vaadin.v7.data.util.ObjectProperty;
+import com.vaadin.v7.data.util.PropertysetItem;
+import com.vaadin.v7.data.validator.EmailValidator;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.ui.*;
+import com.vaadin.v7.ui.*;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.TextField;
+import com.vaadin.v7.ui.TextField;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.ui.Field;
+import com.vaadin.v7.ui.OptionGroup;
 import org.jpos.ee.*;
 import org.jpos.qi.*;
 import org.jpos.qi.components.QIFieldFactory;

@@ -29,7 +29,7 @@ import com.vaadin.v7.data.util.BeanItem;
 import com.vaadin.v7.data.util.GeneratedPropertyContainer;
 import com.vaadin.v7.data.util.converter.StringToBooleanConverter;
 import com.vaadin.v7.data.util.converter.StringToDateConverter;
-import com.vaadin.data.validator.RegexpValidator;
+import com.vaadin.v7.data.validator.RegexpValidator;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;

@@ -76,6 +76,7 @@ ext {
             jetty_util: "org.eclipse.jetty:jetty-util:${jettyVersion}",
             jetty_servlets: "org.eclipse.jetty:jetty-servlets:${jettyVersion}",
             jetty_ajp: "org.eclipse.jetty:jetty-ajp:${jettyVersion}",
+            jetty_continuation: "org.eclipse.jetty:jetty-continuation:${jettyVersion}",
 
             // Quartz Scheduler
             quartz: 'org.quartz-scheduler:quartz:2.2.1',
@@ -99,7 +100,8 @@ ext {
             libraries.jetty_jmx,
             libraries.jetty_annotations,
             libraries.jetty_websocket,
-            libraries.jetty_security
+            libraries.jetty_security,
+            libraries.jetty_continuation
     ]
 
     /*

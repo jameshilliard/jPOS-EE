@@ -36,7 +36,6 @@ import org.jpos.util.*;
 import org.vaadin.sliderpanel.SliderPanel;
 import org.vaadin.sliderpanel.SliderPanelBuilder;
 import org.vaadin.sliderpanel.client.SliderMode;
-import org.vaadin.sliderpanel.client.SliderPanelListener;
 import org.vaadin.sliderpanel.client.SliderTabPosition;
 
 import java.io.ByteArrayOutputStream;
@@ -204,8 +203,8 @@ public class LogListenerView extends CssLayout
           .mode(SliderMode.TOP)
           .tabPosition(SliderTabPosition.MIDDLE)
           .build();
-        slider.addListener((SliderPanelListener) expand -> {
-            if (expand) {
+        slider.addToggleListener(event -> {
+            if (event.isExpand()) {
                 shouldResume = !paused.get();
                 if (shouldResume) {
                     pause();

@@ -18,8 +18,22 @@
 
 package org.jpos.qi;
 
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.*;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.shared.ui.ContentMode;
+
+import com.vaadin.event.ShortcutAction;
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.FontAwesome;
+import com.vaadin.shared.ui.MarginInfo;
+
+//Compatibility imports. Will be changed
 import com.vaadin.v7.data.Container;
 import com.vaadin.v7.data.Validator;
 import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
@@ -30,22 +44,12 @@ import com.vaadin.v7.data.util.GeneratedPropertyContainer;
 import com.vaadin.v7.data.util.converter.StringToBooleanConverter;
 import com.vaadin.v7.data.util.converter.StringToDateConverter;
 import com.vaadin.v7.data.validator.RegexpValidator;
-import com.vaadin.event.ShortcutAction;
-import com.vaadin.navigator.View;
-import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.server.FontAwesome;
-import com.vaadin.shared.ui.MarginInfo;
-
-import com.vaadin.v7.shared.ui.label.ContentMode;
 import com.vaadin.v7.ui.*;
 import com.vaadin.v7.ui.Grid;
-import com.vaadin.v7.ui.HorizontalLayout;
-import com.vaadin.v7.ui.Label;
-import com.vaadin.v7.ui.TextField;
-import com.vaadin.v7.ui.VerticalLayout;
 import com.vaadin.v7.ui.renderers.DateRenderer;
 import com.vaadin.v7.ui.renderers.NumberRenderer;
 import com.vaadin.v7.ui.renderers.Renderer;
+
 import org.jpos.core.Configurable;
 import org.jpos.core.Configuration;
 import org.jpos.ee.BLException;
@@ -58,6 +62,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
+
 
 
 public abstract class QIEntityView<T> extends VerticalLayout implements View, Configurable {
@@ -98,6 +103,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         this.readOnlyFields = viewConfig.getReadOnlyFields();
         setSizeFull();
         setMargin(new MarginInfo(false, false, false, false));
+        setSpacing(false);
         showRevisionHistoryButton=true;
     }
 
@@ -184,7 +190,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
     protected HorizontalLayout createHeader (String title) {
         HorizontalLayout header = new HorizontalLayout();
         header.setWidth("100%");
-        header.setSpacing(true);
+        header.setSpacing(false);
         header.setMargin(new MarginInfo(false, true, false, true));
         Label lbl = new Label(title);
         lbl.addStyleName("h2");
@@ -195,7 +201,8 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         if (isGeneralView() && canAdd()) {
             Button addBtn = new Button(getApp().getMessage("add"));
             addBtn.addStyleName("borderless-colored");
-            addBtn.setIcon(FontAwesome.PLUS);
+//            addBtn.setIcon(FontAwesome.PLUS);
+            addBtn.setIcon(VaadinIcons.PLUS);
             addBtn.addClickListener(event -> getApp().getNavigator().navigateTo(generalRoute + "/new"));
             header.addComponent(addBtn);
             header.setComponentAlignment(addBtn, Alignment.BOTTOM_RIGHT);

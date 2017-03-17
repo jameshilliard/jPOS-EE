@@ -65,8 +65,8 @@ public class AuditLogView extends QIEntityView<SysLog> {
     }
 
     @Override
-    public void formatGrid (Grid grid) {
-        super.formatGrid(grid);
-        grid.getColumn("summary").setExpandRatio(3);
+    public void formatGrid() {
+        super.formatGrid();
+        getGrid().getColumn("summary").setExpandRatio(3);
     }
 }

@@ -133,7 +133,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         addComponent(header);
         grid = createGrid();
         grid.setDataProvider(getHelper().getDataProvider());
-        formatGrid(grid);
+        formatGrid();
         addComponent(grid);
         setExpandRatio(grid, 1);
     }
@@ -235,8 +235,18 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
     }
 
 
-    public void formatGrid (Grid grid) {
+    public void formatGrid() {
         setGridColumns();
+        Iterator<Grid.Column> it = grid.getColumns().iterator();
+        while (it.hasNext()) {
+            Grid.Column c = it.next();
+            String columnId = c.getId();
+            if (!Arrays.asList(getVisibleColumns()).contains(columnId)) {
+                grid.getColumn(columnId).setHidden(true);
+            }
+        }
+        //check which columns need to be visible
+
 //        grid.setCellStyleGenerator(cellReference -> {
 //            if (cellReference.getValue() instanceof BigDecimal)
 //                return "align-right";

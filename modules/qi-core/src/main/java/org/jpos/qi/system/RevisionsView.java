@@ -96,17 +96,17 @@ public class RevisionsView extends QIEntityView<Revision> {
     }
 
     @Override
-    public void formatGrid (Grid grid) {
-        super.formatGrid(grid);
+    public void formatGrid() {
+        super.formatGrid();
         //TODO: check this
 //        grid.getColumn("info").setRenderer(new HtmlRenderer("")).setMaximumWidth(1000);
 //        grid.getColumn("author").setConverter(((RevisionsHelper)getHelper()).getAuthorConverter("")).setRenderer(new HtmlRenderer(""));
 //        grid.getColumn("ref").setRenderer(new HtmlRenderer("")).setConverter(((RevisionsHelper)getHelper()).getRefConverter(""));
-        grid.removeListener((Listener) grid.getListeners(ItemClickEvent.class).iterator().next());
-        grid.addItemClickListener(event -> {
+        getGrid().removeListener((Listener) getGrid().getListeners(ItemClickEvent.class).iterator().next());
+        getGrid().addItemClickListener(event -> {
 
             if (!"ref,author".contains(event.getColumn().getId())) {
-                String url = getGeneralRoute() + "/" + grid.getDataProvider().getId(event.getItem());
+                String url = getGeneralRoute() + "/" + getGrid().getDataProvider().getId(event.getItem());
                 getApp().getNavigator().navigateTo(url);
             }
         });

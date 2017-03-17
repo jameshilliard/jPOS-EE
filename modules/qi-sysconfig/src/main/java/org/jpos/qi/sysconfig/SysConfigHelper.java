@@ -19,6 +19,8 @@
 package org.jpos.qi.sysconfig;
 
 
+import com.vaadin.data.provider.CallbackDataProvider;
+import com.vaadin.data.provider.DataProvider;
 import com.vaadin.v7.data.Container;
 import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.v7.data.fieldgroup.FieldGroup;
@@ -32,17 +34,16 @@ import org.jpos.qi.EntityContainer;
 import org.jpos.qi.QI;
 import org.jpos.qi.QIHelper;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SysConfigHelper extends QIHelper {
     private String prefix;
+    private SysConfigManager mgr;
 
     public SysConfigHelper (String prefix) {
         super(SysConfig.class);
         this.prefix = prefix;
+        mgr = new SysConfigManager(prefix);
     }
 
     public Container createContainer() {
@@ -114,6 +115,34 @@ public class SysConfigHelper extends QIHelper {
             throw new BLException("SysConfig " + id + " already exists.");
         }
     }
+
+    @Override
+    public DataProvider<SysConfig,Void> getDataProvider() {
+        DataProvider<SysConfig, Void> dataProvider = DataProvider.fromCallbacks(
+                (CallbackDataProvider.FetchCallback<SysConfig, Void>) query -> {
+                    int offset = query.getOffset();
+                    int limit = query.getLimit();
+                    //return sysconfigManager.getSysConfigs(offset,limit);
+                    try {
+                        return Arrays.stream(mgr.getAll(offset, limit));
+                    } catch (Exception e) {
+                        getApp().getLog().error(e);
+                        return null;
+                    }
+                },
+                (CallbackDataProvider.CountCallback<SysConfig, Void>) query -> {
+                    // return sysconfigManager.getSysConfigCount()
+                    try {
+                        return mgr.getItemsCount();
+                    } catch (Exception e) {
+                        getApp().getLog().error(e);
+                        return 0;
+                    }
+                });
+        return dataProvider;
+    }
+
+
 
 //    public boolean removeSysConfig (SysConfig sysConfig) {
 //        return (boolean) DB.execWithTransaction((db) -> {

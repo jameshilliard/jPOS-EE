@@ -18,12 +18,12 @@
 
 package org.jpos.qi.system;
 
+import com.vaadin.ui.Grid;
 import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.v7.data.fieldgroup.FieldGroup;
 import com.vaadin.v7.data.fieldgroup.FieldGroupFieldFactory;
 import com.vaadin.v7.event.ItemClickEvent;
 import com.vaadin.v7.ui.Field;
-import com.vaadin.v7.ui.Grid;
 import com.vaadin.ui.Layout;
 import com.vaadin.v7.ui.renderers.HtmlRenderer;
 import org.jpos.ee.Revision;
@@ -98,13 +98,15 @@ public class RevisionsView extends QIEntityView<Revision> {
     @Override
     public void formatGrid (Grid grid) {
         super.formatGrid(grid);
-        grid.getColumn("info").setRenderer(new HtmlRenderer("")).setMaximumWidth(1000);
-        grid.getColumn("author").setConverter(((RevisionsHelper)getHelper()).getAuthorConverter("")).setRenderer(new HtmlRenderer(""));
-        grid.getColumn("ref").setRenderer(new HtmlRenderer("")).setConverter(((RevisionsHelper)getHelper()).getRefConverter(""));
-        grid.removeItemClickListener((ItemClickEvent.ItemClickListener) grid.getListeners(ItemClickEvent.class).iterator().next());
+        //TODO: check this
+//        grid.getColumn("info").setRenderer(new HtmlRenderer("")).setMaximumWidth(1000);
+//        grid.getColumn("author").setConverter(((RevisionsHelper)getHelper()).getAuthorConverter("")).setRenderer(new HtmlRenderer(""));
+//        grid.getColumn("ref").setRenderer(new HtmlRenderer("")).setConverter(((RevisionsHelper)getHelper()).getRefConverter(""));
+        grid.removeListener((Listener) grid.getListeners(ItemClickEvent.class).iterator().next());
         grid.addItemClickListener(event -> {
-            if (!"ref,author".contains(event.getPropertyId().toString())) {
-                String url = getGeneralRoute() + "/" + event.getItemId();
+
+            if (!"ref,author".contains(event.getColumn().getId())) {
+                String url = getGeneralRoute() + "/" + grid.getDataProvider().getId(event.getItem());
                 getApp().getNavigator().navigateTo(url);
             }
         });

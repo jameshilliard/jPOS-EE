@@ -20,6 +20,7 @@ package org.jpos.qi;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.*;
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
@@ -45,7 +46,7 @@ import com.vaadin.v7.data.util.converter.StringToBooleanConverter;
 import com.vaadin.v7.data.util.converter.StringToDateConverter;
 import com.vaadin.v7.data.validator.RegexpValidator;
 import com.vaadin.v7.ui.*;
-import com.vaadin.v7.ui.Grid;
+//import com.vaadin.v7.ui.Grid;
 import com.vaadin.v7.ui.renderers.DateRenderer;
 import com.vaadin.v7.ui.renderers.NumberRenderer;
 import com.vaadin.v7.ui.renderers.Renderer;
@@ -61,8 +62,9 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
-
+import java.util.stream.Stream;
 
 
 public abstract class QIEntityView<T> extends VerticalLayout implements View, Configurable {
@@ -130,7 +132,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         Layout header = createHeader(title);
         addComponent(header);
         grid = createGrid();
-        grid.setContainerDataSource((Container.Indexed) createContainer());
+        grid.setDataProvider(getHelper().getDataProvider());
         formatGrid(grid);
         addComponent(grid);
         setExpandRatio(grid, 1);
@@ -211,20 +213,22 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
     }
 
     public Grid createGrid() {
-        Grid g = new Grid() {
-            @Override
-            public void setContainerDataSource(Container.Indexed container) {
-                GeneratedPropertyContainer wrapper = new GeneratedPropertyContainer(container);
-                List visibleCols = Arrays.asList(getVisibleColumns());
-                container.getContainerPropertyIds().stream().filter(prop -> !visibleCols.contains(prop)).forEach(wrapper::removeContainerProperty);
-                super.setContainerDataSource(wrapper);
-            }
-        };
+        Grid g = new Grid();
+
+//        Grid g = new Grid() {
+//            @Override
+//            public void setContainerDataSource(Container.Indexed container) {
+//                GeneratedPropertyContainer wrapper = new GeneratedPropertyContainer(container);
+//                List visibleCols = Arrays.asList(getVisibleColumns());
+//                container.getContainerPropertyIds().stream().filter(prop -> !visibleCols.contains(prop)).forEach(wrapper::removeContainerProperty);
+//                super.setContainerDataSource(wrapper);
+//            }
+//        };
         g.setSizeFull();
         g.setSelectionMode(Grid.SelectionMode.SINGLE);
         g.setColumnReorderingAllowed(true);
         g.addItemClickListener(event -> {
-            String url = generalRoute + "/" + event.getItemId();
+            String url = generalRoute + "/" + grid.getDataProvider().getId(event.getItem());
             getApp().getNavigator().navigateTo(url);
         });
         return g;
@@ -232,33 +236,36 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
 
 
     public void formatGrid (Grid grid) {
-        grid.setCellStyleGenerator(cellReference -> {
-            if (cellReference.getValue() instanceof BigDecimal)
-                return "align-right";
-            return null;
-        });
+        setGridColumns();
+//        grid.setCellStyleGenerator(cellReference -> {
+//            if (cellReference.getValue() instanceof BigDecimal)
+//                return "align-right";
+//            return null;
+//        });
         DecimalFormat nf = new DecimalFormat();
         nf.setGroupingUsed(false);
         //fix for when a manual resize is done, the last column takes the empty space.
-        grid.addColumnResizeListener((Grid.ColumnResizeListener) event -> {
+        grid.addColumnResizeListener(event -> {
             int lastColumnIndex = grid.getColumns().size()-1;
-            grid.getColumns().get(lastColumnIndex).setWidth(1500);
+            ((Grid.Column)grid.getColumns().get(lastColumnIndex)).setWidth(1500);
         });
-        if (grid.getColumn("id") != null && !String.class.equals(grid.getContainerDataSource().getType("id")))
-            grid.getColumn("id").setRenderer(new NumberRenderer(nf));
-        for (Grid.Column c : grid.getColumns()) {
+//        if (grid.getColumn("id") != null && !String.class.equals(grid.getContainerDataSource().getType("id")))
+//            grid.getColumn("id").setRenderer(new NumberRenderer(nf));
+        Iterator<Grid.Column> iterator = grid.getColumns().iterator();
+        while (iterator.hasNext()) {
+            Grid.Column c = iterator.next();
             c.setHidable(true);
-            if ("id".equals(c.getPropertyId())) {
+            if ("id".equals(c.getId())) {
                 c.setExpandRatio(0);
-            } else if (isBooleanColumn(c)) {
-                c.setExpandRatio(0);
-                c.setConverter(new StringToBooleanConverter("✔", "✘"));
-            } else if (isDateColumn(c)) {
-                c.setRenderer(new DateRenderer(getDateFormat()));
+//            } else if (isBooleanColumn(c)) {
+//                c.setExpandRatio(0);
+////                c.setConverter(new StringToBooleanConverter("✔", "✘"));
+//            } else if (isDateColumn(c)) {
+////                c.setRenderer(new DateRenderer(getDateFormat()));
             } else {
                 c.setExpandRatio(1);
             }
-            ViewConfig.FieldConfig config = viewConfig.getFields().get(c.getPropertyId());
+            ViewConfig.FieldConfig config = viewConfig.getFields().get(c.getId());
             if (config != null) {
                 if (config.getExpandRatio() != -1)
                     c.setExpandRatio(config.getExpandRatio());
@@ -267,12 +274,16 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         grid.setSizeFull();
     }
 
-    private boolean isBooleanColumn (Grid.Column c) {
-        return c.getConverter() != null && StringToBooleanConverter.class.equals(c.getConverter().getClass());
-    }
+//    private boolean isBooleanColumn (Grid.Column c) {
+////     return c.getConverter() != null && StringToBooleanConverter.class.equals(c.getConverter().getClass());
+//    }
+//
+//    private boolean isDateColumn (Grid.Column c) {
+////        return c.getConverter() != null && StringToDateConverter.class.equals(c.getConverter().getClass());
+//    }
 
-    private boolean isDateColumn (Grid.Column c) {
-        return c.getConverter() != null && StringToDateConverter.class.equals(c.getConverter().getClass());
+    public void setGridColumns() {
+
     }
 
     public Layout createForm (final Object entity, String[] params, boolean isNew) {

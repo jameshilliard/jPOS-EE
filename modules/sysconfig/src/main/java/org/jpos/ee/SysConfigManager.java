@@ -18,6 +18,7 @@
 
 package org.jpos.ee;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Iterator;
 
@@ -32,6 +33,14 @@ import org.hibernate.type.IntegerType;
 public class SysConfigManager {
     private DB db;
     private String prefix = "";
+
+    public SysConfigManager() {
+        super();
+    }
+    public SysConfigManager(String prefix) {
+        super();
+        this.prefix=prefix;
+    }
 
     public SysConfigManager (DB db) {
         super();
@@ -114,6 +123,7 @@ public class SysConfigManager {
         return values;
     }
     public SysConfig[] getAll () {
+
         SysConfig[] values;
         try {
             String queryAsString = "from sysconfig in class org.jpos.ee.SysConfig";
@@ -133,6 +143,24 @@ public class SysConfigManager {
             values = new SysConfig[0];
         }
         return values;
+    }
+
+    public SysConfig[] getAll(int offset, int limit) throws Exception {
+        //TODO: Implement properly!
+        return (SysConfig[]) DB.exec(db -> {
+            this.db = db;
+            SysConfig[] all = getAll();
+            SysConfig[] sub = Arrays.copyOfRange(getAll(),offset,offset+limit < all.length ? offset+limit : all.length);
+            return sub;
+        });
+    }
+
+    public int getItemsCount() throws Exception {
+        //TODO: will fix!!!!
+        return (int) DB.exec(db -> {
+            this.db = db;
+            return getAll().length;
+        });
     }
 
     @SuppressWarnings("unchecked")

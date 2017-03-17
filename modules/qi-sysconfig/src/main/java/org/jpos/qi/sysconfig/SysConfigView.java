@@ -18,6 +18,7 @@
 
 package org.jpos.qi.sysconfig;
 
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.TextField;
 import com.vaadin.v7.data.Container;
@@ -36,7 +37,6 @@ import org.jpos.qi.QIHelper;
 import org.jpos.qi.components.QIFieldFactory;
 
 public class SysConfigView extends QIEntityView {
-//    private static String ENTITY_NAME = "sysconfig";
     private String prefix;
 
     public SysConfigView (String name, String prefix) {
@@ -144,6 +144,13 @@ public class SysConfigView extends QIEntityView {
             id.setReadOnly(true);
         }
         return l;
+    }
+
+    @Override
+    public void setGridColumns() {
+        Grid<SysConfig> g = this.getGrid();
+        g.addColumn(SysConfig::getId).setCaption("id");
+        g.addColumn(SysConfig::getValue).setCaption("value");
     }
 
     private String removePrefix (String value) {

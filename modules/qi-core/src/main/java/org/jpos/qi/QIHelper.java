@@ -18,6 +18,7 @@
 
 package org.jpos.qi;
 
+import com.vaadin.data.provider.DataProvider;
 import com.vaadin.v7.data.Container;
 import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.ui.UI;
@@ -29,6 +30,8 @@ import org.jpos.ee.DB;
 import org.jpos.ee.RevisionManager;
 import org.jpos.ee.User;
 import org.jpos.util.BeanDiff;
+
+import java.util.Collection;
 
 public abstract class QIHelper {
 
@@ -160,9 +163,16 @@ public abstract class QIHelper {
 
     public abstract Container createContainer();
 
+    //TODO: will be abstract later.
+    public DataProvider getDataProvider() {
+        return null;
+    }
+
+
     protected Configuration getConfiguration() { return cfg; }
 
     public void setConfiguration (Configuration cfg) {
         this.cfg = cfg;
     }
+
 }

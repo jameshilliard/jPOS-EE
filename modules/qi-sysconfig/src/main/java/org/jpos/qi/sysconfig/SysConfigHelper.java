@@ -19,8 +19,8 @@
 package org.jpos.qi.sysconfig;
 
 
-import com.vaadin.data.provider.CallbackDataProvider;
-import com.vaadin.data.provider.DataProvider;
+import com.vaadin.data.provider.*;
+import com.vaadin.shared.Registration;
 import com.vaadin.v7.data.Container;
 import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.v7.data.fieldgroup.FieldGroup;
@@ -35,6 +35,7 @@ import org.jpos.qi.QI;
 import org.jpos.qi.QIHelper;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class SysConfigHelper extends QIHelper {
     private String prefix;
@@ -118,11 +119,11 @@ public class SysConfigHelper extends QIHelper {
 
     @Override
     public DataProvider<SysConfig,Void> getDataProvider() {
+
         DataProvider<SysConfig, Void> dataProvider = DataProvider.fromCallbacks(
                 (CallbackDataProvider.FetchCallback<SysConfig, Void>) query -> {
                     int offset = query.getOffset();
                     int limit = query.getLimit();
-                    //return sysconfigManager.getSysConfigs(offset,limit);
                     try {
                         return Arrays.stream(mgr.getAll(offset, limit));
                     } catch (Exception e) {
@@ -131,7 +132,6 @@ public class SysConfigHelper extends QIHelper {
                     }
                 },
                 (CallbackDataProvider.CountCallback<SysConfig, Void>) query -> {
-                    // return sysconfigManager.getSysConfigCount()
                     try {
                         return mgr.getItemsCount();
                     } catch (Exception e) {
@@ -140,6 +140,11 @@ public class SysConfigHelper extends QIHelper {
                     }
                 });
         return dataProvider;
+    }
+
+    @Override
+    public String getItemId(Object item) {
+        return ((SysConfig) item).getId();
     }
 
 

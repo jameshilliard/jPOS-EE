@@ -228,7 +228,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         g.setSelectionMode(Grid.SelectionMode.SINGLE);
         g.setColumnReorderingAllowed(true);
         g.addItemClickListener(event -> {
-            String url = generalRoute + "/" + grid.getDataProvider().getId(event.getItem());
+            String url = generalRoute + "/" + getHelper().getItemId(event.getItem());
             getApp().getNavigator().navigateTo(url);
         });
         return g;

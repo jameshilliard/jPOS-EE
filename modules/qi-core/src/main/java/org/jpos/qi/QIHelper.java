@@ -168,6 +168,10 @@ public abstract class QIHelper {
         return null;
     }
 
+    //TODO: will be abstract later.
+    public String getItemId(Object item) {
+        return item.toString();
+    }
 
     protected Configuration getConfiguration() { return cfg; }
 

@@ -60,9 +60,12 @@ public class LogListenerView extends CssLayout
     private Map<String, CheckBox> realms;
     private Layout realmsLayout;
     private boolean shouldResume;
+    private QI qi;
 
     @SuppressWarnings("unchecked")
     public LogListenerView () {
+        super();
+        qi = QI.getQI();
         sp = (Space<String,LogEvent>) SpaceFactory.getSpace();
         key = toString();
         pause = new Button();
@@ -123,7 +126,6 @@ public class LogListenerView extends CssLayout
     @Override
     public void run() {
         ISOUtil.sleep (500L);
-        QI qi = QI.getQI();
         while (active.get() && !paused.get()) {
             boolean needScroll = false;
             sp.rd(key, 1000L);

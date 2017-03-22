@@ -30,7 +30,7 @@
   <sidebar id="system">
     <section name="System"/>
     <option name="Info" action="info"/>
-    <!--<option name="Log" action="log"/>-->
+    <option name="Log" action="log"/>
     <option name="Exception log" action="exceptions"/>
     <option name="Users" action="users"/>
     <option name="Roles" action="roles"/>

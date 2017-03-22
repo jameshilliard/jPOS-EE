@@ -12,7 +12,7 @@ ext {
     jsonSchemaVersion = '2.2.6'
     jacksonVersion = '2.7.4'
     groovyVersion = '2.4.6'
-    vaadinVersion = '8.0.2'
+    vaadinVersion = '8.0.3'
 
     libraries = [
             //jUnit (Tests)
@@ -72,6 +72,7 @@ ext {
             jetty_security: "org.eclipse.jetty:jetty-security:${jettyVersion}",
             jetty_policy: "org.eclipse.jetty:jetty-policy:${jettyVersion}",
             jetty_websocket: "org.eclipse.jetty.websocket:websocket-server:${jettyVersion}",
+            jetty_websocket_jsr356: "org.eclipse.jetty.websocket:javax-websocket-server-impl:${jettyVersion}",
             jetty_rewrite: "org.eclipse.jetty:jetty-rewrite:${jettyVersion}",
             jetty_util: "org.eclipse.jetty:jetty-util:${jettyVersion}",
             jetty_servlets: "org.eclipse.jetty:jetty-servlets:${jettyVersion}",
@@ -100,6 +101,7 @@ ext {
             libraries.jetty_jmx,
             libraries.jetty_annotations,
             libraries.jetty_websocket,
+            libraries.jetty_websocket_jsr356,
             libraries.jetty_security,
             libraries.jetty_continuation
     ]

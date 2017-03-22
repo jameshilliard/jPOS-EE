@@ -79,6 +79,7 @@ public class LogListenerView extends CssLayout
         addStyleName("console");
         label = new XLabel ();
         label.setStyleName ("console");
+        label.setWidth("100%");
         label.setContentMode(ContentMode.PREFORMATTED);
 
         addComponent(createSlider());

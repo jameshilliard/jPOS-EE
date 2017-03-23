@@ -18,16 +18,18 @@
 
 package org.jpos.ee;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Iterator;
+import java.util.*;
 
+import org.hibernate.mapping.Array;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
 import org.hibernate.Transaction;
 import org.hibernate.HibernateException;
+import org.hibernate.query.criteria.internal.OrderImpl;
 import org.hibernate.resource.transaction.spi.TransactionStatus;
 import org.hibernate.type.IntegerType;
+
+import javax.persistence.criteria.*;
 
 @SuppressWarnings("unused")
 public class SysConfigManager {
@@ -145,14 +147,50 @@ public class SysConfigManager {
         return values;
     }
 
-    public SysConfig[] getAll(int offset, int limit) throws Exception {
-        //TODO: Implement properly!
-        return (SysConfig[]) DB.exec(db -> {
-            this.db = db;
-            SysConfig[] all = getAll();
-            SysConfig[] sub = Arrays.copyOfRange(getAll(),offset,offset+limit < all.length ? offset+limit : all.length);
-            return sub;
+    public SysConfig[] getAll(int offset, int limit, Map<String,Boolean> orders) throws Exception {
+
+        List<SysConfig> list = (List<SysConfig>) DB.exec(db -> {
+            CriteriaBuilder criteriaBuilder = db.session().getCriteriaBuilder();
+            CriteriaQuery<SysConfig> query = criteriaBuilder.createQuery(SysConfig.class);
+            Root<SysConfig> root = query.from(SysConfig.class);
+            List<Order> orderList = new ArrayList<>();
+            //ORDERS
+            for (Map.Entry<String,Boolean> entry : orders.entrySet()) {
+                OrderImpl order = new OrderImpl(root.get(entry.getKey()),entry.getValue());
+                orderList.add(order);
+            }
+            //Get only by prefix
+            Predicate prefixLike = criteriaBuilder.like(root.get("id"), prefix + "%");
+
+            query.select(root);
+            query.orderBy(orderList);
+            query.where(prefixLike);
+            return db.session().createQuery(query).getResultList();
+
         });
+
+
+
+        return list.toArray(new SysConfig[] { });
+
+//
+//        Root<Route> routeRoot = query.from(Route.class);
+//        query.select(routeRoot);
+//
+//        List<Order> orderList = new ArrayList();
+//        query.where(routeRoot.get("owner").in(user));
+//
+//        orderList.add(criteriaBuilder.desc(routeRoot.get("date")));
+//        orderList.add(criteriaBuilder.desc(routeRoot.get("rating")));
+//
+//        query.orderBy(orderList);
+//
+//        return (SysConfig[]) DB.exec(db -> {
+//            this.db = db;
+//            SysConfig[] all = getAll();
+//            SysConfig[] sub = Arrays.copyOfRange(getAll(),offset,offset+limit < all.length ? offset+limit : all.length);
+//            return sub;
+//        });
     }
 
     public int getItemsCount() throws Exception {

@@ -63,7 +63,7 @@ public class EntityContainer<T>
     /**
      * Map from entity/item identifiers to index. Maps does not contain mapping
      * for all identifiers in container, but only those that are recently
-     * loaded. Map gets cleanded during usage, to free memory.
+     * loaded. Map gets cleaned during usage, to free memory.
      */
     protected final Map<Object, Integer> idToIndex = new LinkedHashMap<>();
 

@@ -222,12 +222,14 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         setGridColumns();
 
         //check which columns need to be visible and hide extra columns
+        //also set id as caption
         Iterator<Grid.Column> it = grid.getColumns().iterator();
         while (it.hasNext()) {
             Grid.Column c = it.next();
             String columnId = c.getId();
+            c.setCaption(columnId);
             if (!Arrays.asList(getVisibleColumns()).contains(columnId)) {
-                grid.getColumn(columnId).setHidden(true);
+                grid.removeColumn(columnId);
             }
         }
 //        grid.setCellStyleGenerator(cellReference -> {

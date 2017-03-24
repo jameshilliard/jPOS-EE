@@ -98,7 +98,7 @@ public abstract class DateRangeComponent extends HorizontalLayout {
         ComboBox combo = new ComboBox(app.getMessage("or").toUpperCase());
         combo.setStyleName(ValoTheme.COMBOBOX_SMALL);
         combo.setEmptySelectionAllowed(false);
-        combo.setItems(DateRange.ranges);
+        combo.setItems((Object[])DateRange.ranges);
         combo.setItemCaptionGenerator(range -> app.getMessage((String)range));
         combo.addValueChangeListener(event -> {
             if (event.getValue() != null) {

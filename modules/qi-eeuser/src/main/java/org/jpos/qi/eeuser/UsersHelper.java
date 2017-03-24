@@ -33,6 +33,7 @@ import org.jpos.util.PasswordGenerator;
 
 import java.util.*;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class UsersHelper extends QIHelper {
 
@@ -52,6 +53,21 @@ public class UsersHelper extends QIHelper {
 
         List sortable = Arrays.asList("id", "nick", "name", "email", "active");
         return new EntityContainer<>(User.class, properties, sortable);
+    }
+
+    @Override
+    public Stream getAll(int offset, int limit, Map<String, Boolean> orders) throws Exception {
+        return null;
+    }
+
+    @Override
+    public int getItemCount() throws Exception {
+        return 0;
+    }
+
+    @Override
+    public String getItemId(Object item) {
+        return String.valueOf(((User)item).getId());
     }
 
     public User getUserByNick (String nick, boolean includeDeleted) {

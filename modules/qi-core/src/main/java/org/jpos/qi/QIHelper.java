@@ -18,20 +18,21 @@
 
 package org.jpos.qi;
 
+import com.vaadin.data.provider.CallbackDataProvider;
 import com.vaadin.data.provider.DataProvider;
+import com.vaadin.data.provider.QuerySortOrder;
+import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.v7.data.Container;
 import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.ui.UI;
 import com.vaadin.v7.data.fieldgroup.FieldGroup;
 import com.vaadin.v7.data.util.BeanItem;
 import org.jpos.core.Configuration;
-import org.jpos.ee.BLException;
-import org.jpos.ee.DB;
-import org.jpos.ee.RevisionManager;
-import org.jpos.ee.User;
+import org.jpos.ee.*;
 import org.jpos.util.BeanDiff;
 
-import java.util.Collection;
+import java.util.*;
+import java.util.stream.Stream;
 
 public abstract class QIHelper {
 
@@ -163,15 +164,40 @@ public abstract class QIHelper {
 
     public abstract Container createContainer();
 
-    //TODO: will be abstract later.
     public DataProvider getDataProvider() {
-        return null;
+        Map<String,Boolean> orders = new HashMap<>();
+        DataProvider dataProvider = DataProvider.fromCallbacks(
+                (CallbackDataProvider.FetchCallback) query -> {
+                    int offset = query.getOffset();
+                    int limit = query.getLimit();
+                    Iterator it = query.getSortOrders().iterator();
+                    while (it.hasNext()) {
+                        QuerySortOrder order = (QuerySortOrder) it.next();
+                        orders.put(order.getSorted(),order.getDirection() == SortDirection.DESCENDING);
+                    }
+                    try {
+                        return getAll(offset,limit,orders);
+                    } catch (Exception e) {
+                        getApp().getLog().error(e);
+                        return null;
+                    }
+                },
+                (CallbackDataProvider.CountCallback<SysConfig, Void>) query -> {
+                    try {
+                        return getItemCount();
+                    } catch (Exception e) {
+                        getApp().getLog().error(e);
+                        return 0;
+                    }
+                });
+        return dataProvider;
     }
 
-    //TODO: will be abstract later.
-    public String getItemId(Object item) {
-        return item.toString();
-    }
+    public abstract Stream getAll(int offset, int limit, Map<String,Boolean> orders) throws Exception;
+
+    public abstract int getItemCount() throws Exception;
+
+    public abstract String getItemId(Object item);
 
     protected Configuration getConfiguration() { return cfg; }
 

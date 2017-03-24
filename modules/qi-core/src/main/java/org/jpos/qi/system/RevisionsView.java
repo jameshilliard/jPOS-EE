@@ -111,4 +111,9 @@ public class RevisionsView extends QIEntityView<Revision> {
             }
         });
     }
+
+    @Override
+    public void setGridColumns() {
+
+    }
 }

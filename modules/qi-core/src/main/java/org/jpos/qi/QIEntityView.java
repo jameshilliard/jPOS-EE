@@ -31,25 +31,21 @@ import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.MarginInfo;
 
-//Compatibility imports. Will be changed
+//------Compatibility imports. Will be changed----------
 import com.vaadin.v7.data.Container;
 import com.vaadin.v7.data.Validator;
 import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.v7.data.fieldgroup.FieldGroup;
 import com.vaadin.v7.data.fieldgroup.FieldGroupFieldFactory;
 import com.vaadin.v7.data.util.BeanItem;
-import com.vaadin.v7.data.util.GeneratedPropertyContainer;
-import com.vaadin.v7.data.util.converter.StringToBooleanConverter;
-import com.vaadin.v7.data.util.converter.StringToDateConverter;
 import com.vaadin.v7.data.validator.RegexpValidator;
 import com.vaadin.v7.ui.*;
-//import com.vaadin.v7.ui.Grid;
 import com.vaadin.v7.ui.renderers.DateRenderer;
 import com.vaadin.v7.ui.renderers.NumberRenderer;
 import com.vaadin.v7.ui.renderers.Renderer;
+//-------------------------------------------------------
 
 import org.jpos.core.Configurable;
 import org.jpos.core.Configuration;
@@ -63,8 +59,6 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Stream;
 
 
 public abstract class QIEntityView<T> extends VerticalLayout implements View, Configurable {
@@ -203,7 +197,6 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         if (isGeneralView() && canAdd()) {
             Button addBtn = new Button(getApp().getMessage("add"));
             addBtn.addStyleName("borderless-colored");
-//            addBtn.setIcon(FontAwesome.PLUS);
             addBtn.setIcon(VaadinIcons.PLUS);
             addBtn.addClickListener(event -> getApp().getNavigator().navigateTo(generalRoute + "/new"));
             header.addComponent(addBtn);
@@ -214,16 +207,6 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
 
     public Grid createGrid() {
         Grid g = new Grid();
-
-//        Grid g = new Grid() {
-//            @Override
-//            public void setContainerDataSource(Container.Indexed container) {
-//                GeneratedPropertyContainer wrapper = new GeneratedPropertyContainer(container);
-//                List visibleCols = Arrays.asList(getVisibleColumns());
-//                container.getContainerPropertyIds().stream().filter(prop -> !visibleCols.contains(prop)).forEach(wrapper::removeContainerProperty);
-//                super.setContainerDataSource(wrapper);
-//            }
-//        };
         g.setSizeFull();
         g.setSelectionMode(Grid.SelectionMode.SINGLE);
         g.setColumnReorderingAllowed(true);
@@ -237,6 +220,8 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
 
     public void formatGrid() {
         setGridColumns();
+
+        //check which columns need to be visible and hide extra columns
         Iterator<Grid.Column> it = grid.getColumns().iterator();
         while (it.hasNext()) {
             Grid.Column c = it.next();
@@ -245,8 +230,6 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
                 grid.getColumn(columnId).setHidden(true);
             }
         }
-        //check which columns need to be visible
-
 //        grid.setCellStyleGenerator(cellReference -> {
 //            if (cellReference.getValue() instanceof BigDecimal)
 //                return "align-right";
@@ -254,13 +237,15 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
 //        });
         DecimalFormat nf = new DecimalFormat();
         nf.setGroupingUsed(false);
-        //fix for when a manual resize is done, the last column takes the empty space.
-        grid.addColumnResizeListener(event -> {
-            int lastColumnIndex = grid.getColumns().size()-1;
-            ((Grid.Column)grid.getColumns().get(lastColumnIndex)).setWidth(1500);
-        });
+
+//        //fix for when a manual resize is done, the last column takes the empty space.
+//        grid.addColumnResizeListener(event -> {
+//            int lastColumnIndex = grid.getColumns().size()-1;
+//            ((Grid.Column)grid.getColumns().get(lastColumnIndex)).setWidth(1500);
+//        });
 //        if (grid.getColumn("id") != null && !String.class.equals(grid.getContainerDataSource().getType("id")))
 //            grid.getColumn("id").setRenderer(new NumberRenderer(nf));
+
         Iterator<Grid.Column> iterator = grid.getColumns().iterator();
         while (iterator.hasNext()) {
             Grid.Column c = iterator.next();
@@ -285,16 +270,15 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
     }
 
 //    private boolean isBooleanColumn (Grid.Column c) {
-////     return c.getConverter() != null && StringToBooleanConverter.class.equals(c.getConverter().getClass());
+//        return c.getConverter() != null && StringToBooleanConverter.class.equals(c.getConverter().getClass());
 //    }
 //
 //    private boolean isDateColumn (Grid.Column c) {
 ////        return c.getConverter() != null && StringToDateConverter.class.equals(c.getConverter().getClass());
 //    }
 
-    public void setGridColumns() {
 
-    }
+    public abstract void setGridColumns();
 
     public Layout createForm (final Object entity, String[] params, boolean isNew) {
         VerticalLayout profileLayout = new VerticalLayout();
@@ -305,7 +289,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         if (params.length <= 1 || !"profile".equals(params[1])) {
             Button back = new Button(getApp().getMessage("back"));
             back.addStyleName("borderless-colored");
-            back.setIcon(FontAwesome.ARROW_LEFT);
+            back.setIcon(VaadinIcons.ARROW_LEFT);
             back.addClickListener(event -> app.getNavigator().navigateTo(getGeneralRoute()));
             profileLayout.addComponent(back);
             profileLayout.setComponentAlignment(back, Alignment.MIDDLE_LEFT);

@@ -19,9 +19,6 @@
 package org.jpos.qi.sysconfig;
 
 
-import com.vaadin.data.provider.*;
-import com.vaadin.shared.Registration;
-import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.v7.data.Container;
 import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.v7.data.fieldgroup.FieldGroup;
@@ -40,12 +37,12 @@ import java.util.stream.Stream;
 
 public class SysConfigHelper extends QIHelper {
     private String prefix;
-    private SysConfigManager mgr;
+//    private SysConfigManager mgr;
 
     public SysConfigHelper (String prefix) {
         super(SysConfig.class);
         this.prefix = prefix;
-        mgr = new SysConfigManager(prefix);
+//        mgr = new SysConfigManager(prefix);
     }
 
     public Container createContainer() {
@@ -119,39 +116,20 @@ public class SysConfigHelper extends QIHelper {
     }
 
     @Override
-    public DataProvider<SysConfig,Void> getDataProvider() {
+    public Stream getAll(int offset, int limit, Map<String, Boolean> orders) throws Exception {
+        SysConfig[] configs = (SysConfig[]) DB.exec(db -> {
+            SysConfigManager mgr = new SysConfigManager(db,prefix);
+            return mgr.getAll(offset,limit,orders);
+        });
+        return Arrays.asList(configs).stream();
+    }
 
-        Map<String,Boolean> orders = new HashMap<>();
-
-        DataProvider<SysConfig, Void> dataProvider = DataProvider.fromCallbacks(
-                (CallbackDataProvider.FetchCallback<SysConfig, Void>) query -> {
-                    System.out.println("FETCH ALL");
-                    int offset = query.getOffset();
-                    int limit = query.getLimit();
-                    for (QuerySortOrder order : query.getSortOrders()) {
-                        //name of property
-                        String name = order.getSorted();
-                        //orientation
-                        boolean desc = order.getDirection() == SortDirection.DESCENDING;
-                        System.out.println("------> " + name + " " + desc);
-                        orders.put(name,desc);
-                    }
-                    try {
-                        return Arrays.stream(mgr.getAll(offset, limit,orders));
-                    } catch (Exception e) {
-                        getApp().getLog().error(e);
-                        return null;
-                    }
-                },
-                (CallbackDataProvider.CountCallback<SysConfig, Void>) query -> {
-                    try {
-                        return mgr.getItemsCount();
-                    } catch (Exception e) {
-                        getApp().getLog().error(e);
-                        return 0;
-                    }
-                });
-        return dataProvider;
+    @Override
+    public int getItemCount() throws Exception {
+        return (int) DB.exec(db -> {
+            SysConfigManager mgr = new SysConfigManager(db,prefix);
+            return mgr.getItemCount();
+        });
     }
 
     @Override

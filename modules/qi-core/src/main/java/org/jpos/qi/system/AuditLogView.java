@@ -69,4 +69,18 @@ public class AuditLogView extends QIEntityView<SysLog> {
         super.formatGrid();
         getGrid().getColumn("summary").setExpandRatio(3);
     }
+
+    @Override
+    public void setGridColumns() {
+        Grid<SysLog> g = getGrid();
+        g.addColumn("id");
+        g.addColumn("date");
+        g.addColumn("deleted");
+        g.addColumn("source");
+        g.addColumn("type");
+        g.addColumn("severity");
+        g.addColumn("summary");
+        g.addColumn("detail");
+        g.addColumn("trace");
+    }
 }

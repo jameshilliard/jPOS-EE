@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public class RolesHelper extends QIHelper {
     protected RolesHelper() {
@@ -45,6 +46,21 @@ public class RolesHelper extends QIHelper {
         properties.put("name", String.class);
         List sortable = Arrays.asList("id", "name");
         return new EntityContainer(Role.class, properties, sortable);
+    }
+
+    @Override
+    public Stream getAll(int offset, int limit, Map<String, Boolean> orders) throws Exception {
+        return null;
+    }
+
+    @Override
+    public int getItemCount() throws Exception {
+        return 0;
+    }
+
+    @Override
+    public String getItemId(Object item) {
+        return String.valueOf(((Role)item).getId());
     }
 
     @Override

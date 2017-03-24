@@ -20,6 +20,9 @@ package org.jpos.qi.eeuser;
 
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Layout;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Panel;
+
 import com.vaadin.v7.data.Validator;
 import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.v7.data.fieldgroup.FieldGroup;
@@ -29,12 +32,11 @@ import com.vaadin.v7.data.util.PropertysetItem;
 import com.vaadin.v7.data.validator.EmailValidator;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.v7.ui.*;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Panel;
 import com.vaadin.v7.ui.TextField;
-import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.ui.Field;
 import com.vaadin.v7.ui.OptionGroup;
+
+import com.vaadin.ui.themes.ValoTheme;
 import org.jpos.ee.*;
 import org.jpos.qi.*;
 import org.jpos.qi.components.QIFieldFactory;
@@ -188,6 +190,11 @@ public class UsersView extends QIEntityView<User> {
             getCancelBtn().setEnabled(false);
             getApp().scrollIntoView(passwordPanel);
         }
+
+    }
+
+    @Override
+    public void setGridColumns() {
 
     }
 

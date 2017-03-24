@@ -20,7 +20,6 @@ package org.jpos.ee;
 
 import java.util.*;
 
-import org.hibernate.mapping.Array;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
 import org.hibernate.Transaction;
@@ -36,13 +35,13 @@ public class SysConfigManager {
     private DB db;
     private String prefix = "";
 
-    public SysConfigManager() {
-        super();
-    }
-    public SysConfigManager(String prefix) {
-        super();
-        this.prefix=prefix;
-    }
+//    public SysConfigManager() {
+//        super();
+//    }
+//    public SysConfigManager(String prefix) {
+//        super();
+//        this.prefix=prefix;
+//    }
 
     public SysConfigManager (DB db) {
         super();
@@ -148,52 +147,28 @@ public class SysConfigManager {
     }
 
     public SysConfig[] getAll(int offset, int limit, Map<String,Boolean> orders) throws Exception {
+        CriteriaBuilder criteriaBuilder = db.session().getCriteriaBuilder();
+        CriteriaQuery<SysConfig> query = criteriaBuilder.createQuery(SysConfig.class);
+        Root<SysConfig> root = query.from(SysConfig.class);
+        List<Order> orderList = new ArrayList<>();
+        //ORDERS
+        for (Map.Entry<String,Boolean> entry : orders.entrySet()) {
+            OrderImpl order = new OrderImpl(root.get(entry.getKey()),entry.getValue());
+            orderList.add(order);
+        }
+        //Get only by prefix
+        Predicate prefixLike = criteriaBuilder.like(root.get("id"), prefix + "%");
 
-        List<SysConfig> list = (List<SysConfig>) DB.exec(db -> {
-            CriteriaBuilder criteriaBuilder = db.session().getCriteriaBuilder();
-            CriteriaQuery<SysConfig> query = criteriaBuilder.createQuery(SysConfig.class);
-            Root<SysConfig> root = query.from(SysConfig.class);
-            List<Order> orderList = new ArrayList<>();
-            //ORDERS
-            for (Map.Entry<String,Boolean> entry : orders.entrySet()) {
-                OrderImpl order = new OrderImpl(root.get(entry.getKey()),entry.getValue());
-                orderList.add(order);
-            }
-            //Get only by prefix
-            Predicate prefixLike = criteriaBuilder.like(root.get("id"), prefix + "%");
-
-            query.select(root);
-            query.orderBy(orderList);
-            query.where(prefixLike);
-            return db.session().createQuery(query).getResultList();
-
-        });
-
-
+        query.select(root);
+        query.orderBy(orderList);
+        query.where(prefixLike);
+        List<SysConfig> list = db.session().createQuery(query).getResultList();
 
         return list.toArray(new SysConfig[] { });
 
-//
-//        Root<Route> routeRoot = query.from(Route.class);
-//        query.select(routeRoot);
-//
-//        List<Order> orderList = new ArrayList();
-//        query.where(routeRoot.get("owner").in(user));
-//
-//        orderList.add(criteriaBuilder.desc(routeRoot.get("date")));
-//        orderList.add(criteriaBuilder.desc(routeRoot.get("rating")));
-//
-//        query.orderBy(orderList);
-//
-//        return (SysConfig[]) DB.exec(db -> {
-//            this.db = db;
-//            SysConfig[] all = getAll();
-//            SysConfig[] sub = Arrays.copyOfRange(getAll(),offset,offset+limit < all.length ? offset+limit : all.length);
-//            return sub;
-//        });
     }
 
-    public int getItemsCount() throws Exception {
+    public int getItemCount() throws Exception {
         //TODO: will fix!!!!
         return (int) DB.exec(db -> {
             this.db = db;

@@ -32,6 +32,7 @@ import org.jpos.qi.QINavigator;
 import org.jpos.util.UserConverter;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Created by spr on 6/15/16.
@@ -55,6 +56,21 @@ public class RevisionsHelper extends QIHelper {
         EntityContainer container = new EntityContainer<>(Revision.class, properties, sortable);
         container.setNormalOrder(false);
         return container;
+    }
+
+    @Override
+    public Stream getAll(int offset, int limit, Map<String, Boolean> orders) throws Exception {
+        return null;
+    }
+
+    @Override
+    public int getItemCount() throws Exception {
+        return 0;
+    }
+
+    @Override
+    public String getItemId(Object item) {
+        return String.valueOf(((Revision)item).getId());
     }
 
     // Need eager mode to fetch User (author).

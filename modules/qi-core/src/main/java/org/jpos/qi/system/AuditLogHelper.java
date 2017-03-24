@@ -28,6 +28,7 @@ import org.jpos.qi.EntityContainer;
 import org.jpos.qi.QIHelper;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Created by jr on 6/16/16.
@@ -55,6 +56,24 @@ public class AuditLogHelper extends QIHelper {
         EntityContainer container = new EntityContainer<>(SysLog.class, properties, sortable);
         container.addRestriction(Restrictions.eq("deleted",false));
         return container;
+    }
+
+    @Override
+    public Stream getAll(int offset, int limit, Map<String, Boolean> orders) throws Exception {
+//        DB.exec(db -> {
+//            SysLogManager mgr = new SysLogManager();
+//        });
+        return null;
+    }
+
+    @Override
+    public int getItemCount() throws Exception {
+        return 0;
+    }
+
+    @Override
+    public String getItemId(Object item) {
+        return String.valueOf(((SysLog)item).getId());
     }
 
     @Override

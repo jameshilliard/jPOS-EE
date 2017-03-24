@@ -90,6 +90,11 @@ public class RolesView extends QIEntityView {
         };
     }
 
+    @Override
+    public void setGridColumns() {
+
+    }
+
     //override to add validators
     @Override
     protected Layout addFields(FieldGroup fieldGroup) {

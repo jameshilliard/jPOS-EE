@@ -194,7 +194,7 @@ public class UsersView extends QIEntityView<User> {
     }
 
     @Override
-    public void setGridColumns() {
+    public void setGridGetters() {
 
     }
 

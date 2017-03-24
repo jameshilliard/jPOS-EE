@@ -91,7 +91,7 @@ public class RolesView extends QIEntityView {
     }
 
     @Override
-    public void setGridColumns() {
+    public void setGridGetters() {
 
     }
 

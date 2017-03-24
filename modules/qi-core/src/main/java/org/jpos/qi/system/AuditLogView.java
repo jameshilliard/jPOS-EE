@@ -71,7 +71,7 @@ public class AuditLogView extends QIEntityView<SysLog> {
     }
 
     @Override
-    public void setGridColumns() {
+    public void setGridGetters() {
         Grid<SysLog> g = getGrid();
         g.addColumn(SysLog::getId).setId("id");
         g.addColumn(SysLog::getDate).setId("date");

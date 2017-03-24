@@ -52,7 +52,6 @@ import org.jpos.core.Configuration;
 import org.jpos.ee.BLException;
 import org.jpos.ee.DB;
 
-import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -219,26 +218,38 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
 
 
     public void formatGrid() {
-        setGridColumns();
+        setGridGetters();
 
-        //check which columns need to be visible and hide extra columns
-        //also set id as caption
+        //Delete not visible columns
+        //Use columnId as caption
+        //Set sorting for every column.
+        DecimalFormat nf = new DecimalFormat();
+        nf.setGroupingUsed(false);
+
         Iterator<Grid.Column> it = grid.getColumns().iterator();
         while (it.hasNext()) {
             Grid.Column c = it.next();
             String columnId = c.getId();
-            c.setCaption(columnId);
             if (!Arrays.asList(getVisibleColumns()).contains(columnId)) {
                 grid.removeColumn(columnId);
             }
-        }
+            //todo: read sortable from xml and set to false. Default: true
+            c.setCaption(columnId)
+                    .setSortProperty(columnId)
+                    .setSortable(true)
+                    .setHidable(true);
+
+            ViewConfig.FieldConfig config = viewConfig.getFields().get(c.getId());
+            if (config != null) {
+                if (config.getExpandRatio() != -1)
+                    c.setExpandRatio(config.getExpandRatio());
+            }
+
 //        grid.setCellStyleGenerator(cellReference -> {
 //            if (cellReference.getValue() instanceof BigDecimal)
 //                return "align-right";
 //            return null;
 //        });
-        DecimalFormat nf = new DecimalFormat();
-        nf.setGroupingUsed(false);
 
 //        //fix for when a manual resize is done, the last column takes the empty space.
 //        grid.addColumnResizeListener(event -> {
@@ -248,10 +259,6 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
 //        if (grid.getColumn("id") != null && !String.class.equals(grid.getContainerDataSource().getType("id")))
 //            grid.getColumn("id").setRenderer(new NumberRenderer(nf));
 
-        Iterator<Grid.Column> iterator = grid.getColumns().iterator();
-        while (iterator.hasNext()) {
-            Grid.Column c = iterator.next();
-            c.setHidable(true);
             if ("id".equals(c.getId())) {
                 c.setExpandRatio(0);
 //            } else if (isBooleanColumn(c)) {
@@ -262,11 +269,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
             } else {
                 c.setExpandRatio(1);
             }
-            ViewConfig.FieldConfig config = viewConfig.getFields().get(c.getId());
-            if (config != null) {
-                if (config.getExpandRatio() != -1)
-                    c.setExpandRatio(config.getExpandRatio());
-            }
+
         }
         grid.setSizeFull();
     }
@@ -280,7 +283,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
 //    }
 
 
-    public abstract void setGridColumns();
+    public abstract void setGridGetters();
 
     public Layout createForm (final Object entity, String[] params, boolean isNew) {
         VerticalLayout profileLayout = new VerticalLayout();

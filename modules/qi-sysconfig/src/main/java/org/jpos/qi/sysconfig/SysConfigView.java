@@ -147,10 +147,10 @@ public class SysConfigView extends QIEntityView {
     }
 
     @Override
-    public void setGridColumns() {
+    public void setGridGetters() {
         Grid<SysConfig> g = this.getGrid();
-        g.addColumn(SysConfig::getId).setCaption("id").setId("id").setSortProperty("id");
-        g.addColumn(SysConfig::getValue).setCaption("value").setId("value").setSortProperty("value");
+        g.addColumn(SysConfig::getId);
+        g.addColumn(SysConfig::getValue);
     }
 
     private String removePrefix (String value) {

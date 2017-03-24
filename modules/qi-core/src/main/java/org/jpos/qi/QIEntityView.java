@@ -232,18 +232,18 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
             String columnId = c.getId();
             if (!Arrays.asList(getVisibleColumns()).contains(columnId)) {
                 grid.removeColumn(columnId);
-            }
-            //todo: read sortable from xml and set to false. Default: true
-            c.setCaption(columnId)
-                    .setSortProperty(columnId)
-                    .setSortable(true)
-                    .setHidable(true);
+            } else {
+                //todo: read sortable from xml and set to false. Default: true
+                c.setCaption(columnId)
+                        .setSortProperty(columnId)
+                        .setSortable(true)
+                        .setHidable(true);
 
-            ViewConfig.FieldConfig config = viewConfig.getFields().get(c.getId());
-            if (config != null) {
-                if (config.getExpandRatio() != -1)
-                    c.setExpandRatio(config.getExpandRatio());
-            }
+                ViewConfig.FieldConfig config = viewConfig.getFields().get(c.getId());
+                if (config != null) {
+                    if (config.getExpandRatio() != -1)
+                        c.setExpandRatio(config.getExpandRatio());
+                }
 
 //        grid.setCellStyleGenerator(cellReference -> {
 //            if (cellReference.getValue() instanceof BigDecimal)
@@ -259,15 +259,16 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
 //        if (grid.getColumn("id") != null && !String.class.equals(grid.getContainerDataSource().getType("id")))
 //            grid.getColumn("id").setRenderer(new NumberRenderer(nf));
 
-            if ("id".equals(c.getId())) {
-                c.setExpandRatio(0);
+                if ("id".equals(c.getId())) {
+                    c.setExpandRatio(0);
 //            } else if (isBooleanColumn(c)) {
 //                c.setExpandRatio(0);
 ////                c.setConverter(new StringToBooleanConverter("✔", "✘"));
 //            } else if (isDateColumn(c)) {
 ////                c.setRenderer(new DateRenderer(getDateFormat()));
-            } else {
-                c.setExpandRatio(1);
+                } else {
+                    c.setExpandRatio(1);
+                }
             }
 
         }

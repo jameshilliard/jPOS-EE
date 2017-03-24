@@ -22,6 +22,7 @@ import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.Grid;
 
 import com.vaadin.v7.data.Validator;
 import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
@@ -195,6 +196,20 @@ public class UsersView extends QIEntityView<User> {
 
     @Override
     public void setGridGetters() {
+        Grid<User> g = getGrid();
+        g.addColumn(User::getId).setId("id");
+        g.addColumn(User::getName).setId("name");
+        g.addColumn(User::getNick).setId("nick");
+        g.addColumn(User::getEmail).setId("email");
+        g.addColumn(User::isActive).setId("active");
+        g.addColumn(User::isDeleted).setId("deleted");
+        g.addColumn(User::isVerified).setId("verified");
+        g.addColumn(User::getStartDate).setId("startDate");
+        g.addColumn(User::getEndDate).setId("endDate");
+        g.addColumn(User::isForcePasswordChange).setId("forcePasswordChange");
+        g.addColumn(User::getLastLogin).setId("lastLogin");
+        g.addColumn(User::getPasswordChanged).setId("passwordChanged");
+        g.addColumn(User::getLoginAttempts).setId("loginAttempts");
 
     }
 

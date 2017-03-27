@@ -149,8 +149,8 @@ public class SysConfigView extends QIEntityView {
     @Override
     public void setGridGetters() {
         Grid<SysConfig> g = this.getGrid();
-        g.addColumn(SysConfig::getId);
-        g.addColumn(SysConfig::getValue);
+        g.addColumn(sysconfig -> removePrefix(sysconfig.getId())).setId("id");
+        g.addColumn(SysConfig::getValue).setId("value");
     }
 
     private String removePrefix (String value) {

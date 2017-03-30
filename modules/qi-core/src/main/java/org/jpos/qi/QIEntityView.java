@@ -18,6 +18,7 @@
 
 package org.jpos.qi;
 
+import com.vaadin.data.Binder;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Grid;
@@ -34,7 +35,6 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.shared.ui.MarginInfo;
 
 //------Compatibility imports. Will be changed----------
-import com.vaadin.v7.data.Container;
 import com.vaadin.v7.data.Validator;
 import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.v7.data.fieldgroup.FieldGroup;
@@ -77,7 +77,8 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
     private Button removeBtn;
     private Button saveBtn;
     private Button cancelBtn;
-    private BeanFieldGroup<T> fieldGroup;
+    private Binder<T> binder;
+//    private BeanFieldGroup<T> fieldGroup;
     private Label errorLabel;
     private boolean newView;
     private Configuration cfg;
@@ -301,7 +302,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
             profileLayout.setComponentAlignment(back, Alignment.MIDDLE_LEFT);
         }
 
-        fieldGroup = new BeanFieldGroup<T>(clazz) {
+        binder = new Binder<T>(clazz) {
             @Override
             public void setReadOnly (boolean readOnly) {
                 super.setReadOnly(readOnly);
@@ -309,16 +310,34 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
                     for (String fieldId : readOnlyFields) {
                         if (getField(fieldId) != null && getField(fieldId).getValue() != null)
                             getField(fieldId).setReadOnly(true);
+
+                        binder.getBinding(fieldId).get().getField();
                     }
                 }
             }
         };
-        fieldGroup.setItemDataSource((T)entity);
-        fieldGroup.setReadOnly(true);
+        binder.setReadOnly(true);
+
+//        fieldGroup = new BeanFieldGroup<T>(clazz) {
+//            @Override
+//            public void setReadOnly (boolean readOnly) {
+//                super.setReadOnly(readOnly);
+//                if (readOnlyFields != null) {
+//                    for (String fieldId : readOnlyFields) {
+//                        if (getField(fieldId) != null && getField(fieldId).getValue() != null)
+//                            getField(fieldId).setReadOnly(true);
+//                    }
+//                }
+//            }
+//        };
+        binder.setBean((T)entity);
+//        fieldGroup.setItemDataSource((T)entity);
+//        fieldGroup.setReadOnly(true);
         fieldGroup.setFieldFactory(createFieldFactory());
 
         for (String property : visibleFields) {
             try{
+
                 fieldGroup.buildAndBind(property);
             } catch (Exception e) {
                 app.getLog().error("error binding property", e);
@@ -395,7 +414,8 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
     }
     protected void cancelClick(Button.ClickEvent event, Layout formLayout) {
         fieldGroup.discard();
-        fieldGroup.setReadOnly(true);
+        binder.setReadOnly(true);
+//        fieldGroup.setReadOnly(true);
         event.getButton().setVisible(false);
         saveBtn.setVisible(false);
         editBtn.setVisible(true);
@@ -441,7 +461,8 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
     }
 
     protected void editClick(Button.ClickEvent event, Layout formLayout) {
-        fieldGroup.setReadOnly(false);
+//        fieldGroup.setReadOnly(false);
+        binder.setReadOnly(true);
         event.getButton().setVisible(false);
         removeBtn.setVisible(false);
         saveBtn.setVisible(true);
@@ -527,10 +548,6 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
             f.setRequired(true);
             f.setRequiredError(getApp().getMessage("errorMessage.req",f.getCaption()));
         }
-    }
-
-    public Container createContainer() {
-        return getHelper().createContainer();
     }
 
     public Object createNewEntity (){
@@ -704,8 +721,8 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
 
 
     public T getInstance() {
-        BeanItem<T> item = fieldGroup.getItemDataSource();
-        return item.getBean();
+//        BeanItem<T> item = fieldGroup.getItemDataSource();
+        return binder.getBean();
     }
 
     public boolean isNewView() {

@@ -169,11 +169,10 @@ public class SysConfigManager {
     }
 
     public int getItemCount() throws Exception {
-        //TODO: will fix!!!!
-        return (int) DB.exec(db -> {
-            this.db = db;
-            return getAll().length;
-        });
+        CriteriaBuilder criteriaBuilder = db.session().getCriteriaBuilder();
+        CriteriaQuery<Long> query = criteriaBuilder.createQuery(Long.class);
+        query.select(criteriaBuilder.count(query.from(SysConfig.class)));
+        return db.session().createQuery(query).getSingleResult().intValue();
     }
 
     @SuppressWarnings("unchecked")

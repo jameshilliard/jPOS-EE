@@ -114,13 +114,11 @@ public abstract class QIHelper {
         return false;
     }
 
-    public boolean saveEntity(BeanFieldGroup fieldGroup) throws FieldGroup.CommitException, BLException {
-        fieldGroup.commit();
-        BeanItem item = fieldGroup.getItemDataSource();
+    public boolean saveEntity(Object entity) throws BLException {
         try {
             return (boolean) DB.execWithTransaction(db -> {
-                db.save(item.getBean());
-                addRevisionCreated(db, getEntityName(), String.valueOf(item.getItemProperty("id")));
+                db.save(entity);
+                addRevisionCreated(db, getEntityName(), String.valueOf(getItemId(entity)));
                 return true;
             });
         } catch (Exception e) {
@@ -162,7 +160,6 @@ public abstract class QIHelper {
     public abstract boolean updateEntity(BeanFieldGroup fieldGroup) throws FieldGroup.CommitException,
             BLException, CloneNotSupportedException;
 
-    public abstract Container createContainer();
 
     public DataProvider getDataProvider() {
         Map<String,Boolean> orders = new HashMap<>();

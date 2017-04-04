@@ -57,11 +57,13 @@ public class UsersHelper extends QIHelper {
 
     @Override
     public Stream getAll(int offset, int limit, Map<String, Boolean> orders) throws Exception {
+        //TODO: implement
         return null;
     }
 
     @Override
     public int getItemCount() throws Exception {
+        //TODO: implement
         return 0;
     }
 
@@ -138,12 +140,12 @@ public class UsersHelper extends QIHelper {
         return userUpdated;
     }
 
-    public boolean saveUser (BeanFieldGroup<User> fieldGroup, String clearPass) throws FieldGroup.CommitException, BLException {
-        fieldGroup.commit();
-        BeanItem<User> item = fieldGroup.getItemDataSource();
+    //Does not override SaveEntity because it needs the String clearPass
+    public boolean saveUser (Object entity, String clearPass) throws BLException {
+
+        User u = (User) entity;
         try {
             return (boolean) DB.execWithTransaction((db) -> {
-                User u = item.getBean();
                 db.save(u);
                 if (clearPass != null && !clearPass.isEmpty()) {
                     UserManager mgr = new UserManager(db);
@@ -152,7 +154,7 @@ public class UsersHelper extends QIHelper {
                     } catch (BLException e) {
                         return false;
                     }
-                    addRevisionCreated(db,getEntityName(), item.getItemProperty("id").getValue().toString());
+                    addRevisionCreated(db,getEntityName(), u.getId().toString());
                     u.setForcePasswordChange(true);
                     db.session().update(u);
                     return true;
@@ -164,6 +166,7 @@ public class UsersHelper extends QIHelper {
             return false;
         }
     }
+
 
     @Override
     public boolean removeEntity (BeanFieldGroup fieldGroup) {

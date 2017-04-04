@@ -18,6 +18,7 @@
 
 package org.jpos.qi.sysconfig;
 
+import com.vaadin.server.SerializableFunction;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.TextField;
@@ -100,25 +101,6 @@ public class SysConfigView extends QIEntityView {
     }
 
     @Override
-    public Container createContainer() {
-        EntityContainer<SysConfig> cont = (EntityContainer<SysConfig>) getHelper().createContainer();
-        GeneratedPropertyContainer gpContainer = new GeneratedPropertyContainer(cont);
-        gpContainer.addGeneratedProperty("id", new PropertyValueGenerator<String>() {
-            @Override
-            public String getValue(Item item, Object itemId, Object propertyId) {
-                String id = (String) item.getItemProperty("id").getValue();
-                return removePrefix(id);
-            }
-
-            @Override
-            public Class<String> getType() {
-                return String.class;
-            }
-        });
-        return gpContainer;
-    }
-
-    @Override
     public FieldGroupFieldFactory createFieldFactory() {
         return new QIFieldFactory() {
             @Override
@@ -130,19 +112,32 @@ public class SysConfigView extends QIEntityView {
     }
 
     @Override
-    protected Layout addFields(FieldGroup fieldGroup) {
-        Layout l = super.addFields(fieldGroup);
-        Field id = (Field) fieldGroup.getField("id");
-        id.setRequired(true);
-        id.setRequiredError(getApp().getMessage("errorMessage.req", id.getCaption()));
-        String idValue = (String) fieldGroup.getItemDataSource().getItemProperty("id").getValue();
-        //Hide prefix
-        if (idValue != null) { //Means it is not a new sysconfig entry
-            id.setReadOnly(false);
-            idValue = prefix != null ? idValue.substring(prefix.length()) : idValue;
-            id.setValue(idValue);
-            id.setReadOnly(true);
-        }
+    protected Layout addFields() {
+        Layout l = super.addFields();
+
+        TextField id = new TextField("id");
+        TextField value = new TextField("value");
+
+        getBinder().bind(id,"id");
+        getBinder().forField(id).withConverter(
+                converter -> removePrefix(id.getValue()),
+                converter2 -> id.getValue()
+        );
+        getBinder().bind(value,"value");
+        setRequired(id,value);
+        l.addComponents(id,value);
+
+
+//        Field id = (Field) fieldGroup.getField("id");
+
+//        String idValue = (String) fieldGroup.getItemDataSource().getItemProperty("id").getValue();
+//        //Hide prefix
+//        if (idValue != null) { //Means it is not a new sysconfig entry
+//            id.setReadOnly(false);
+//            idValue = prefix != null ? idValue.substring(prefix.length()) : idValue;
+//            id.setValue(idValue);
+//            id.setReadOnly(true);
+//        }
         return l;
     }
 

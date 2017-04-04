@@ -19,12 +19,12 @@
 package org.jpos.qi;
 
 import com.vaadin.data.Binder;
+import com.vaadin.data.HasValue;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.shared.ui.ContentMode;
@@ -35,13 +35,9 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.shared.ui.MarginInfo;
 
 //------Compatibility imports. Will be changed----------
-import com.vaadin.v7.data.Validator;
 import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.v7.data.fieldgroup.FieldGroup;
 import com.vaadin.v7.data.fieldgroup.FieldGroupFieldFactory;
-import com.vaadin.v7.data.util.BeanItem;
-import com.vaadin.v7.data.validator.RegexpValidator;
-import com.vaadin.v7.ui.*;
 import com.vaadin.v7.ui.renderers.DateRenderer;
 import com.vaadin.v7.ui.renderers.NumberRenderer;
 import com.vaadin.v7.ui.renderers.Renderer;
@@ -245,7 +241,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
                     if (config.getExpandRatio() != -1)
                         c.setExpandRatio(config.getExpandRatio());
                 }
-
+            //TODO: find a way to do this on vaadin8
 //        grid.setCellStyleGenerator(cellReference -> {
 //            if (cellReference.getValue() instanceof BigDecimal)
 //                return "align-right";
@@ -308,45 +304,22 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
                 super.setReadOnly(readOnly);
                 if (readOnlyFields != null) {
                     for (String fieldId : readOnlyFields) {
-                        if (getField(fieldId) != null && getField(fieldId).getValue() != null)
-                            getField(fieldId).setReadOnly(true);
+                        if (binder.getBinding(fieldId).isPresent()) {
+                            HasValue field = binder.getBinding(fieldId).get().getField();
+                            if (field != null && field.getValue() != null)
+                                field.setReadOnly(readOnly);
+                        }
 
-                        binder.getBinding(fieldId).get().getField();
                     }
                 }
             }
         };
         binder.setReadOnly(true);
-
-//        fieldGroup = new BeanFieldGroup<T>(clazz) {
-//            @Override
-//            public void setReadOnly (boolean readOnly) {
-//                super.setReadOnly(readOnly);
-//                if (readOnlyFields != null) {
-//                    for (String fieldId : readOnlyFields) {
-//                        if (getField(fieldId) != null && getField(fieldId).getValue() != null)
-//                            getField(fieldId).setReadOnly(true);
-//                    }
-//                }
-//            }
-//        };
         binder.setBean((T)entity);
-//        fieldGroup.setItemDataSource((T)entity);
-//        fieldGroup.setReadOnly(true);
-        fieldGroup.setFieldFactory(createFieldFactory());
 
-        for (String property : visibleFields) {
-            try{
-
-                fieldGroup.buildAndBind(property);
-            } catch (Exception e) {
-                app.getLog().error("error binding property", e);
-            }
-        }
-
-        final Layout formLayout = addFields(fieldGroup);
+        final Layout formLayout = addFields();
         profileLayout.addComponent(formLayout);
-        addValidators();
+//        addValidators();
 
         HorizontalLayout footer = new HorizontalLayout();
         footer.addStyleName("footer");
@@ -371,12 +344,14 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         removeBtn.addClickListener(event -> app.addWindow(new ConfirmDialog(
                         app.getMessage("confirmTitle"),
                         app.getMessage("removeConfirmationMessage"),
-                        confirm -> {
-                            if (confirm) {
-                                removeEntity(fieldGroup);
-                            }
-                        })
-        ));
+                null
+//                        confirm -> {
+//                            if (confirm) {
+//                                removeEntity(fieldGroup);
+//                            }
+//                        }
+//        )
+        )));
         removeBtn.addStyleName("icon-trash");
 
         cancelBtn.addClickListener(event -> {
@@ -413,9 +388,10 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         return profileLayout;
     }
     protected void cancelClick(Button.ClickEvent event, Layout formLayout) {
-        fieldGroup.discard();
+//        fieldGroup.discard();
+        //todo: find how to discard
+        binder.readBean(binder.getBean());
         binder.setReadOnly(true);
-//        fieldGroup.setReadOnly(true);
         event.getButton().setVisible(false);
         saveBtn.setVisible(false);
         editBtn.setVisible(true);
@@ -426,25 +402,20 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
     }
 
     protected boolean saveClick(Button.ClickEvent event, Layout formLayout) {
-        try {
-            if (getEntity (fieldGroup.getItemDataSource().getBean()) == null)
-                saveEntity(fieldGroup);
+        if (binder.validate().isOk()) {
+            if (getEntity(getBinder().getBean()) == null)
+                try {
+                    saveEntity(getBinder().getBean());
+                } catch (BLException e) {
+                    Notification.show(e.getMessage());
+                }
             else
-                updateEntity(fieldGroup);
-        } catch (BLException e) {
-            app.displayNotification(e.getMessage());
-            return false;
-        } catch (FieldGroup.CommitException e) {
-            for (Field f : e.getInvalidFields().keySet()) {
-                errorLabel.setValue(e.getInvalidFields().get(f).getMessage());
-                errorLabel.setVisible(true);
-            }
-            return false;
-        } catch (CloneNotSupportedException e) {
-            app.displayNotification(e.getMessage());
-            return false;
+                //TODO: implement
+                System.out.println("-------------> SHOULD UPDATE");
+
         }
-        fieldGroup.setReadOnly(true);
+
+        binder.setReadOnly(true);
         formLayout.addStyleName(ValoTheme.FORMLAYOUT_LIGHT);
         event.getButton().setVisible(false);
         cancelBtn.setVisible(false);
@@ -461,8 +432,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
     }
 
     protected void editClick(Button.ClickEvent event, Layout formLayout) {
-//        fieldGroup.setReadOnly(false);
-        binder.setReadOnly(true);
+        binder.setReadOnly(false);
         event.getButton().setVisible(false);
         removeBtn.setVisible(false);
         saveBtn.setVisible(true);
@@ -470,48 +440,50 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         formLayout.removeStyleName(ValoTheme.FORMLAYOUT_LIGHT);
     }
 
-    protected Layout addFields (FieldGroup fieldGroup) {
+    protected Layout addFields () {
         FormLayout layout = new FormLayout();
         layout.addStyleName(ValoTheme.FORMLAYOUT_LIGHT);
         layout.addStyleName("qi-form");
         layout.setMargin(new MarginInfo(false));
         boolean firstField = true;
-        for (Field field : fieldGroup.getFields()) {
-            layout.addComponent(field);
-            if (firstField) {
-                field.focus();
-                firstField = false;
-            }
-        }
+//        for (Field field : fieldGroup.getFields()) {
+//            layout.addComponent(field);
+//            if (firstField) {
+//                field.focus();
+//                firstField = false;
+//            }
+//        }
+        //Remove not visible fields
+
         return layout;
     }
 
-    protected void addValidators () {
-        fieldGroup.getFields().forEach(this::addValidators);
-    }
-
-    protected void addValidators (Field field) {
-        if (field != null) {
-            String propertyId = (String) fieldGroup.getPropertyId(field);
-            ViewConfig.FieldConfig config = viewConfig.getFields().get(propertyId);
-            if (config != null) {
-                String regex = config.getRegex();
-                int length = config.getLength();
-                String[] options = config.getOptions();
-                if (options != null) {
-                    //Change the field to a OptionGroup loaded with the options
-                    OptionGroup optionGroup = new OptionGroup(field.getCaption(),Arrays.asList(options));
-                    String fieldId = field.getId();
-                    fieldGroup.unbind(field);
-                    fieldGroup.bind(optionGroup,fieldId);
-                }
-                if (regex != null)
-                    field.addValidator((Validator) new RegexpValidator(regex, getApp().getMessage("errorMessage.invalidField", field.getCaption())));
-                if (field instanceof TextField && length > 0)
-                    ((TextField) field).setMaxLength(length);
-            }
-        }
-    }
+//    protected void addValidators () {
+//        fieldGroup.getFields().forEach(this::addValidators);
+//    }
+//
+//    protected void addValidators (Field field) {
+//        if (field != null) {
+//            String propertyId = (String) fieldGroup.getPropertyId(field);
+//            ViewConfig.FieldConfig config = viewConfig.getFields().get(propertyId);
+//            if (config != null) {
+//                String regex = config.getRegex();
+//                int length = config.getLength();
+//                String[] options = config.getOptions();
+//                if (options != null) {
+//                    //Change the field to a OptionGroup loaded with the options
+//                    OptionGroup optionGroup = new OptionGroup(field.getCaption(),Arrays.asList(options));
+//                    String fieldId = field.getId();
+//                    fieldGroup.unbind(field);
+//                    fieldGroup.bind(optionGroup,fieldId);
+//                }
+//                if (regex != null)
+//                    field.addValidator((Validator) new RegexpValidator(regex, getApp().getMessage("errorMessage.invalidField", field.getCaption())));
+//                if (field instanceof TextField && length > 0)
+//                    ((TextField) field).setMaxLength(length);
+//            }
+//        }
+//    }
 
     private void loadRevisionHistory (Layout formLayout, String ref) {
         DB db = new DB();
@@ -543,10 +515,11 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
 
     public abstract FieldGroupFieldFactory createFieldFactory();
 
-    public void setRequired(Field... fields) {
-        for (Field f : fields) {
-            f.setRequired(true);
-            f.setRequiredError(getApp().getMessage("errorMessage.req",f.getCaption()));
+    public void setRequired(HasValue... fields) {
+        for (HasValue f : fields) {
+            getBinder().forMemberField(f).asRequired(getApp().getMessage("errorMessage.req"));
+//            f.setRequired(true);
+//            f.setRequiredError(getApp().getMessage("errorMessage.req",f.getCaption()));
         }
     }
 
@@ -562,8 +535,8 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         }
     }
 
-    public void saveEntity (BeanFieldGroup fieldGroup) throws FieldGroup.CommitException, BLException {
-        if (getHelper().saveEntity(fieldGroup)) {
+    public void saveEntity (Object entity) throws BLException {
+        if (getHelper().saveEntity(entity)) {
             app.displayNotification(app.getMessage("created", getEntityName().toUpperCase()));
             app.getNavigator().navigateTo(getGeneralRoute());
         }
@@ -721,8 +694,11 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
 
 
     public T getInstance() {
-//        BeanItem<T> item = fieldGroup.getItemDataSource();
         return binder.getBean();
+    }
+
+    public Binder<T> getBinder() {
+        return this.binder;
     }
 
     public boolean isNewView() {

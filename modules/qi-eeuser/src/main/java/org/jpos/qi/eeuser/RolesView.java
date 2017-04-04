@@ -18,9 +18,7 @@
 
 package org.jpos.qi.eeuser;
 
-import com.vaadin.v7.data.fieldgroup.FieldGroup;
 import com.vaadin.v7.data.fieldgroup.FieldGroupFieldFactory;
-import com.vaadin.ui.*;
 import com.vaadin.v7.ui.Field;
 import com.vaadin.v7.ui.OptionGroup;
 import org.jpos.ee.*;
@@ -96,14 +94,14 @@ public class RolesView extends QIEntityView {
     }
 
     //override to add validators
-    @Override
-    protected Layout addFields(FieldGroup fieldGroup) {
-        Layout l = super.addFields(fieldGroup);
-        com.vaadin.v7.ui.Field<?> name = fieldGroup.getField("name");
-        name.setRequired(true);
-        name.setRequiredError(getApp().getMessage("errorMessage.req", name.getCaption()));
-        return l;
-    }
+//    @Override
+//    protected Layout addFields(FieldGroup fieldGroup) {
+//        Layout l = super.addFields(fieldGroup);
+//        com.vaadin.v7.ui.Field<?> name = fieldGroup.getField("name");
+//        name.setRequired(true);
+//        name.setRequiredError(getApp().getMessage("errorMessage.req", name.getCaption()));
+//        return l;
+//    }
 
     @Override
     public boolean canEdit() {

@@ -23,12 +23,10 @@ import com.vaadin.v7.data.Container;
 import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.v7.data.fieldgroup.FieldGroup;
 import com.vaadin.v7.data.util.BeanItem;
-import org.hibernate.criterion.Restrictions;
 import org.jpos.ee.BLException;
 import org.jpos.ee.DB;
 import org.jpos.ee.SysConfig;
 import org.jpos.ee.SysConfigManager;
-import org.jpos.qi.EntityContainer;
 import org.jpos.qi.QI;
 import org.jpos.qi.QIHelper;
 
@@ -37,24 +35,12 @@ import java.util.stream.Stream;
 
 public class SysConfigHelper extends QIHelper {
     private String prefix;
-//    private SysConfigManager mgr;
 
     public SysConfigHelper (String prefix) {
         super(SysConfig.class);
         this.prefix = prefix;
-//        mgr = new SysConfigManager(prefix);
     }
 
-    public Container createContainer() {
-        Map<String, Class> properties = new LinkedHashMap<String, Class>();
-        properties.put("id", String.class);
-        properties.put("value", String.class);
-        List sortable = Arrays.asList("id", "value");
-        EntityContainer<SysConfig> ec = new EntityContainer<SysConfig>(SysConfig.class, properties, sortable);
-        if(prefix != null)
-            ec.addRestriction(Restrictions.like("id", prefix + "%"));
-        return ec;
-    }
 
     public SysConfig getSysConfig (String param) {
         try {
@@ -90,17 +76,15 @@ public class SysConfigHelper extends QIHelper {
     }
 
     @Override
-    public boolean saveEntity (BeanFieldGroup fieldGroup) throws FieldGroup.CommitException, BLException {
-        fieldGroup.commit();
-        BeanItem<SysConfig> item = fieldGroup.getItemDataSource();
-        String id = (String) item.getItemProperty("id").getValue();
+    public boolean saveEntity (Object entity) throws BLException {
+        String id = ((SysConfig)entity).getId();
         id = prefix != null ? prefix + id : id;
         if (getSysConfig(id) == null) {
             final String finalId = id;
             try {
                 return (boolean) DB.execWithTransaction((db) -> {
                     SysConfigManager mgr = new SysConfigManager(db,prefix);
-                    mgr.put((String) item.getItemProperty("id").getValue(), (String) item.getItemProperty("value").getValue());
+                    mgr.put(((SysConfig)entity).getId(), ((SysConfig)entity).getValue());
                     addRevisionCreated(db, "SYSCONFIG", finalId);
                     return true;
                 });
@@ -109,8 +93,8 @@ public class SysConfigHelper extends QIHelper {
                 return false;
             }
         } else {
-            fieldGroup.getField("id").focus();
-            fieldGroup.getItemDataSource().getItemProperty("id").setValue(null);
+//            fieldGroup.getField("id").focus();
+//            fieldGroup.getItemDataSource().getItemProperty("id").setValue(null);
             throw new BLException("SysConfig " + id + " already exists.");
         }
     }
@@ -137,13 +121,4 @@ public class SysConfigHelper extends QIHelper {
         return ((SysConfig) item).getId();
     }
 
-
-
-//    public boolean removeSysConfig (SysConfig sysConfig) {
-//        return (boolean) DB.execWithTransaction((db) -> {
-//            db.session().delete(sysConfig);
-//            addRevisionRemoved(db, "SYSCONFIG", sysConfig.getId().toString());
-//            return true;
-//        });
-//    }
 }

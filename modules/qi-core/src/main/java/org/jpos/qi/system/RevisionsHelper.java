@@ -18,7 +18,6 @@
 
 package org.jpos.qi.system;
 
-import com.vaadin.v7.data.Container;
 import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.v7.data.fieldgroup.FieldGroup;
 import com.vaadin.v7.data.util.converter.Converter;
@@ -26,7 +25,6 @@ import org.jpos.ee.BLException;
 import org.jpos.ee.DB;
 import org.jpos.ee.Revision;
 import org.jpos.ee.User;
-import org.jpos.qi.EntityContainer;
 import org.jpos.qi.QIHelper;
 import org.jpos.qi.QINavigator;
 import org.jpos.util.UserConverter;
@@ -43,20 +41,19 @@ public class RevisionsHelper extends QIHelper {
         super(Revision.class);
     }
 
-    @Override
-    public Container createContainer() {
-        Map<String, Class> properties = new LinkedHashMap<>();
-        properties.put("id", Integer.class);
-        properties.put("date", Date.class);
-        properties.put("info", String.class);
-        properties.put("ref", String.class);
-        properties.put("author", User.class);
-
-        List sortable = Arrays.asList("id", "date", "info", "ref", "author");
-        EntityContainer container = new EntityContainer<>(Revision.class, properties, sortable);
-        container.setNormalOrder(false);
-        return container;
-    }
+//    public Container createContainer() {
+//        Map<String, Class> properties = new LinkedHashMap<>();
+//        properties.put("id", Integer.class);
+//        properties.put("date", Date.class);
+//        properties.put("info", String.class);
+//        properties.put("ref", String.class);
+//        properties.put("author", User.class);
+//
+//        List sortable = Arrays.asList("id", "date", "info", "ref", "author");
+//        EntityContainer container = new EntityContainer<>(Revision.class, properties, sortable);
+//        container.setNormalOrder(false);
+//        return container;
+//    }
 
     @Override
     public Stream getAll(int offset, int limit, Map<String, Boolean> orders) throws Exception {

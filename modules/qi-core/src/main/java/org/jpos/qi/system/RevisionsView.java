@@ -18,14 +18,9 @@
 
 package org.jpos.qi.system;
 
-import com.vaadin.ui.Grid;
-import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.v7.data.fieldgroup.FieldGroup;
 import com.vaadin.v7.data.fieldgroup.FieldGroupFieldFactory;
 import com.vaadin.v7.event.ItemClickEvent;
 import com.vaadin.v7.ui.Field;
-import com.vaadin.ui.Layout;
-import com.vaadin.v7.ui.renderers.HtmlRenderer;
 import org.jpos.ee.Revision;
 import org.jpos.ee.User;
 import org.jpos.qi.QIEntityView;
@@ -63,16 +58,16 @@ public class RevisionsView extends QIEntityView<Revision> {
         return new RevisionsHelper();
     }
 
-    @Override
-    protected Layout addFields (FieldGroup fieldGroup) {
-        Layout l = super.addFields(fieldGroup);
-        ReadOnlyField ref = (ReadOnlyField) fieldGroup.getField("ref");
-        ReadOnlyField author = (ReadOnlyField) fieldGroup.getField("author");
-        Revision current = (Revision) ((BeanFieldGroup)fieldGroup).getItemDataSource().getBean();
-        ref.setConverter(((RevisionsHelper)getHelper()).getRefConverter(String.valueOf(current.getId())));
-        author.setConverter(((RevisionsHelper)getHelper()).getAuthorConverter(String.valueOf(current.getId())));
-        return l;
-    }
+//    @Override
+//    protected Layout addFields (FieldGroup fieldGroup) {
+//        Layout l = super.addFields(fieldGroup);
+//        ReadOnlyField ref = (ReadOnlyField) fieldGroup.getField("ref");
+//        ReadOnlyField author = (ReadOnlyField) fieldGroup.getField("author");
+//        Revision current = (Revision) ((BeanFieldGroup)fieldGroup).getItemDataSource().getBean();
+//        ref.setConverter(((RevisionsHelper)getHelper()).getRefConverter(String.valueOf(current.getId())));
+//        author.setConverter(((RevisionsHelper)getHelper()).getAuthorConverter(String.valueOf(current.getId())));
+//        return l;
+//    }
 
     @Override
     public Object getEntity(Object entity) {
@@ -98,7 +93,6 @@ public class RevisionsView extends QIEntityView<Revision> {
     @Override
     public void formatGrid() {
         super.formatGrid();
-        //TODO: check this
 //        grid.getColumn("info").setRenderer(new HtmlRenderer("")).setMaximumWidth(1000);
 //        grid.getColumn("author").setConverter(((RevisionsHelper)getHelper()).getAuthorConverter("")).setRenderer(new HtmlRenderer(""));
 //        grid.getColumn("ref").setRenderer(new HtmlRenderer("")).setConverter(((RevisionsHelper)getHelper()).getRefConverter(""));

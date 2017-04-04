@@ -18,16 +18,13 @@
 
 package org.jpos.qi.eeuser;
 
-import com.vaadin.v7.data.Container;
 import com.vaadin.v7.data.Validator;
 import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.v7.data.fieldgroup.FieldGroup;
 import com.vaadin.v7.data.util.BeanItem;
 import com.vaadin.v7.ui.PasswordField;
 import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
 import org.jpos.ee.*;
-import org.jpos.qi.EntityContainer;
 import org.jpos.qi.QIHelper;
 import org.jpos.util.PasswordGenerator;
 
@@ -39,32 +36,23 @@ public class UsersHelper extends QIHelper {
 
     public UsersHelper() {
         super(User.class);
-
-    }
-
-    public Container createContainer() {
-        Map<String, Class> properties = new LinkedHashMap<>();
-        properties.put("id", Integer.class);
-        properties.put("nick", String.class);
-        properties.put("name", String.class);
-        properties.put("email", String.class);
-        properties.put("active", Boolean.class);
-        properties.put("roles", Set.class);
-
-        List sortable = Arrays.asList("id", "nick", "name", "email", "active");
-        return new EntityContainer<>(User.class, properties, sortable);
     }
 
     @Override
     public Stream getAll(int offset, int limit, Map<String, Boolean> orders) throws Exception {
-        //TODO: implement
-        return null;
+        List<User> all = (List<User>) DB.exec(db -> {
+            UserManager mgr = new UserManager(db);
+            return mgr.getAll(offset,limit,orders);
+        });
+        return all.stream();
     }
 
     @Override
     public int getItemCount() throws Exception {
-        //TODO: implement
-        return 0;
+        return (int) DB.exec(db -> {
+            UserManager mgr = new UserManager(db);
+            return mgr.getItemCount();
+        });
     }
 
     @Override
@@ -75,11 +63,8 @@ public class UsersHelper extends QIHelper {
     public User getUserByNick (String nick, boolean includeDeleted) {
         try {
             return (User) DB.exec((db) -> {
-                Criteria crit = db.session().createCriteria(User.class);
-                crit = crit.add(Restrictions.eq("nick", nick));
-                if (!includeDeleted)
-                    crit = crit.add(Restrictions.eq("deleted", false));
-                return crit.uniqueResult();
+                UserManager mgr = new UserManager(db);
+                return mgr.getUserByNick(nick,includeDeleted);
             });
         } catch (Exception e) {
             getApp().getLog().error(e);
@@ -142,7 +127,6 @@ public class UsersHelper extends QIHelper {
 
     //Does not override SaveEntity because it needs the String clearPass
     public boolean saveUser (Object entity, String clearPass) throws BLException {
-
         User u = (User) entity;
         try {
             return (boolean) DB.execWithTransaction((db) -> {

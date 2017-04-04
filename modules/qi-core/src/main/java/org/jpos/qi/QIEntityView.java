@@ -407,7 +407,8 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
                 try {
                     saveEntity(getBinder().getBean());
                 } catch (BLException e) {
-                    Notification.show(e.getMessage());
+                    getApp().displayNotification(e.getDetailedMessage());
+                    return false;
                 }
             else
                 //TODO: implement

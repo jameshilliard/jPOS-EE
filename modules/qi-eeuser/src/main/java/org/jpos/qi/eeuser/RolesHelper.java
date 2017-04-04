@@ -18,19 +18,13 @@
 
 package org.jpos.qi.eeuser;
 
-import com.vaadin.v7.data.Container;
 import com.vaadin.v7.data.Validator;
 import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.v7.data.fieldgroup.FieldGroup;
 import com.vaadin.v7.data.util.BeanItem;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
 import org.jpos.ee.*;
-import org.jpos.qi.EntityContainer;
 import org.jpos.qi.QIHelper;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -40,22 +34,21 @@ public class RolesHelper extends QIHelper {
         super(Role.class);
     }
 
-    public Container createContainer() {
-        Map<String, Class> properties = new LinkedHashMap<String, Class>();
-        properties.put("id", Integer.class);
-        properties.put("name", String.class);
-        List sortable = Arrays.asList("id", "name");
-        return new EntityContainer(Role.class, properties, sortable);
-    }
-
     @Override
     public Stream getAll(int offset, int limit, Map<String, Boolean> orders) throws Exception {
-        return null;
+        List<Role> list = (List<Role>) DB.exec(db -> {
+            RoleManager mgr = new RoleManager(db);
+            return mgr.getAll(offset,limit,orders);
+        });
+        return list.stream();
     }
 
     @Override
     public int getItemCount() throws Exception {
-        return 0;
+        return (int) DB.exec(db -> {
+            RoleManager mgr = new RoleManager(db);
+            return mgr.getItemCount();
+        });
     }
 
     @Override
@@ -99,10 +92,9 @@ public class RolesHelper extends QIHelper {
 
     public Role getRoleByName(String name) {
         try {
-            return (Role) DB.exec((db) ->{
-                Criteria crit = db.session().createCriteria(Role.class);
-                crit = crit.add(Restrictions.eq("name", name));
-                return crit.uniqueResult();
+            return (Role) DB.exec((db) -> {
+                RoleManager mgr = new RoleManager(db);
+                return mgr.getRoleByName(name);
             });
         } catch (Exception e) {
             getApp().getLog().error(e);

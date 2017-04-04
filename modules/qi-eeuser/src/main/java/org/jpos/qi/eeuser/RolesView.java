@@ -18,6 +18,7 @@
 
 package org.jpos.qi.eeuser;
 
+import com.vaadin.ui.Grid;
 import com.vaadin.v7.data.fieldgroup.FieldGroupFieldFactory;
 import com.vaadin.v7.ui.Field;
 import com.vaadin.v7.ui.OptionGroup;
@@ -90,7 +91,10 @@ public class RolesView extends QIEntityView {
 
     @Override
     public void setGridGetters() {
-
+        Grid<Role> g = this.getGrid();
+        g.addColumn(Role::getId).setId("id");
+        g.addColumn(Role::getName).setId("name");
+        g.addColumn(Role::getPermissions).setId("permissions");
     }
 
     //override to add validators
@@ -118,8 +122,4 @@ public class RolesView extends QIEntityView {
         return true;
     }
 
-    @Override
-    public String[] getVisibleColumns() {
-        return new String[] { "name" };
-    }
 }

@@ -162,8 +162,10 @@ public class SysConfigManager {
         query.select(root);
         query.orderBy(orderList);
         query.where(prefixLike);
-        List<SysConfig> list = db.session().createQuery(query).getResultList();
-
+        List<SysConfig> list = db.session().createQuery(query)
+                .setMaxResults(limit)
+                .setFirstResult(offset)
+                .getResultList();
         return list.toArray(new SysConfig[] { });
 
     }

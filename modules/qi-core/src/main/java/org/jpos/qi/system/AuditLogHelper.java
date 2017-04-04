@@ -23,7 +23,9 @@ import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.v7.data.fieldgroup.FieldGroup;
 import org.hibernate.criterion.Restrictions;
 import org.jpos.ee.BLException;
+import org.jpos.ee.DB;
 import org.jpos.ee.SysLog;
+import org.jpos.ee.SysLogManager;
 import org.jpos.qi.EntityContainer;
 import org.jpos.qi.QIHelper;
 
@@ -39,36 +41,21 @@ public class AuditLogHelper extends QIHelper {
         super(SysLog.class);
     }
 
-
-    public Container createContainer() {
-        Map<String, Class> properties = new LinkedHashMap<>();
-        properties.put("id", Integer.class);
-        properties.put("date", Date.class);
-        properties.put("deleted", Boolean.class);
-        properties.put("source", String.class);
-        properties.put("type", String.class);
-        properties.put("severity", Integer.class);
-        properties.put("summary", String.class);
-        properties.put("detail", String.class);
-        properties.put("trace", String.class);
-
-        List sortable = Arrays.asList("id", "date", "deleted", "source", "type","severity","summary");
-        EntityContainer container = new EntityContainer<>(SysLog.class, properties, sortable);
-        container.addRestriction(Restrictions.eq("deleted",false));
-        return container;
-    }
-
     @Override
     public Stream getAll(int offset, int limit, Map<String, Boolean> orders) throws Exception {
-//        DB.exec(db -> {
-//            SysLogManager mgr = new SysLogManager();
-//        });
-        return null;
+        List<SysLog> list = (List<SysLog>) DB.exec(db -> {
+            SysLogManager mgr = new SysLogManager(db);
+            return mgr.getAll(offset,limit,orders);
+        });
+        return list.stream();
     }
 
     @Override
     public int getItemCount() throws Exception {
-        return 0;
+        return (int) DB.exec(db -> {
+            SysLogManager mgr = new SysLogManager(db);
+            return mgr.getItemCount();
+        });
     }
 
     @Override

@@ -19,6 +19,7 @@
 package org.jpos.qi.eeuser;
 
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Layout;
 import com.vaadin.v7.data.fieldgroup.FieldGroupFieldFactory;
 import com.vaadin.v7.ui.Field;
 import com.vaadin.v7.ui.OptionGroup;
@@ -97,15 +98,15 @@ public class RolesView extends QIEntityView {
         g.addColumn(Role::getPermissions).setId("permissions");
     }
 
-    //override to add validators
-//    @Override
-//    protected Layout addFields(FieldGroup fieldGroup) {
-//        Layout l = super.addFields(fieldGroup);
+    @Override
+    protected void addFields(Layout l) {
+//        Layout l = super.createLayout(fieldGroup);
 //        com.vaadin.v7.ui.Field<?> name = fieldGroup.getField("name");
 //        name.setRequired(true);
 //        name.setRequiredError(getApp().getMessage("errorMessage.req", name.getCaption()));
 //        return l;
-//    }
+    }
+
 
     @Override
     public boolean canEdit() {

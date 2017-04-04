@@ -18,15 +18,12 @@
 
 package org.jpos.qi.system;
 
-import com.vaadin.v7.data.Container;
 import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.v7.data.fieldgroup.FieldGroup;
-import org.hibernate.criterion.Restrictions;
 import org.jpos.ee.BLException;
 import org.jpos.ee.DB;
 import org.jpos.ee.SysLog;
 import org.jpos.ee.SysLogManager;
-import org.jpos.qi.EntityContainer;
 import org.jpos.qi.QIHelper;
 
 import java.util.*;

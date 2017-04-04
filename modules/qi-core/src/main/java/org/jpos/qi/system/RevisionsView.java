@@ -18,6 +18,7 @@
 
 package org.jpos.qi.system;
 
+import com.vaadin.ui.Layout;
 import com.vaadin.v7.data.fieldgroup.FieldGroupFieldFactory;
 import com.vaadin.v7.event.ItemClickEvent;
 import com.vaadin.v7.ui.Field;
@@ -57,17 +58,6 @@ public class RevisionsView extends QIEntityView<Revision> {
     public QIHelper createHelper() {
         return new RevisionsHelper();
     }
-
-//    @Override
-//    protected Layout addFields (FieldGroup fieldGroup) {
-//        Layout l = super.addFields(fieldGroup);
-//        ReadOnlyField ref = (ReadOnlyField) fieldGroup.getField("ref");
-//        ReadOnlyField author = (ReadOnlyField) fieldGroup.getField("author");
-//        Revision current = (Revision) ((BeanFieldGroup)fieldGroup).getItemDataSource().getBean();
-//        ref.setConverter(((RevisionsHelper)getHelper()).getRefConverter(String.valueOf(current.getId())));
-//        author.setConverter(((RevisionsHelper)getHelper()).getAuthorConverter(String.valueOf(current.getId())));
-//        return l;
-//    }
 
     @Override
     public Object getEntity(Object entity) {
@@ -110,4 +100,16 @@ public class RevisionsView extends QIEntityView<Revision> {
     public void setGridGetters() {
 
     }
+
+    @Override
+    protected void addFields(Layout l) {
+//        Layout l = super.createLayout(fieldGroup);
+//        ReadOnlyField ref = (ReadOnlyField) fieldGroup.getField("ref");
+//        ReadOnlyField author = (ReadOnlyField) fieldGroup.getField("author");
+//        Revision current = (Revision) ((BeanFieldGroup)fieldGroup).getItemDataSource().getBean();
+//        ref.setConverter(((RevisionsHelper)getHelper()).getRefConverter(String.valueOf(current.getId())));
+//        author.setConverter(((RevisionsHelper)getHelper()).getAuthorConverter(String.valueOf(current.getId())));
+//        return l;
+    }
+
 }

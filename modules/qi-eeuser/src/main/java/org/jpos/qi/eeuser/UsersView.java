@@ -140,41 +140,6 @@ public class UsersView extends QIEntityView<User> {
         };
     }
 
-//    @Override
-//    protected Layout addFields (FieldGroup fieldGroup) {
-//        Layout l = super.addFields(fieldGroup);
-//        TextField email = (TextField) fieldGroup.getField("email");
-//        TextField name = (TextField) fieldGroup.getField("name");
-//        TextField nick = (TextField) fieldGroup.getField("nick");
-//
-//        EmailValidator emailV = new EmailValidator(getApp().getMessage("errorMessage.invalidEmail"));
-//        email.addValidator(emailV);
-//        email.setWidth("60%");
-//
-//        nick.setRequired(true);
-//        nick.setRequiredError(getApp().getMessage("errorMessage.req",nick.getCaption()));
-//
-//        selectedU = (User) ((BeanFieldGroup)fieldGroup).getItemDataSource().getBean();
-//        Validator nickTakenV = ((UsersHelper) getHelper()).getNickTakenValidator(selectedU);
-//        nick.addValidator(nickTakenV);
-//        nick.setWidth("30%");
-//        nick.setMaxLength(64);
-//
-//        name.setRequired(true);
-//        name.setRequiredError(getApp().getMessage("errorMessage.req",name.getCaption()));
-//        name.setWidth("60%");
-//
-//        if (selectedU.equals(getApp().getUser())) {
-//            changePassBtn = createChangePasswordButton();
-//            l.addComponents(changePassBtn, createPasswordPanel());
-//        }
-//        if (getApp().getUser().hasPermission("sysadmin") && !isNewView()) {
-//            resetPassBtn = createResetPasswordButton();
-//            l.addComponent(resetPassBtn);
-//        }
-//
-//        return l;
-//    }
 
     @Override
     public void showSpecificView (String parameter) {
@@ -355,6 +320,42 @@ public class UsersView extends QIEntityView<User> {
             resetPassBtn.setEnabled(true);
         if (changePassBtn != null)
             changePassBtn.setEnabled(true);
+    }
+
+    @Override
+    protected void addFields(Layout l) {
+//        Layout l = super.createLayout(fieldGroup);
+//        TextField email = (TextField) fieldGroup.getField("email");
+//        TextField name = (TextField) fieldGroup.getField("name");
+//        TextField nick = (TextField) fieldGroup.getField("nick");
+//
+//        EmailValidator emailV = new EmailValidator(getApp().getMessage("errorMessage.invalidEmail"));
+//        email.addValidator(emailV);
+//        email.setWidth("60%");
+//
+//        nick.setRequired(true);
+//        nick.setRequiredError(getApp().getMessage("errorMessage.req",nick.getCaption()));
+//
+//        selectedU = (User) ((BeanFieldGroup)fieldGroup).getItemDataSource().getBean();
+//        Validator nickTakenV = ((UsersHelper) getHelper()).getNickTakenValidator(selectedU);
+//        nick.addValidator(nickTakenV);
+//        nick.setWidth("30%");
+//        nick.setMaxLength(64);
+//
+//        name.setRequired(true);
+//        name.setRequiredError(getApp().getMessage("errorMessage.req",name.getCaption()));
+//        name.setWidth("60%");
+//
+//        if (selectedU.equals(getApp().getUser())) {
+//            changePassBtn = createChangePasswordButton();
+//            l.addComponents(changePassBtn, createPasswordPanel());
+//        }
+//        if (getApp().getUser().hasPermission("sysadmin") && !isNewView()) {
+//            resetPassBtn = createResetPasswordButton();
+//            l.addComponent(resetPassBtn);
+//        }
+//
+//        return l;
     }
 
     @Override

@@ -18,21 +18,15 @@
 
 package org.jpos.qi.sysconfig;
 
-import com.vaadin.server.SerializableFunction;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.TextField;
-import com.vaadin.v7.data.Container;
-import com.vaadin.v7.data.Item;
 import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.v7.data.fieldgroup.FieldGroup;
 import com.vaadin.v7.data.fieldgroup.FieldGroupFieldFactory;
-import com.vaadin.v7.data.util.GeneratedPropertyContainer;
-import com.vaadin.v7.data.util.PropertyValueGenerator;
 import com.vaadin.v7.ui.Field;
 import org.jpos.ee.BLException;
 import org.jpos.ee.SysConfig;
-import org.jpos.qi.EntityContainer;
 import org.jpos.qi.QIEntityView;
 import org.jpos.qi.QIHelper;
 import org.jpos.qi.components.QIFieldFactory;
@@ -112,9 +106,7 @@ public class SysConfigView extends QIEntityView {
     }
 
     @Override
-    protected Layout addFields() {
-        Layout l = super.addFields();
-
+    protected void addFields(Layout l) {
         TextField id = new TextField("id");
         TextField value = new TextField("value");
 
@@ -138,7 +130,6 @@ public class SysConfigView extends QIEntityView {
 //            id.setValue(idValue);
 //            id.setReadOnly(true);
 //        }
-        return l;
     }
 
     @Override

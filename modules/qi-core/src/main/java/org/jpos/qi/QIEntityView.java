@@ -317,7 +317,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         binder.setReadOnly(true);
         binder.setBean((T)entity);
 
-        final Layout formLayout = addFields();
+        final Layout formLayout = createLayout();
         profileLayout.addComponent(formLayout);
 //        addValidators();
 
@@ -441,11 +441,13 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         formLayout.removeStyleName(ValoTheme.FORMLAYOUT_LIGHT);
     }
 
-    protected Layout addFields () {
+    protected Layout createLayout() {
         FormLayout layout = new FormLayout();
         layout.addStyleName(ValoTheme.FORMLAYOUT_LIGHT);
         layout.addStyleName("qi-form");
         layout.setMargin(new MarginInfo(false));
+        addFields(layout);
+
         boolean firstField = true;
 //        for (Field field : fieldGroup.getFields()) {
 //            layout.addComponent(field);
@@ -458,6 +460,8 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
 
         return layout;
     }
+
+    protected abstract void addFields(Layout l);
 
 //    protected void addValidators () {
 //        fieldGroup.getFields().forEach(this::addValidators);

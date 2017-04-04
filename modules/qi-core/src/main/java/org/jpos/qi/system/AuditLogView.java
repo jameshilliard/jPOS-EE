@@ -19,6 +19,7 @@
 package org.jpos.qi.system;
 
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Layout;
 import com.vaadin.v7.data.fieldgroup.FieldGroupFieldFactory;
 import org.jpos.ee.SysLog;
 import org.jpos.qi.QIEntityView;
@@ -82,5 +83,10 @@ public class AuditLogView extends QIEntityView<SysLog> {
         g.addColumn(SysLog::getSummary).setId("summary");
         g.addColumn(SysLog::getDetail).setId("detail");
         g.addColumn(SysLog::getTrace).setId("trace");
+    }
+
+    @Override
+    protected void addFields(Layout l) {
+        
     }
 }

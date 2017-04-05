@@ -18,23 +18,22 @@
 
 package org.jpos.qi.eeuser;
 
-import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.Layout;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.Grid;
+import com.vaadin.data.validator.EmailValidator;
+import com.vaadin.ui.*;
 
+import com.vaadin.ui.Grid;
 import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.v7.data.fieldgroup.FieldGroup;
 import com.vaadin.v7.data.fieldgroup.FieldGroupFieldFactory;
 import com.vaadin.v7.data.util.ObjectProperty;
 import com.vaadin.v7.data.util.PropertysetItem;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.v7.ui.*;
 import com.vaadin.v7.ui.Field;
 import com.vaadin.v7.ui.OptionGroup;
 
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.ui.PasswordField;
+import com.vaadin.v7.ui.VerticalLayout;
 import org.jpos.ee.*;
 import org.jpos.qi.*;
 import org.jpos.qi.components.QIFieldFactory;
@@ -324,6 +323,39 @@ public class UsersView extends QIEntityView<User> {
 
     @Override
     protected void addFields(Layout l) {
+        TextField id = new TextField("id");
+        TextField name  = new TextField("name");
+        TextField nick = new TextField("nick");
+        TextField email = new TextField("email");
+        TextField active = new TextField("active");
+        TextField deleted = new TextField("deleted");
+        TextField isVerified = new TextField("verified");
+        TextField isForcePasswordChanged = new TextField("forcePasswordChange");
+        DateField startDate = new DateField("startDate");
+        DateField endDate = new DateField("endDate");
+        DateField lastLogin = new DateField("lastLogin");
+        DateField passwordChanged = new DateField("passwordChanged");
+        TextField loginAttempts = new TextField("loginAttempts");
+
+        getBinder().bind(id,"id");
+        getBinder().bind(name,"name");
+        getBinder().forField(nick).bind("nick");
+        getBinder()
+                .forField(email)
+                .withValidator(new EmailValidator(getApp().getMessage("errorMessage.invalidEmail")))
+                .bind("email");
+        getBinder().bind(active,"active");
+        getBinder().bind(deleted,"deleted");
+        getBinder().bind(isVerified,"isVerified");
+        getBinder().bind(isForcePasswordChanged,"isForcePasswordChange");
+        getBinder().bind(startDate,"startDate");
+        getBinder().bind(endDate,"endDate");
+        getBinder().bind(lastLogin,"lastLogin");
+        getBinder().bind(passwordChanged,"passwordChanged");
+        getBinder().bind(loginAttempts,"loginAttempts");
+
+        l.addComponents(id,name,nick,email,active,deleted,isVerified,
+                isForcePasswordChanged,startDate,endDate,lastLogin,passwordChanged,loginAttempts);
 //        Layout l = super.createLayout(fieldGroup);
 //        TextField email = (TextField) fieldGroup.getField("email");
 //        TextField name = (TextField) fieldGroup.getField("name");

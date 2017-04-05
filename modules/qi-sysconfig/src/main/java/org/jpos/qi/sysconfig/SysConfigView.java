@@ -110,11 +110,10 @@ public class SysConfigView extends QIEntityView {
         TextField id = new TextField("id");
         TextField value = new TextField("value");
 
-        getBinder().bind(id,"id");
         getBinder().forField(id).withConverter(
                 converter -> removePrefix(id.getValue()),
                 converter2 -> id.getValue()
-        );
+        ).bind("id");
         getBinder().bind(value,"value");
         setRequired(id,value);
         l.addComponents(id,value);

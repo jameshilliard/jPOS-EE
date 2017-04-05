@@ -191,6 +191,7 @@ public class UsersHelper extends QIHelper {
     }
 
     public Validator getNickTakenValidator(final User selectedU) {
+
         return new Validator() {
             public boolean isValid(Object value) {
                 String oldNick = selectedU.getNick();

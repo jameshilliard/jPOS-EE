@@ -20,6 +20,8 @@ package org.jpos.qi;
 
 import com.vaadin.data.Binder;
 import com.vaadin.data.HasValue;
+import com.vaadin.data.converter.StringToBooleanConverter;
+import com.vaadin.data.converter.StringToLongConverter;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Grid;
@@ -489,6 +491,41 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
 //            }
 //        }
 //    }
+
+    protected TextField buildAndBindLongField(String id) {
+        TextField field = new TextField(id);
+        getBinder()
+            .forField(field)
+            .withConverter(new StringToLongConverter(getApp().getMessage("errorMessage.NaN",id)))
+            .bind(id);
+        return field;
+    }
+
+    protected TextField buildAndBindBooleanField(String id) {
+        TextField field = new TextField(id);
+        getBinder()
+            .forField(field)
+            .withConverter(new StringToBooleanConverter(getApp().getMessage("errorMessage.invalidField",id)))
+            .bind(id);
+        return field;
+    }
+
+    protected TextField buildAndBindTextField(String id) {
+        TextField field = new TextField(id);
+        getBinder()
+            .forField(field)
+            .bind(id);
+        return field;
+    }
+
+    protected DateField buildAndBindDateField(String id) {
+        DateField field = new DateField(id);
+        getBinder()
+            .forField(field)
+            .bind(id);
+        return field;
+    }
+
 
     private void loadRevisionHistory (Layout formLayout, String ref) {
         DB db = new DB();

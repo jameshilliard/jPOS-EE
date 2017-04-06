@@ -39,6 +39,7 @@ import org.jpos.qi.*;
 import org.jpos.qi.components.QIFieldFactory;
 import org.jpos.util.PasswordGenerator;
 
+import java.sql.Timestamp;
 import java.util.Set;
 
 public class UsersView extends QIEntityView<User> {
@@ -323,46 +324,20 @@ public class UsersView extends QIEntityView<User> {
 
     @Override
     protected void addFields(Layout l) {
-        TextField id = new TextField("id");
-        TextField name  = new TextField("name");
-        TextField nick = new TextField("nick");
-        TextField email = new TextField("email");
-        TextField active = new TextField("active");
-        TextField deleted = new TextField("deleted");
-        TextField isVerified = new TextField("verified");
-        TextField isForcePasswordChanged = new TextField("forcePasswordChange");
-        DateField startDate = new DateField("startDate");
-        DateField endDate = new DateField("endDate");
-        DateField lastLogin = new DateField("lastLogin");
-        DateField passwordChanged = new DateField("passwordChanged");
-        TextField loginAttempts = new TextField("loginAttempts");
+        //done separately because needs extra validator.
+        TextField email = buildAndBindTextField("email");
+        getBinder().forField(email).withValidator(new EmailValidator(getApp().getMessage("errorMessage.invalidEmail")));
+//        TextField passwordChanged = new TextField("passwordChanged");
+//        getBinder().forField(passwordChanged).withConverter(converter -> passwordChanged.getValue(),
+//                converter2 -> passwordChanged.getValue()
+//        ).bind("passwordChanged");
 
-        getBinder().bind(id,"id");
-        getBinder().bind(name,"name");
-        getBinder().forField(nick).bind("nick");
-        getBinder()
-                .forField(email)
-                .withValidator(new EmailValidator(getApp().getMessage("errorMessage.invalidEmail")))
-                .bind("email");
-        getBinder().bind(active,"active");
-        getBinder().bind(deleted,"deleted");
-        getBinder().bind(isVerified,"isVerified");
-        getBinder().bind(isForcePasswordChanged,"isForcePasswordChange");
-        getBinder().bind(startDate,"startDate");
-        getBinder().bind(endDate,"endDate");
-        getBinder().bind(lastLogin,"lastLogin");
-        getBinder().bind(passwordChanged,"passwordChanged");
-        getBinder().bind(loginAttempts,"loginAttempts");
 
-        l.addComponents(id,name,nick,email,active,deleted,isVerified,
-                isForcePasswordChanged,startDate,endDate,lastLogin,passwordChanged,loginAttempts);
-//        Layout l = super.createLayout(fieldGroup);
-//        TextField email = (TextField) fieldGroup.getField("email");
-//        TextField name = (TextField) fieldGroup.getField("name");
-//        TextField nick = (TextField) fieldGroup.getField("nick");
-//
-//        EmailValidator emailV = new EmailValidator(getApp().getMessage("errorMessage.invalidEmail"));
-//        email.addValidator(emailV);
+        l.addComponents(buildAndBindLongField("id"),buildAndBindTextField("name"),buildAndBindTextField("nick"),email,
+                buildAndBindTextField("email"),buildAndBindBooleanField("active"),buildAndBindBooleanField("deleted")
+                ,buildAndBindBooleanField("verified"),buildAndBindBooleanField("forcePasswordChange"),
+                buildAndBindDateField("startDate"), buildAndBindDateField("endDate")
+                ,buildAndBindLongField("loginAttempts"));
 //        email.setWidth("60%");
 //
 //        nick.setRequired(true);
@@ -378,14 +353,14 @@ public class UsersView extends QIEntityView<User> {
 //        name.setRequiredError(getApp().getMessage("errorMessage.req",name.getCaption()));
 //        name.setWidth("60%");
 //
-//        if (selectedU.equals(getApp().getUser())) {
-//            changePassBtn = createChangePasswordButton();
-//            l.addComponents(changePassBtn, createPasswordPanel());
-//        }
-//        if (getApp().getUser().hasPermission("sysadmin") && !isNewView()) {
-//            resetPassBtn = createResetPasswordButton();
-//            l.addComponent(resetPassBtn);
-//        }
+        if (getBinder().getBean().getId().equals(getApp().getUser().getId())) {
+            changePassBtn = createChangePasswordButton();
+            l.addComponents(changePassBtn, createPasswordPanel());
+        }
+        if (getApp().getUser().hasPermission("sysadmin") && !isNewView()) {
+            resetPassBtn = createResetPasswordButton();
+            l.addComponent(resetPassBtn);
+        }
 //
 //        return l;
     }

@@ -39,7 +39,6 @@ import org.jpos.qi.*;
 import org.jpos.qi.components.QIFieldFactory;
 import org.jpos.util.PasswordGenerator;
 
-import java.sql.Timestamp;
 import java.util.Set;
 
 public class UsersView extends QIEntityView<User> {
@@ -324,6 +323,7 @@ public class UsersView extends QIEntityView<User> {
 
     @Override
     protected void addFields(Layout l) {
+        selectedU = getBinder().getBean();
         //done separately because needs extra validator.
         TextField email = buildAndBindTextField("email");
         getBinder().forField(email).withValidator(new EmailValidator(getApp().getMessage("errorMessage.invalidEmail")));
@@ -342,8 +342,6 @@ public class UsersView extends QIEntityView<User> {
 //
 //        nick.setRequired(true);
 //        nick.setRequiredError(getApp().getMessage("errorMessage.req",nick.getCaption()));
-//
-//        selectedU = (User) ((BeanFieldGroup)fieldGroup).getItemDataSource().getBean();
 //        Validator nickTakenV = ((UsersHelper) getHelper()).getNickTakenValidator(selectedU);
 //        nick.addValidator(nickTakenV);
 //        nick.setWidth("30%");

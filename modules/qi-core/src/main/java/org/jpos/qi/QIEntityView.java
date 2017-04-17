@@ -392,7 +392,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
     protected void cancelClick(Button.ClickEvent event, Layout formLayout) {
 //        fieldGroup.discard();
         //todo: find how to discard
-        binder.readBean(binder.getBean());
+//        binder.readBean(binder.getBean());
         binder.setReadOnly(true);
         event.getButton().setVisible(false);
         saveBtn.setVisible(false);

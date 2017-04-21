@@ -23,6 +23,7 @@ import com.vaadin.data.HasValue;
 import com.vaadin.data.converter.StringToBooleanConverter;
 import com.vaadin.data.converter.StringToLongConverter;
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.sass.internal.util.StringUtil;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
@@ -45,6 +46,7 @@ import com.vaadin.v7.ui.renderers.NumberRenderer;
 import com.vaadin.v7.ui.renderers.Renderer;
 //-------------------------------------------------------
 
+import org.apache.commons.lang3.StringUtils;
 import org.jpos.core.Configurable;
 import org.jpos.core.Configuration;
 import org.jpos.ee.BLException;
@@ -493,7 +495,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
 //    }
 
     protected TextField buildAndBindLongField(String id) {
-        TextField field = new TextField(id);
+        TextField field = new TextField(getCaptionFromId(id));
         getBinder()
             .forField(field)
             .withConverter(new StringToLongConverter(getApp().getMessage("errorMessage.NaN",id)))
@@ -502,7 +504,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
     }
 
     protected TextField buildAndBindBooleanField(String id) {
-        TextField field = new TextField(id);
+        TextField field = new TextField(getCaptionFromId(id));
         getBinder()
             .forField(field)
             .withConverter(new StringToBooleanConverter(getApp().getMessage("errorMessage.invalidField",id)))
@@ -511,7 +513,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
     }
 
     protected TextField buildAndBindTextField(String id) {
-        TextField field = new TextField(id);
+        TextField field = new TextField(getCaptionFromId(id));
         getBinder()
             .forField(field)
             .bind(id);
@@ -519,11 +521,15 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
     }
 
     protected DateField buildAndBindDateField(String id) {
-        DateField field = new DateField(id);
+        DateField field = new DateField(getCaptionFromId(id));
         getBinder()
             .forField(field)
             .bind(id);
         return field;
+    }
+
+    private String getCaptionFromId(String id) {
+        return StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(id),' ');
     }
 
 

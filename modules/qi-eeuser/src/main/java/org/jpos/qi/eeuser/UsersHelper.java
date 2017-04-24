@@ -72,10 +72,14 @@ public class UsersHelper extends QIHelper {
         }
     }
 
-    public boolean updateUser (BeanFieldGroup<User> fieldGroup, String currentPass, String newClearPass) throws BLException, FieldGroup.CommitException, CloneNotSupportedException {
+    public boolean updateUser (BeanFieldGroup<User> fieldGroup, String currentPass, String newClearPass) throws BLException, CloneNotSupportedException {
         BeanItem<User> old = fieldGroup.getItemDataSource();
         Object oldUser = old.getBean().clone();
-        fieldGroup.commit();
+        try {
+            fieldGroup.commit();
+        } catch (FieldGroup.CommitException e) {
+            e.printStackTrace();
+        }
         BeanItem<User> item = fieldGroup.getItemDataSource();
         User u = item.getBean();
         boolean userUpdated = false;
@@ -173,7 +177,7 @@ public class UsersHelper extends QIHelper {
     }
 
     @Override
-    public boolean updateEntity(BeanFieldGroup fieldGroup) throws FieldGroup.CommitException, BLException, CloneNotSupportedException {
+    public boolean updateEntity(BeanFieldGroup fieldGroup) throws BLException, CloneNotSupportedException {
         //NOT USED
         return false;
     }

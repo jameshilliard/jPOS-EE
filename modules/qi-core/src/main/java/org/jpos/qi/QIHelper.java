@@ -156,7 +156,7 @@ public abstract class QIHelper {
         }
     }
 
-    public abstract boolean updateEntity(BeanFieldGroup fieldGroup) throws FieldGroup.CommitException,
+    public abstract boolean updateEntity(BeanFieldGroup fieldGroup) throws
             BLException, CloneNotSupportedException;
 
 

@@ -20,15 +20,10 @@ package org.jpos.qi.eeuser;
 
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Layout;
-import com.vaadin.v7.data.fieldgroup.FieldGroupFieldFactory;
-import com.vaadin.v7.ui.Field;
-import com.vaadin.v7.ui.OptionGroup;
 import org.jpos.ee.*;
 import org.jpos.qi.QIEntityView;
 import org.jpos.qi.QIHelper;
-import org.jpos.qi.components.QIFieldFactory;
 
-import java.util.Set;
 
 public class RolesView extends QIEntityView {
 
@@ -66,29 +61,29 @@ public class RolesView extends QIEntityView {
         return new RolesHelper();
     }
 
-    @Override
-    public FieldGroupFieldFactory createFieldFactory() {
-        return new QIFieldFactory() {
-            @Override
-            public <T extends Field> T createField(Class<?> dataType, Class<T> fieldType) {
-                if (Set.class.equals(dataType)) {
-                    OptionGroup f = new OptionGroup("Permissions");
-                    f.setMultiSelect(true);
-                    f.setNullSelectionAllowed(false);
-                    for (SysConfig sys : ((RolesHelper)getHelper()).getPermissions()) {
-                        Permission p = Permission.valueOf(sys.getId().substring(5));
-                        f.addItem(p);
-                        f.setItemCaption(p, sys.getValue());
-                    }
-                    f.setImmediate(true);
-                    return (T) f;
-                } else {
-                    Field f = super.createField(dataType, fieldType);
-                    return (T) f;
-                }
-            }
-        };
-    }
+//    @Override
+//    public FieldGroupFieldFactory createFieldFactory() {
+//        return new QIFieldFactory() {
+//            @Override
+//            public <T extends Field> T createField(Class<?> dataType, Class<T> fieldType) {
+//                if (Set.class.equals(dataType)) {
+//                    OptionGroup f = new OptionGroup("Permissions");
+//                    f.setMultiSelect(true);
+//                    f.setNullSelectionAllowed(false);
+//                    for (SysConfig sys : ((RolesHelper)getHelper()).getPermissions()) {
+//                        Permission p = Permission.valueOf(sys.getId().substring(5));
+//                        f.addItem(p);
+//                        f.setItemCaption(p, sys.getValue());
+//                    }
+//                    f.setImmediate(true);
+//                    return (T) f;
+//                } else {
+//                    Field f = super.createField(dataType, fieldType);
+//                    return (T) f;
+//                }
+//            }
+//        };
+//    }
 
     @Override
     public void setGridGetters() {
@@ -97,16 +92,6 @@ public class RolesView extends QIEntityView {
         g.addColumn(Role::getName).setId("name");
         g.addColumn(Role::getPermissions).setId("permissions");
     }
-
-    @Override
-    protected void addFields(Layout l) {
-//        Layout l = super.createLayout(fieldGroup);
-//        com.vaadin.v7.ui.Field<?> name = fieldGroup.getField("name");
-//        name.setRequired(true);
-//        name.setRequiredError(getApp().getMessage("errorMessage.req", name.getCaption()));
-//        return l;
-    }
-
 
     @Override
     public boolean canEdit() {

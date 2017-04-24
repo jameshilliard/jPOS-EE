@@ -40,19 +40,19 @@ public class RevisionsView extends QIEntityView<Revision> {
         setShowRevisionHistoryButton(false);
     }
 
-    @Override
-    public FieldGroupFieldFactory createFieldFactory() {
-        return new QIFieldFactory() {
-            @Override
-            public <T extends Field> T createField(Class<?> dataType, Class<T> fieldType) {
-                ReadOnlyField f = new ReadOnlyField();
-                if (User.class.equals(dataType)) {
-                    f.setConverter(((RevisionsHelper)getHelper()).getAuthorConverter(""));
-                }
-                return (T) f;
-            }
-        };
-    }
+//    @Override
+//    public FieldGroupFieldFactory createFieldFactory() {
+//        return new QIFieldFactory() {
+//            @Override
+//            public <T extends Field> T createField(Class<?> dataType, Class<T> fieldType) {
+//                ReadOnlyField f = new ReadOnlyField();
+//                if (User.class.equals(dataType)) {
+//                    f.setConverter(((RevisionsHelper)getHelper()).getAuthorConverter(""));
+//                }
+//                return (T) f;
+//            }
+//        };
+//    }
 
     @Override
     public QIHelper createHelper() {
@@ -100,16 +100,4 @@ public class RevisionsView extends QIEntityView<Revision> {
     public void setGridGetters() {
 
     }
-
-    @Override
-    protected void addFields(Layout l) {
-//        Layout l = super.createLayout(fieldGroup);
-//        ReadOnlyField ref = (ReadOnlyField) fieldGroup.getField("ref");
-//        ReadOnlyField author = (ReadOnlyField) fieldGroup.getField("author");
-//        Revision current = (Revision) ((BeanFieldGroup)fieldGroup).getItemDataSource().getBean();
-//        ref.setConverter(((RevisionsHelper)getHelper()).getRefConverter(String.valueOf(current.getId())));
-//        author.setConverter(((RevisionsHelper)getHelper()).getAuthorConverter(String.valueOf(current.getId())));
-//        return l;
-    }
-
 }

@@ -22,14 +22,10 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.TextField;
 import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.v7.data.fieldgroup.FieldGroup;
-import com.vaadin.v7.data.fieldgroup.FieldGroupFieldFactory;
-import com.vaadin.v7.ui.Field;
 import org.jpos.ee.BLException;
 import org.jpos.ee.SysConfig;
 import org.jpos.qi.QIEntityView;
 import org.jpos.qi.QIHelper;
-import org.jpos.qi.components.QIFieldFactory;
 
 public class SysConfigView extends QIEntityView {
     private String prefix;
@@ -78,7 +74,7 @@ public class SysConfigView extends QIEntityView {
     }
 
     @Override
-    public void updateEntity(BeanFieldGroup fieldGroup) throws FieldGroup.CommitException, CloneNotSupportedException, BLException {
+    public void updateEntity(BeanFieldGroup fieldGroup) throws CloneNotSupportedException, BLException {
         String idValue = (String) fieldGroup.getField("id").getValue();
         idValue = addPrefix(idValue);
         TextField idField = (TextField)fieldGroup.getField("id");
@@ -94,19 +90,10 @@ public class SysConfigView extends QIEntityView {
         idField.setReadOnly(true);
     }
 
-    @Override
-    public FieldGroupFieldFactory createFieldFactory() {
-        return new QIFieldFactory() {
-            @Override
-            public <T extends Field> T createField(Class<?> dataType, Class<T> fieldType) {
-                Field f = super.createField(dataType, fieldType);
-                return (T) f;
-            }
-        };
-    }
 
     @Override
     protected void addFields(Layout l) {
+        super.addFields(l);
         TextField id = new TextField("id");
         TextField value = new TextField("value");
 
@@ -114,9 +101,9 @@ public class SysConfigView extends QIEntityView {
                 converter -> removePrefix(id.getValue()),
                 converter2 -> id.getValue()
         ).bind("id");
-        getBinder().bind(value,"value");
+//        getBinder().bind(value,"value");
         setRequired(id,value);
-        l.addComponents(id,value);
+//        l.addComponents(id,value);
 
 
 //        Field id = (Field) fieldGroup.getField("id");

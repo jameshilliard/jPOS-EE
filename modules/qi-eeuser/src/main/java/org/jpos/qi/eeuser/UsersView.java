@@ -96,8 +96,7 @@ public class UsersView extends QIEntityView<User> {
     }
 
     @Override
-    public void updateEntity(BeanFieldGroup fieldGroup) throws
-            FieldGroup.CommitException, CloneNotSupportedException, BLException
+    public void updateEntity(BeanFieldGroup fieldGroup) throws CloneNotSupportedException, BLException
     {
         String current = "";
         String repeat = "";
@@ -119,25 +118,25 @@ public class UsersView extends QIEntityView<User> {
     }
 
 
-    @Override
-    public FieldGroupFieldFactory createFieldFactory() {
-        return new QIFieldFactory() {
-            @Override
-            public <T extends Field> T createField(Class<?> dataType, Class<T> fieldType) {
-                if (Set.class.equals(dataType)) {
-                    OptionGroup f = new OptionGroup();
-                    f.setMultiSelect(true);
-                    for (Role r : ((UsersHelper)getHelper()).getRoles()) {
-                        f.addItem(r);
-                        f.setItemCaption(r, r.getName());
-                    }
-                    return (T) f;
-                } else {
-                    return super.createField(dataType, fieldType);
-                }
-            }
-        };
-    }
+//    @Override
+//    public FieldGroupFieldFactory createFieldFactory() {
+//        return new QIFieldFactory() {
+//            @Override
+//            public <T extends Field> T createField(Class<?> dataType, Class<T> fieldType) {
+//                if (Set.class.equals(dataType)) {
+//                    OptionGroup f = new OptionGroup();
+//                    f.setMultiSelect(true);
+//                    for (Role r : ((UsersHelper)getHelper()).getRoles()) {
+//                        f.addItem(r);
+//                        f.setItemCaption(r, r.getName());
+//                    }
+//                    return (T) f;
+//                } else {
+//                    return super.createField(dataType, fieldType);
+//                }
+//            }
+//        };
+//    }
 
 
     @Override
@@ -323,21 +322,19 @@ public class UsersView extends QIEntityView<User> {
 
     @Override
     protected void addFields(Layout l) {
+        super.addFields(l);
         selectedU = getBinder().getBean();
         //done separately because needs extra validator.
-        TextField email = buildAndBindTextField("email");
-        getBinder().forField(email).withValidator(new EmailValidator(getApp().getMessage("errorMessage.invalidEmail")));
+//        TextField email = buildAndBindTextField("email");
+//        getBinder().forField(email).withValidator(new EmailValidator(getApp().getMessage("errorMessage.invalidEmail")));
+
+
+
 //        TextField passwordChanged = new TextField("passwordChanged");
 //        getBinder().forField(passwordChanged).withConverter(converter -> passwordChanged.getValue(),
 //                converter2 -> passwordChanged.getValue()
 //        ).bind("passwordChanged");
-
-
-        l.addComponents(buildAndBindLongField("id"),buildAndBindTextField("name"),buildAndBindTextField("nick"),email,
-                buildAndBindTextField("email"),buildAndBindBooleanField("active"),buildAndBindBooleanField("deleted")
-                ,buildAndBindBooleanField("verified"),buildAndBindBooleanField("forcePasswordChange"),
-                buildAndBindDateField("startDate"), buildAndBindDateField("endDate")
-                ,buildAndBindLongField("loginAttempts"));
+//
 //        email.setWidth("60%");
 //
 //        nick.setRequired(true);

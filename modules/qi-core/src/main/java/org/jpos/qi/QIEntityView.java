@@ -24,6 +24,7 @@ import com.vaadin.data.converter.StringToBooleanConverter;
 import com.vaadin.data.converter.StringToLongConverter;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.sass.internal.util.StringUtil;
+import com.vaadin.shared.ui.optiongroup.CheckBoxGroupState;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
@@ -39,24 +40,31 @@ import com.vaadin.shared.ui.MarginInfo;
 
 //------Compatibility imports. Will be changed----------
 import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.v7.data.fieldgroup.FieldGroup;
-import com.vaadin.v7.data.fieldgroup.FieldGroupFieldFactory;
+//import com.vaadin.v7.data.fieldgroup.FieldGroup;
+//import com.vaadin.v7.data.fieldgroup.FieldGroupFieldFactory;
 import com.vaadin.v7.ui.renderers.DateRenderer;
 import com.vaadin.v7.ui.renderers.NumberRenderer;
 import com.vaadin.v7.ui.renderers.Renderer;
 //-------------------------------------------------------
 
+import org.apache.commons.collections.comparators.BooleanComparator;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.Check;
 import org.jpos.core.Configurable;
 import org.jpos.core.Configuration;
 import org.jpos.ee.BLException;
 import org.jpos.ee.DB;
+import org.jpos.qi.components.BigDecimalField;
 
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 
 
@@ -465,7 +473,32 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         return layout;
     }
 
-    protected abstract void addFields(Layout l);
+    protected void addFields(Layout l) {
+        Object o = getBinder().getBean();
+        for (String id : getVisibleFields()) {
+            try {
+                Class dataType = o.getClass().getDeclaredField(id).getType();
+
+                if (dataType.equals(Date.class)) {
+                    l.addComponent(buildAndBindDateField(id));
+                } else if (dataType.equals(BigDecimal.class)) {
+                    //use BigDecimalField
+
+                } else if (dataType.equals(Long.class)) {
+                    l.addComponent(buildAndBindLongField(id));
+                } else if (dataType.equals(Boolean.class)) {
+                    l.addComponent(buildAndBindBooleanField(id));
+                }
+                else if (dataType.equals(String.class)) {
+                    l.addComponent(buildAndBindTextField(id));
+                }
+
+            } catch (NoSuchFieldException e) {
+                //todo: do something useful
+                e.printStackTrace();
+            }
+        }
+    }
 
 //    protected void addValidators () {
 //        fieldGroup.getFields().forEach(this::addValidators);
@@ -503,13 +536,12 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         return field;
     }
 
-    protected TextField buildAndBindBooleanField(String id) {
-        TextField field = new TextField(getCaptionFromId(id));
+    protected CheckBox buildAndBindBooleanField(String id) {
+        CheckBox box = new CheckBox(getCaptionFromId(id),false);
         getBinder()
-            .forField(field)
-            .withConverter(new StringToBooleanConverter(getApp().getMessage("errorMessage.invalidField",id)))
+            .forField(box)
             .bind(id);
-        return field;
+        return box;
     }
 
     protected TextField buildAndBindTextField(String id) {
@@ -526,6 +558,10 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
             .forField(field)
             .bind(id);
         return field;
+    }
+
+    protected void buildAndBindBigDecimalField(String id) {
+        //todo: need to update BigDecimalField to vaadin8
     }
 
     private String getCaptionFromId(String id) {
@@ -561,7 +597,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         return new DateRenderer(dateFormat);
     }
 
-    public abstract FieldGroupFieldFactory createFieldFactory();
+//    public abstract FieldGroupFieldFactory createFieldFactory();
 
     public void setRequired(HasValue... fields) {
         for (HasValue f : fields) {
@@ -598,7 +634,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         return getHelper().getEntityName();
     }
 
-    public void updateEntity (BeanFieldGroup fieldGroup) throws BLException, FieldGroup.CommitException, CloneNotSupportedException {
+    public void updateEntity (BeanFieldGroup fieldGroup) throws BLException, CloneNotSupportedException {
         if (getHelper().updateEntity(fieldGroup))
             getApp().displayNotification(getApp().getMessage("updated", getEntityName().toUpperCase()));
         else

@@ -19,7 +19,6 @@
 package org.jpos.qi.system;
 
 import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.v7.data.fieldgroup.FieldGroup;
 import com.vaadin.v7.data.util.converter.Converter;
 import org.jpos.ee.BLException;
 import org.jpos.ee.DB;
@@ -86,7 +85,7 @@ public class RevisionsHelper extends QIHelper {
     }
 
     @Override
-    public boolean updateEntity(BeanFieldGroup fieldGroup) throws FieldGroup.CommitException, BLException, CloneNotSupportedException {
+    public boolean updateEntity(BeanFieldGroup fieldGroup) throws BLException, CloneNotSupportedException {
         return false;
     }
 

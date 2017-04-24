@@ -58,10 +58,14 @@ public class RolesHelper extends QIHelper {
 
     @Override
     public boolean updateEntity (BeanFieldGroup fieldGroup) throws
-            BLException, FieldGroup.CommitException, CloneNotSupportedException {
+            BLException, CloneNotSupportedException {
         BeanItem<Role> old = fieldGroup.getItemDataSource();
         Object oldRole = old.getBean().clone();
-        fieldGroup.commit();
+        try {
+            fieldGroup.commit();
+        } catch (FieldGroup.CommitException e) {
+            e.printStackTrace();
+        }
         BeanItem<Role> item = fieldGroup.getItemDataSource();
         Role r = item.getBean();
         try {

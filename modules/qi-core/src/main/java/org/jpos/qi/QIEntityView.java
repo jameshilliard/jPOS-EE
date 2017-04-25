@@ -20,11 +20,11 @@ package org.jpos.qi;
 
 import com.vaadin.data.Binder;
 import com.vaadin.data.HasValue;
-import com.vaadin.data.converter.StringToBooleanConverter;
+import com.vaadin.data.Validator;
 import com.vaadin.data.converter.StringToLongConverter;
+import com.vaadin.data.validator.RegexpValidator;
+import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.sass.internal.util.StringUtil;
-import com.vaadin.shared.ui.optiongroup.CheckBoxGroupState;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
@@ -40,32 +40,24 @@ import com.vaadin.shared.ui.MarginInfo;
 
 //------Compatibility imports. Will be changed----------
 import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
-//import com.vaadin.v7.data.fieldgroup.FieldGroup;
-//import com.vaadin.v7.data.fieldgroup.FieldGroupFieldFactory;
 import com.vaadin.v7.ui.renderers.DateRenderer;
 import com.vaadin.v7.ui.renderers.NumberRenderer;
 import com.vaadin.v7.ui.renderers.Renderer;
 //-------------------------------------------------------
 
-import org.apache.commons.collections.comparators.BooleanComparator;
-import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.annotations.Check;
 import org.jpos.core.Configurable;
 import org.jpos.core.Configuration;
 import org.jpos.ee.BLException;
 import org.jpos.ee.DB;
-import org.jpos.qi.components.BigDecimalField;
+import org.jpos.ee.SysConfig;
 
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Iterator;
+import java.util.*;
 
 
 public abstract class QIEntityView<T> extends VerticalLayout implements View, Configurable {
@@ -86,7 +78,6 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
     private Button saveBtn;
     private Button cancelBtn;
     private Binder<T> binder;
-//    private BeanFieldGroup<T> fieldGroup;
     private Label errorLabel;
     private boolean newView;
     private Configuration cfg;
@@ -476,28 +467,63 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
     protected void addFields(Layout l) {
         Object o = getBinder().getBean();
         for (String id : getVisibleFields()) {
-            try {
-                Class dataType = o.getClass().getDeclaredField(id).getType();
-
-                if (dataType.equals(Date.class)) {
-                    l.addComponent(buildAndBindDateField(id));
-                } else if (dataType.equals(BigDecimal.class)) {
-                    //use BigDecimalField
-
-                } else if (dataType.equals(Long.class)) {
-                    l.addComponent(buildAndBindLongField(id));
-                } else if (dataType.equals(Boolean.class)) {
-                    l.addComponent(buildAndBindBooleanField(id));
+            //Check if there's a custom builder
+            Component field = buildAndBindCustomComponent(id);
+            if (field == null) {
+                //if it wasn't built yet, build it now.
+                try {
+                    Class dataType = o.getClass().getDeclaredField(id).getType();
+                    if (dataType.equals(Date.class)) {
+                        l.addComponent(buildAndBindDateField(id));
+                    } else if (dataType.equals(BigDecimal.class)) {
+                        //use BigDecimalField
+                    } else if (dataType.equals(Long.class)) {
+                        l.addComponent(buildAndBindLongField(id));
+                    } else if (dataType.equals(Boolean.class)) {
+                        l.addComponent(buildAndBindBooleanField(id));
+                    } else if (dataType.equals(String.class)) {
+                        l.addComponent(buildAndBindTextField(id));
+                    } else if (dataType.equals(SysConfig.class)) {
+                        //Create an optionGroup
+                    } else if (dataType.equals(Set.class)) {
+                        //create something useful for this.
+                    }
+                } catch (NoSuchFieldException e) {
+                    getApp().getLog().error(e);
                 }
-                else if (dataType.equals(String.class)) {
-                    l.addComponent(buildAndBindTextField(id));
-                }
-
-            } catch (NoSuchFieldException e) {
-                //todo: do something useful
-                e.printStackTrace();
+            } else {
+                l.addComponent(field);
             }
         }
+    }
+
+    //Override on specific views to create a custom field for a certain property, or to add validators.
+    protected Component buildAndBindCustomComponent(String propertyId) {
+        return null;
+    }
+
+    //Override to add more customValidators
+    protected List<Validator> getValidators(String propertyId) {
+        List<Validator> validators = new ArrayList<>();
+        ViewConfig.FieldConfig config = viewConfig.getFields().get(propertyId);
+        if (config != null) {
+            String regex = config.getRegex();
+            int length = config.getLength();
+            String[] options = config.getOptions();
+            if (options != null) {
+                //Change the field to a Combo loaded with the options
+                ComboBox combo = new ComboBox(getCaptionFromId(propertyId),Arrays.asList(options));
+                getBinder().bind(combo,propertyId);
+                return null;
+            }
+            if (regex != null) {
+                validators.add(new RegexpValidator(getApp().getMessage("errorMessage.invalidField", propertyId),regex));
+            }
+            if (length > 0) {
+                validators.add(new StringLengthValidator(getApp().getMessage("errorMessage.invalidField", propertyId),0,length));
+            }
+        }
+        return validators;
     }
 
 //    protected void addValidators () {
@@ -529,34 +555,46 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
 
     protected TextField buildAndBindLongField(String id) {
         TextField field = new TextField(getCaptionFromId(id));
-        getBinder()
-            .forField(field)
-            .withConverter(new StringToLongConverter(getApp().getMessage("errorMessage.NaN",id)))
-            .bind(id);
+        List<Validator> v = getValidators(id);
+        Binder.BindingBuilder builder = getBinder().forField(field);
+        for (Validator val : v) {
+            builder.withValidator(val);
+        }
+        builder.withConverter(new StringToLongConverter(getApp().getMessage("errorMessage.NaN",id)));
+        builder.bind(id);
         return field;
     }
 
     protected CheckBox buildAndBindBooleanField(String id) {
         CheckBox box = new CheckBox(getCaptionFromId(id),false);
-        getBinder()
-            .forField(box)
-            .bind(id);
+        List<Validator> v = getValidators(id);
+        Binder.BindingBuilder builder = getBinder().forField(box);
+        for (Validator val : v) {
+            builder.withValidator(val);
+        }
+        builder.bind(id);
         return box;
     }
 
     protected TextField buildAndBindTextField(String id) {
         TextField field = new TextField(getCaptionFromId(id));
-        getBinder()
-            .forField(field)
-            .bind(id);
+        List<Validator> v = getValidators(id);
+        Binder.BindingBuilder builder = getBinder().forField(field);
+        for (Validator val : v) {
+            builder.withValidator(val);
+        }
+        builder.bind(id);
         return field;
     }
 
     protected DateField buildAndBindDateField(String id) {
         DateField field = new DateField(getCaptionFromId(id));
-        getBinder()
-            .forField(field)
-            .bind(id);
+        List<Validator> v = getValidators(id);
+        Binder.BindingBuilder builder = getBinder().forField(field);
+        for (Validator val : v) {
+            builder.withValidator(val);
+        }
+        builder.bind(id);
         return field;
     }
 
@@ -564,7 +602,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         //todo: need to update BigDecimalField to vaadin8
     }
 
-    private String getCaptionFromId(String id) {
+    protected String getCaptionFromId(String id) {
         return StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(id),' ');
     }
 

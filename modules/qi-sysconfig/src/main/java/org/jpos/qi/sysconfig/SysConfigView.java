@@ -18,11 +18,15 @@
 
 package org.jpos.qi.sysconfig;
 
+import com.vaadin.data.Binder;
+import com.vaadin.server.SerializableFunction;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.TextField;
 import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
 import org.jpos.ee.BLException;
+import org.jpos.ee.DB;
 import org.jpos.ee.SysConfig;
 import org.jpos.qi.QIEntityView;
 import org.jpos.qi.QIHelper;
@@ -94,15 +98,15 @@ public class SysConfigView extends QIEntityView {
     @Override
     protected void addFields(Layout l) {
         super.addFields(l);
-        TextField id = new TextField("id");
-        TextField value = new TextField("value");
-
-        getBinder().forField(id).withConverter(
-                converter -> removePrefix(id.getValue()),
-                converter2 -> id.getValue()
-        ).bind("id");
+//        TextField id = new TextField("id");
+//        TextField value = new TextField("value");
+//
+//        getBinder().forField(id).withConverter(
+//                converter -> removePrefix(id.getValue()),
+//                converter2 -> id.getValue()
+//        ).bind("id");
 //        getBinder().bind(value,"value");
-        setRequired(id,value);
+//        setRequired(id,value);
 //        l.addComponents(id,value);
 
 
@@ -119,6 +123,20 @@ public class SysConfigView extends QIEntityView {
     }
 
     @Override
+    protected Component buildAndBindCustomComponent(String propertyId) {
+        if ("id".equals(propertyId)) {
+            TextField id = new TextField(getCaptionFromId(propertyId));
+            Binder<SysConfig> binder = getBinder();
+            binder.forField(id)
+                .withNullRepresentation("")
+                .withConverter(userInputValue -> prefix + "." + userInputValue, toPresentation -> removePrefix(toPresentation))
+            .bind(propertyId);
+            return id;
+        }
+        return null;
+    }
+
+    @Override
     public void setGridGetters() {
         Grid<SysConfig> g = this.getGrid();
         g.addColumn(sysconfig -> removePrefix(sysconfig.getId())).setId("id");
@@ -126,7 +144,9 @@ public class SysConfigView extends QIEntityView {
     }
 
     private String removePrefix (String value) {
-        return prefix != null ? value.substring(prefix.length()) : value;
+        if (value != null && !value.isEmpty())
+            return prefix != null ? value.substring(prefix.length()) : value;
+        return value;
     }
 
     private String addPrefix (String value) {

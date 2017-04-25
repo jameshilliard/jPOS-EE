@@ -18,8 +18,10 @@
 
 package org.jpos.qi.eeuser;
 
+import com.vaadin.ui.CheckBoxGroup;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
-import com.vaadin.ui.Layout;
+import com.vaadin.ui.ItemCaptionGenerator;
 import org.jpos.ee.*;
 import org.jpos.qi.QIEntityView;
 import org.jpos.qi.QIHelper;
@@ -61,29 +63,20 @@ public class RolesView extends QIEntityView {
         return new RolesHelper();
     }
 
-//    @Override
-//    public FieldGroupFieldFactory createFieldFactory() {
-//        return new QIFieldFactory() {
-//            @Override
-//            public <T extends Field> T createField(Class<?> dataType, Class<T> fieldType) {
-//                if (Set.class.equals(dataType)) {
-//                    OptionGroup f = new OptionGroup("Permissions");
-//                    f.setMultiSelect(true);
-//                    f.setNullSelectionAllowed(false);
-//                    for (SysConfig sys : ((RolesHelper)getHelper()).getPermissions()) {
-//                        Permission p = Permission.valueOf(sys.getId().substring(5));
-//                        f.addItem(p);
-//                        f.setItemCaption(p, sys.getValue());
-//                    }
+    @Override
+    protected Component buildAndBindCustomComponent(String propertyId) {
+        if ("permissions".equals(propertyId)) {
+            CheckBoxGroup<SysConfig> f = new CheckBoxGroup("Permissions");
+//            f.setMultiSelect(true);
+//                f.setNullSelectionAllowed(false);
+            f.setItems(((RolesHelper)getHelper()).getPermissions());
+            f.setItemCaptionGenerator((ItemCaptionGenerator<SysConfig>) item -> item.getValue());
+            return f;
+
 //                    f.setImmediate(true);
-//                    return (T) f;
-//                } else {
-//                    Field f = super.createField(dataType, fieldType);
-//                    return (T) f;
-//                }
-//            }
-//        };
-//    }
+        }
+        return null;
+    }
 
     @Override
     public void setGridGetters() {

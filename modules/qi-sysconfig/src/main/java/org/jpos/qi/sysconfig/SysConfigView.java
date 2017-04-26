@@ -129,7 +129,7 @@ public class SysConfigView extends QIEntityView {
             Binder<SysConfig> binder = getBinder();
             binder.forField(id)
                 .withNullRepresentation("")
-                .withConverter(userInputValue -> prefix + "." + userInputValue, toPresentation -> removePrefix(toPresentation))
+                .withConverter(userInputValue -> userInputValue, toPresentation -> removePrefix(toPresentation))
             .bind(propertyId);
             return id;
         }

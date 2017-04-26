@@ -19,17 +19,17 @@
 package org.jpos.qi.sysconfig;
 
 import com.vaadin.data.Binder;
-import com.vaadin.server.SerializableFunction;
+import com.vaadin.data.Validator;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
-import com.vaadin.ui.Layout;
 import com.vaadin.ui.TextField;
 import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
 import org.jpos.ee.BLException;
-import org.jpos.ee.DB;
 import org.jpos.ee.SysConfig;
 import org.jpos.qi.QIEntityView;
 import org.jpos.qi.QIHelper;
+
+import java.util.List;
 
 public class SysConfigView extends QIEntityView {
     private String prefix;
@@ -94,43 +94,17 @@ public class SysConfigView extends QIEntityView {
         idField.setReadOnly(true);
     }
 
-
-    @Override
-    protected void addFields(Layout l) {
-        super.addFields(l);
-//        TextField id = new TextField("id");
-//        TextField value = new TextField("value");
-//
-//        getBinder().forField(id).withConverter(
-//                converter -> removePrefix(id.getValue()),
-//                converter2 -> id.getValue()
-//        ).bind("id");
-//        getBinder().bind(value,"value");
-//        setRequired(id,value);
-//        l.addComponents(id,value);
-
-
-//        Field id = (Field) fieldGroup.getField("id");
-
-//        String idValue = (String) fieldGroup.getItemDataSource().getItemProperty("id").getValue();
-//        //Hide prefix
-//        if (idValue != null) { //Means it is not a new sysconfig entry
-//            id.setReadOnly(false);
-//            idValue = prefix != null ? idValue.substring(prefix.length()) : idValue;
-//            id.setValue(idValue);
-//            id.setReadOnly(true);
-//        }
-    }
-
     @Override
     protected Component buildAndBindCustomComponent(String propertyId) {
         if ("id".equals(propertyId)) {
+            List<Validator> validators = getValidators(propertyId);
             TextField id = new TextField(getCaptionFromId(propertyId));
             Binder<SysConfig> binder = getBinder();
-            binder.forField(id)
+            Binder.BindingBuilder builder = binder.forField(id)
                 .withNullRepresentation("")
-                .withConverter(userInputValue -> userInputValue, toPresentation -> removePrefix(toPresentation))
-            .bind(propertyId);
+                .withConverter(userInputValue -> userInputValue, toPresentation -> removePrefix(toPresentation));
+            validators.forEach(builder::withValidator);
+            builder.bind(propertyId);
             return id;
         }
         return null;

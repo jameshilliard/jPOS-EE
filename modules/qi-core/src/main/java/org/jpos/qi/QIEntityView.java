@@ -498,6 +498,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
     }
 
     //Override on specific views to create a custom field for a certain property, or to add validators.
+    // Do not forget to getValidators and add them.
     protected Component buildAndBindCustomComponent(String propertyId) {
         return null;
     }

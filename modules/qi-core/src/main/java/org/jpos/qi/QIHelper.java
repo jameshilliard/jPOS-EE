@@ -95,22 +95,16 @@ public abstract class QIHelper {
         this.app = app;
     }
 
-    public boolean removeEntity(BeanFieldGroup fieldGroup) throws BLException {
-        BeanItem item = fieldGroup.getItemDataSource();
-        Object t = item.getBean();
-        if ( t!=null ) {
-            try {
-                DB.execWithTransaction(db -> {
-                    db.session().delete(t);
-                    addRevisionRemoved(db, getEntityName(), String.valueOf(item.getItemProperty("id").getValue()));
-                    return null;
-                });
-            } catch (Exception e) {
-                throw new BLException(e.getMessage());
-            }
-            return true;
+    public boolean removeEntity(Object entity) throws BLException {
+        try {
+            return (boolean) DB.execWithTransaction(db -> {
+                db.session().delete(entity);
+                addRevisionRemoved(db, getEntityName(), String.valueOf(getItemId(entity)));
+                return true;
+            });
+        } catch (Exception e) {
+            throw new BLException(e.getMessage());
         }
-        return false;
     }
 
     public boolean saveEntity(Object entity) throws BLException {

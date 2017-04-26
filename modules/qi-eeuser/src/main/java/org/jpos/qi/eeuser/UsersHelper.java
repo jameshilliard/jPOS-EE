@@ -157,10 +157,9 @@ public class UsersHelper extends QIHelper {
 
 
     @Override
-    public boolean removeEntity (BeanFieldGroup fieldGroup) {
+    public boolean removeEntity (Object entity) {
         //Users have a deleted flag, they are not completely removed.
-        BeanItem item = fieldGroup.getItemDataSource();
-        User t = (User) item.getBean();
+        User t = (User) entity;
         try {
             return t != null && (boolean) DB.execWithTransaction((db) -> {
                 User user = db.session().get(User.class, t.getId());

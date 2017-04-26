@@ -347,14 +347,13 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         removeBtn.addClickListener(event -> app.addWindow(new ConfirmDialog(
                         app.getMessage("confirmTitle"),
                         app.getMessage("removeConfirmationMessage"),
-                null
-//                        confirm -> {
-//                            if (confirm) {
-//                                removeEntity(fieldGroup);
-//                            }
-//                        }
-//        )
-        )));
+                        confirm -> {
+                            if (confirm) {
+                                removeEntity(getBinder().getBean());
+                            }
+                        }
+        )
+        ));
         removeBtn.addStyleName("icon-trash");
 
         cancelBtn.addClickListener(event -> {
@@ -391,7 +390,6 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         return profileLayout;
     }
     protected void cancelClick(Button.ClickEvent event, Layout formLayout) {
-//        fieldGroup.discard();
         //todo: find how to discard
 //        binder.readBean(binder.getBean());
         binder.setReadOnly(true);
@@ -413,10 +411,10 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
                     getApp().displayNotification(e.getDetailedMessage());
                     return false;
                 }
-            else
+            else {
                 //TODO: implement
                 System.out.println("-------------> SHOULD UPDATE");
-
+            }
         }
 
         binder.setReadOnly(true);
@@ -527,33 +525,6 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         return validators;
     }
 
-//    protected void addValidators () {
-//        fieldGroup.getFields().forEach(this::addValidators);
-//    }
-//
-//    protected void addValidators (Field field) {
-//        if (field != null) {
-//            String propertyId = (String) fieldGroup.getPropertyId(field);
-//            ViewConfig.FieldConfig config = viewConfig.getFields().get(propertyId);
-//            if (config != null) {
-//                String regex = config.getRegex();
-//                int length = config.getLength();
-//                String[] options = config.getOptions();
-//                if (options != null) {
-//                    //Change the field to a OptionGroup loaded with the options
-//                    OptionGroup optionGroup = new OptionGroup(field.getCaption(),Arrays.asList(options));
-//                    String fieldId = field.getId();
-//                    fieldGroup.unbind(field);
-//                    fieldGroup.bind(optionGroup,fieldId);
-//                }
-//                if (regex != null)
-//                    field.addValidator((Validator) new RegexpValidator(regex, getApp().getMessage("errorMessage.invalidField", field.getCaption())));
-//                if (field instanceof TextField && length > 0)
-//                    ((TextField) field).setMaxLength(length);
-//            }
-//        }
-//    }
-
     protected TextField buildAndBindLongField(String id) {
         TextField field = new TextField(getCaptionFromId(id));
         List<Validator> v = getValidators(id);
@@ -636,8 +607,6 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         return new DateRenderer(dateFormat);
     }
 
-//    public abstract FieldGroupFieldFactory createFieldFactory();
-
     public void setRequired(HasValue... fields) {
         for (HasValue f : fields) {
             getBinder().forMemberField(f).asRequired(getApp().getMessage("errorMessage.req"));
@@ -651,8 +620,8 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
     }
     public abstract QIHelper createHelper ();
 
-    public void removeEntity (BeanFieldGroup fieldGroup) throws BLException {
-        if (getHelper().removeEntity(fieldGroup)) {
+    public void removeEntity (Object entity) throws BLException {
+        if (getHelper().removeEntity(entity)) {
             getApp().getNavigator().navigateTo(getGeneralRoute());
             getApp().displayNotification(getApp().getMessage("removed", getEntityName()));
         }

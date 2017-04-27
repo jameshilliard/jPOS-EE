@@ -18,6 +18,7 @@
 
 package org.jpos.qi.system;
 
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.Layout;
 import com.vaadin.v7.data.fieldgroup.FieldGroupFieldFactory;
 import com.vaadin.v7.event.ItemClickEvent;
@@ -80,24 +81,30 @@ public class RevisionsView extends QIEntityView<Revision> {
         }
     }
 
-    @Override
-    public void formatGrid() {
-        super.formatGrid();
-//        grid.getColumn("info").setRenderer(new HtmlRenderer("")).setMaximumWidth(1000);
-//        grid.getColumn("author").setConverter(((RevisionsHelper)getHelper()).getAuthorConverter("")).setRenderer(new HtmlRenderer(""));
-//        grid.getColumn("ref").setRenderer(new HtmlRenderer("")).setConverter(((RevisionsHelper)getHelper()).getRefConverter(""));
-        getGrid().removeListener((Listener) getGrid().getListeners(ItemClickEvent.class).iterator().next());
-        getGrid().addItemClickListener(event -> {
-
-            if (!"ref,author".contains(event.getColumn().getId())) {
-                String url = getGeneralRoute() + "/" + getGrid().getDataProvider().getId(event.getItem());
-                getApp().getNavigator().navigateTo(url);
-            }
-        });
-    }
+//    @Override
+//    public void formatGrid() {
+//        super.formatGrid();
+////        grid.getColumn("info").setRenderer(new HtmlRenderer("")).setMaximumWidth(1000);
+////        grid.getColumn("author").setConverter(((RevisionsHelper)getHelper()).getAuthorConverter("")).setRenderer(new HtmlRenderer(""));
+////        grid.getColumn("ref").setRenderer(new HtmlRenderer("")).setConverter(((RevisionsHelper)getHelper()).getRefConverter(""));
+////        getGrid().removeListener((Listener) getGrid().getListeners(ItemClickEvent.class).iterator().next());
+//        getGrid().addItemClickListener(event -> {
+//
+//            if (!"ref,author".contains(event.getColumn().getId())) {
+//                String url = getGeneralRoute() + "/" + getGrid().getDataProvider().getId(event.getItem());
+//                getApp().getNavigator().navigateTo(url);
+//            }
+//        });
+//    }
 
     @Override
     public void setGridGetters() {
-
+        Grid<Revision> g = this.getGrid();
+        g.addColumn(Revision::getId).setId("id");
+        g.addColumn(Revision::getInfo).setId("info");
+        g.addColumn(Revision::getRef).setId("ref");
+        g.addColumn(Revision::getAuthor).setId("author");
+        g.addColumn(Revision::getDate).setId("date");
     }
+
 }

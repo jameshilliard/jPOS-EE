@@ -19,10 +19,7 @@
 package org.jpos.qi.system;
 
 import com.vaadin.v7.data.util.converter.Converter;
-import org.jpos.ee.BLException;
-import org.jpos.ee.DB;
-import org.jpos.ee.Revision;
-import org.jpos.ee.User;
+import org.jpos.ee.*;
 import org.jpos.qi.QIHelper;
 import org.jpos.qi.QINavigator;
 import org.jpos.util.UserConverter;
@@ -41,12 +38,19 @@ public class RevisionsHelper extends QIHelper {
 
     @Override
     public Stream getAll(int offset, int limit, Map<String, Boolean> orders) throws Exception {
-        return null;
+        List<Revision> list = (List<Revision>) DB.exec(db -> {
+            RevisionManager mgr = new RevisionManager(db);
+            return mgr.getAll(offset,limit,orders);
+        });
+        return list.stream();
     }
 
     @Override
     public int getItemCount() throws Exception {
-        return 0;
+        return (int) DB.exec(db -> {
+            RevisionManager mgr = new RevisionManager(db);
+            return mgr.getItemCount();
+        });
     }
 
     @Override

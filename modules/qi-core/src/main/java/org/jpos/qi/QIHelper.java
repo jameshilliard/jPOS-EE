@@ -22,10 +22,7 @@ import com.vaadin.data.provider.CallbackDataProvider;
 import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.provider.QuerySortOrder;
 import com.vaadin.shared.data.sort.SortDirection;
-import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.ui.UI;
-import com.vaadin.v7.data.fieldgroup.FieldGroup;
-import com.vaadin.v7.data.util.BeanItem;
 import org.jpos.core.Configuration;
 import org.jpos.ee.*;
 import org.jpos.util.BeanDiff;
@@ -150,8 +147,8 @@ public abstract class QIHelper {
         }
     }
 
-    public abstract boolean updateEntity(BeanFieldGroup fieldGroup) throws
-            BLException, CloneNotSupportedException;
+    public abstract boolean updateEntity(Object entity) throws
+            BLException;
 
 
     public DataProvider getDataProvider() {

@@ -87,6 +87,18 @@ public class SysConfigManager {
         return defaultValue;
     }
 
+    public SysConfig getObject(String name) {
+        try {
+            if (prefix != null)
+                name = prefix + name;
+            SysConfig cfg = db.session().get (SysConfig.class, name);
+            return cfg;
+        } catch (HibernateException e) {
+            db.getLog().warn (e);
+        }
+        return null;
+    }
+
     public boolean delete (String name) {
         try {
             if (prefix != null)

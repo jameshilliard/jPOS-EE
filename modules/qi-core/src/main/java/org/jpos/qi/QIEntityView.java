@@ -412,8 +412,12 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
                     return false;
                 }
             else {
-                //TODO: implement
-                System.out.println("-------------> SHOULD UPDATE");
+                try {
+                    updateEntity(getBinder().getBean());
+                } catch (BLException e) {
+                    getApp().displayNotification(e.getDetailedMessage());
+                    return false;
+                }
             }
         }
 
@@ -620,14 +624,14 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
     }
     public abstract QIHelper createHelper ();
 
-    public void removeEntity (Object entity) throws BLException {
+    public void removeEntity (T entity) throws BLException {
         if (getHelper().removeEntity(entity)) {
             getApp().getNavigator().navigateTo(getGeneralRoute());
             getApp().displayNotification(getApp().getMessage("removed", getEntityName()));
         }
     }
 
-    public void saveEntity (Object entity) throws BLException {
+    public void saveEntity (T entity) throws BLException {
         if (getHelper().saveEntity(entity)) {
             app.displayNotification(app.getMessage("created", getEntityName().toUpperCase()));
             app.getNavigator().navigateTo(getGeneralRoute());
@@ -642,8 +646,8 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         return getHelper().getEntityName();
     }
 
-    public void updateEntity (BeanFieldGroup fieldGroup) throws BLException, CloneNotSupportedException {
-        if (getHelper().updateEntity(fieldGroup))
+    public void updateEntity (T entity) throws BLException {
+        if (getHelper().updateEntity(entity))
             getApp().displayNotification(getApp().getMessage("updated", getEntityName().toUpperCase()));
         else
             getApp().displayNotification(getApp().getMessage("notchanged"));

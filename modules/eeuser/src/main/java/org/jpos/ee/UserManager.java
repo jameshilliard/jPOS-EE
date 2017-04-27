@@ -150,6 +150,19 @@ public class UserManager {
         return u;
     }
 
+    public User getUserById(String id, boolean includeDeleted) throws HibernateException {
+        Criteria crit = db.session().createCriteria(User.class)
+                .add(Restrictions.eq("id", id));
+        if (!includeDeleted)
+            crit = crit.add (Restrictions.eq ("deleted", Boolean.FALSE));
+        return (User) crit.uniqueResult();
+    }
+
+    public User getUserById(String id)
+            throws HibernateException {
+        return getUserById(id,false);
+    }
+
     public boolean checkPassword (User u, String clearpass)
             throws HibernateException, BLException
     {

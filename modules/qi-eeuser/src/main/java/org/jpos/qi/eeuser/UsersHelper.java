@@ -19,9 +19,6 @@
 package org.jpos.qi.eeuser;
 
 import com.vaadin.v7.data.Validator;
-import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.v7.data.fieldgroup.FieldGroup;
-import com.vaadin.v7.data.util.BeanItem;
 import com.vaadin.v7.ui.PasswordField;
 import org.hibernate.Criteria;
 import org.jpos.ee.*;
@@ -72,37 +69,24 @@ public class UsersHelper extends QIHelper {
         }
     }
 
-    public boolean updateUser (BeanFieldGroup<User> fieldGroup, String currentPass, String newClearPass) throws BLException, CloneNotSupportedException {
-        BeanItem<User> old = fieldGroup.getItemDataSource();
-        Object oldUser = old.getBean().clone();
-        try {
-            fieldGroup.commit();
-        } catch (FieldGroup.CommitException e) {
-            e.printStackTrace();
-        }
-        BeanItem<User> item = fieldGroup.getItemDataSource();
-        User u = item.getBean();
-        boolean userUpdated = false;
+    public boolean updateUser (User u, String currentPass, String newClearPass) throws BLException {
+        boolean userUpdated;
         try {
             userUpdated = (boolean) DB.execWithTransaction((db) -> {
-                User user = (User) db.session().merge(u);
                 UserManager mgr = new UserManager(db);
+                User oldUser = mgr.getUserById(String.valueOf(u.getId()));
+                User user = (User) db.session().merge(u);
                 boolean updated = false;
                 if (!newClearPass.isEmpty()) {
                     boolean passwordOK = false;
                     boolean newPasswordOK = false;
-                    try {
-                        passwordOK = mgr.checkPassword(user, currentPass);
-                        newPasswordOK = mgr.checkNewPassword(user, newClearPass);
-                        if (passwordOK && newPasswordOK) {
-                            mgr.setPassword(user, newClearPass);
-                            updated = true;
-                        } else if (!newPasswordOK) {
-                            throw new BLException("This password has already been used");
-                        }
-                    } catch (BLException e) {
-                        // do nothing
-                        return false;
+                    passwordOK = mgr.checkPassword(user, currentPass);
+                    newPasswordOK = mgr.checkNewPassword(user, newClearPass);
+                    if (passwordOK && newPasswordOK) {
+                        mgr.setPassword(user, newClearPass);
+                        updated = true;
+                    } else if (!newPasswordOK) {
+                        throw new BLException("This password has already been used");
                     }
                 }
                 updated = updated || addRevisionUpdated(db, getEntityName(),
@@ -112,6 +96,8 @@ public class UsersHelper extends QIHelper {
                         new String[]{"nick", "name", "email", "active", "roles", "password"});
                 return updated;
             });
+        } catch (BLException e) {
+            throw e;
         } catch (Exception e) {
             getApp().getLog().error(e);
             return false;
@@ -176,7 +162,7 @@ public class UsersHelper extends QIHelper {
     }
 
     @Override
-    public boolean updateEntity(BeanFieldGroup fieldGroup) throws BLException, CloneNotSupportedException {
+    public boolean updateEntity(Object entity) throws BLException {
         //NOT USED
         return false;
     }

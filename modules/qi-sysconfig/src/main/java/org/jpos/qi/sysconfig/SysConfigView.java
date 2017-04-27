@@ -23,7 +23,6 @@ import com.vaadin.data.Validator;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.TextField;
-import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
 import org.jpos.ee.BLException;
 import org.jpos.ee.SysConfig;
 import org.jpos.qi.QIEntityView;
@@ -31,7 +30,7 @@ import org.jpos.qi.QIHelper;
 
 import java.util.List;
 
-public class SysConfigView extends QIEntityView {
+public class SysConfigView extends QIEntityView<SysConfig> {
     private String prefix;
 
     public SysConfigView (String name, String prefix) {
@@ -78,20 +77,21 @@ public class SysConfigView extends QIEntityView {
     }
 
     @Override
-    public void updateEntity(BeanFieldGroup fieldGroup) throws CloneNotSupportedException, BLException {
-        String idValue = (String) fieldGroup.getField("id").getValue();
-        idValue = addPrefix(idValue);
-        TextField idField = (TextField)fieldGroup.getField("id");
-        idField.setReadOnly(false);
-        idField.setValue(idValue);
-        idField.setReadOnly(true);
-        if (getHelper().updateEntity(fieldGroup))
+    public void updateEntity(SysConfig entity) throws BLException {
+//        String idValue = entity.getId();
+//        idValue = addPrefix(idValue);
+        entity.setId(addPrefix(entity.getId()));
+//        TextField idField = (TextField)fieldGroup.getField("id");
+//        idField.setReadOnly(false);
+//        idField.setValue(idValue);
+//        idField.setReadOnly(true);
+        if (getHelper().updateEntity(entity))
             getApp().displayNotification(getApp().getMessage("updated", getEntityName().toUpperCase()));
         else
             getApp().displayNotification(getApp().getMessage("notchanged"));
-        idField.setReadOnly(false);
-        idField.setValue(removePrefix(idValue));
-        idField.setReadOnly(true);
+//        idField.setReadOnly(false);
+//        idField.setValue(removePrefix(idValue));
+//        idField.setReadOnly(true);
     }
 
     @Override

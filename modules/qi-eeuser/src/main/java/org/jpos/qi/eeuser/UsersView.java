@@ -86,7 +86,7 @@ public class UsersView extends QIEntityView<User> {
     }
 
     @Override
-    public void saveEntity(Object entity) throws BLException {
+    public void saveEntity(User entity) throws BLException {
         QI app = getApp();
         String generatedPassword = PasswordGenerator.generateRandomPassword();
         ((UsersHelper) getHelper()).saveUser(getBinder().getBean(), generatedPassword);
@@ -96,7 +96,7 @@ public class UsersView extends QIEntityView<User> {
     }
 
     @Override
-    public void updateEntity(BeanFieldGroup fieldGroup) throws CloneNotSupportedException, BLException
+    public void updateEntity(User entity) throws BLException
     {
         String current = "";
         String repeat = "";
@@ -106,10 +106,10 @@ public class UsersView extends QIEntityView<User> {
             current = currentPass != null ? (String) currentPass.getValue() : "";
             repeat = repeatPass != null ? (String) repeatPass.getValue() : "";
         }
-        if (((UsersHelper)getHelper()).updateUser(fieldGroup, current, repeat)){
+        if (((UsersHelper)getHelper()).updateUser(entity, current, repeat)){
             getApp().displayNotification(getApp().getMessage("updated", getEntityName().toUpperCase()));
-            if (getApp().getUser().equals(fieldGroup.getItemDataSource().getBean())) {
-                getApp().getUser().setName(((User) fieldGroup.getItemDataSource().getBean()).getName());
+            if (getApp().getUser().equals(getBinder().getBean())) {
+                getApp().getUser().setName(getBinder().getBean().getName());
                 getApp().getHeader().refresh();
             }
         }

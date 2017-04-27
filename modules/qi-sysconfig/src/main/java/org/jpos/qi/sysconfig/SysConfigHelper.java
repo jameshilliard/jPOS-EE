@@ -51,23 +51,23 @@ public class SysConfigHelper extends QIHelper {
     }
 
     @Override
-    public boolean updateEntity (BeanFieldGroup fieldGroup) throws
-            BLException, CloneNotSupportedException
-    {
-        BeanItem<SysConfig> old = fieldGroup.getItemDataSource();
-        Object oldSysConfig = old.getBean().clone();
-        try {
-            fieldGroup.commit();
-        } catch (FieldGroup.CommitException e) {
-            e.printStackTrace();
-        }
-        BeanItem<SysConfig> item = fieldGroup.getItemDataSource();
-        SysConfig s = item.getBean();
+    public boolean updateEntity (Object s) throws BLException {
+//        BeanItem<SysConfig> old = fieldGroup.getItemDataSource();
+//        Object oldSysConfig = old.getBean().clone();
+//        try {
+//            fieldGroup.commit();
+//        } catch (FieldGroup.CommitException e) {
+//            e.printStackTrace();
+//        }
+//        BeanItem<SysConfig> item = fieldGroup.getItemDataSource();
+//        SysConfig s = item.getBean();
         try {
             return (boolean) DB.execWithTransaction((db) -> {
+                SysConfigManager mgr = new SysConfigManager(db);
+                SysConfig oldSysConfig = mgr.getObject(((SysConfig)s).getId());
                 db.session().merge(s);
                 return addRevisionUpdated(db, getEntityName(),
-                        String.valueOf(s.getId()),
+                        String.valueOf(((SysConfig)s).getId()),
                         oldSysConfig,
                         s,
                         new String[]{"id", "value"});

@@ -41,9 +41,6 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.shared.ui.MarginInfo;
 
-//------Compatibility imports. Will be changed----------
-//-------------------------------------------------------
-
 import org.apache.commons.lang3.StringUtils;
 import org.jpos.core.Configurable;
 import org.jpos.core.Configuration;

@@ -19,13 +19,8 @@
 package org.jpos.qi;
 
 
-import com.vaadin.ui.Layout;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.UI;
-import com.vaadin.v7.shared.ui.label.ContentMode;
-import com.vaadin.v7.ui.HorizontalLayout;
-import com.vaadin.v7.ui.Label;
-import com.vaadin.v7.ui.VerticalLayout;
+import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.ui.*;
 import org.jpos.ee.DB;
 import org.jpos.ee.Revision;
 import org.jpos.ee.RevisionManager;

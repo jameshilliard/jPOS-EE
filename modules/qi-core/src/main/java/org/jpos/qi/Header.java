@@ -19,12 +19,8 @@
 package org.jpos.qi;
 
 import com.vaadin.ui.*;
-import com.vaadin.v7.data.validator.RegexpValidator;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.v7.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
-import com.vaadin.v7.ui.HorizontalLayout;
-import com.vaadin.v7.ui.TextField;
 import org.jdom2.Element;
 
 public class Header extends HorizontalLayout {
@@ -70,17 +66,17 @@ public class Header extends HorizontalLayout {
         searchField.addStyleName("tiny");
         searchField.setIcon(FontAwesome.SEARCH);
         searchField.setWidth("400px");
-        searchField.setImmediate(true);
-        searchField.addValidator(new RegexpValidator(
-            QIResources.ALPHANUMERIC_SYMBOLS_PATTERN,
-            app.getMessage("errorMessage.invalidField", app.getMessage("search"))
-        ));
-        searchField.setValidationVisible(false);
+        //TODO: vaadin8 incompatible methods
+//        searchField.setImmediate(true);
+//        searchField.addValidator(new RegexpValidator(
+//            app.getMessage("errorMessage.invalidField", app.getMessage("search")),QIResources.ALPHANUMERIC_SYMBOLS_PATTERN)
+//        );
+//        searchField.setValidationVisible(false);
         group.addComponent(searchField);
 
         Button searchButton = new Button(app.getMessage("search"));
         searchButton.addClickListener(event -> {
-            if (searchField.getValue() != null && !searchField.getValue().isEmpty() && searchField.isValid())
+            if (searchField.getValue() != null && !searchField.getValue().isEmpty() /*&& searchField.isValid()*/)
                 app.getNavigator().navigateTo("/search/" + searchField.getValue());
             else
                 app.displayNotification(app.getMessage("errorMessage.invalidField", app.getMessage("search")));

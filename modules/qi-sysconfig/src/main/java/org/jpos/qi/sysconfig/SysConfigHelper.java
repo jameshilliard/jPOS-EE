@@ -18,10 +18,6 @@
 
 package org.jpos.qi.sysconfig;
 
-
-    import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.v7.data.fieldgroup.FieldGroup;
-import com.vaadin.v7.data.util.BeanItem;
 import org.jpos.ee.BLException;
 import org.jpos.ee.DB;
 import org.jpos.ee.SysConfig;
@@ -52,15 +48,6 @@ public class SysConfigHelper extends QIHelper {
 
     @Override
     public boolean updateEntity (Object s) throws BLException {
-//        BeanItem<SysConfig> old = fieldGroup.getItemDataSource();
-//        Object oldSysConfig = old.getBean().clone();
-//        try {
-//            fieldGroup.commit();
-//        } catch (FieldGroup.CommitException e) {
-//            e.printStackTrace();
-//        }
-//        BeanItem<SysConfig> item = fieldGroup.getItemDataSource();
-//        SysConfig s = item.getBean();
         try {
             return (boolean) DB.execWithTransaction((db) -> {
                 SysConfigManager mgr = new SysConfigManager(db);

@@ -30,6 +30,9 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.renderers.DateRenderer;
+import com.vaadin.ui.renderers.NumberRenderer;
+import com.vaadin.ui.renderers.Renderer;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.shared.ui.ContentMode;
 
@@ -39,10 +42,6 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.shared.ui.MarginInfo;
 
 //------Compatibility imports. Will be changed----------
-import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.v7.ui.renderers.DateRenderer;
-import com.vaadin.v7.ui.renderers.NumberRenderer;
-import com.vaadin.v7.ui.renderers.Renderer;
 //-------------------------------------------------------
 
 import org.apache.commons.lang3.StringUtils;
@@ -301,7 +300,8 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
             profileLayout.setComponentAlignment(back, Alignment.MIDDLE_LEFT);
         }
 
-        binder = new Binder<T>(clazz) {
+        binder = new Binder<T>(clazz)
+        {
             @Override
             public void setReadOnly (boolean readOnly) {
                 super.setReadOnly(readOnly);
@@ -309,8 +309,10 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
                     for (String fieldId : readOnlyFields) {
                         if (binder.getBinding(fieldId).isPresent()) {
                             HasValue field = binder.getBinding(fieldId).get().getField();
-                            if (field != null && field.getValue() != null)
-                                field.setReadOnly(readOnly);
+                            if (field != null && !field.isEmpty()) {
+                                field.setReadOnly(true);
+                                binder.bind(field, fieldId);
+                            }
                         }
 
                     }
@@ -505,6 +507,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         return null;
     }
 
+    //Reads regex and length from 00_qi.xml
     //Override to add more customValidators
     protected List<Validator> getValidators(String propertyId) {
         List<Validator> validators = new ArrayList<>();
@@ -582,7 +585,6 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         return StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(id),' ');
     }
 
-
     private void loadRevisionHistory (Layout formLayout, String ref) {
         DB db = new DB();
         db.open();
@@ -609,14 +611,6 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
     public Renderer createTimestampRenderer () {
         DateFormat dateFormat     = new SimpleDateFormat(getApp().getMessage("timestampformat"));
         return new DateRenderer(dateFormat);
-    }
-
-    public void setRequired(HasValue... fields) {
-        for (HasValue f : fields) {
-            getBinder().forMemberField(f).asRequired(getApp().getMessage("errorMessage.req"));
-//            f.setRequired(true);
-//            f.setRequiredError(getApp().getMessage("errorMessage.req",f.getCaption()));
-        }
     }
 
     public Object createNewEntity (){

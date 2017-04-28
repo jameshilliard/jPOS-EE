@@ -618,7 +618,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
     public void removeEntity (T entity) throws BLException {
         if (getHelper().removeEntity(entity)) {
             getApp().getNavigator().navigateTo(getGeneralRoute());
-            getApp().displayNotification(getApp().getMessage("removed", getEntityName()));
+            getApp().displayNotification(getApp().getMessage("removed", getEntityName().toUpperCase()));
         }
     }
 

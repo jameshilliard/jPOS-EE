@@ -19,16 +19,10 @@
 package org.jpos.qi.system;
 
 import com.vaadin.ui.Grid;
-import com.vaadin.ui.Layout;
-import com.vaadin.v7.data.fieldgroup.FieldGroupFieldFactory;
-import com.vaadin.v7.event.ItemClickEvent;
-import com.vaadin.v7.ui.Field;
+import com.vaadin.ui.renderers.HtmlRenderer;
 import org.jpos.ee.Revision;
-import org.jpos.ee.User;
 import org.jpos.qi.QIEntityView;
 import org.jpos.qi.QIHelper;
-import org.jpos.qi.ReadOnlyField;
-import org.jpos.qi.components.QIFieldFactory;
 
 
 /**
@@ -85,9 +79,14 @@ public class RevisionsView extends QIEntityView<Revision> {
 //    public void formatGrid() {
 //        super.formatGrid();
 ////        grid.getColumn("info").setRenderer(new HtmlRenderer("")).setMaximumWidth(1000);
-////        grid.getColumn("author").setConverter(((RevisionsHelper)getHelper()).getAuthorConverter("")).setRenderer(new HtmlRenderer(""));
+////
+//        grid.getColumn("author").setConverter(((RevisionsHelper)getHelper()).getAuthorConverter("")).setRenderer(new HtmlRenderer(""));
+
+
 ////        grid.getColumn("ref").setRenderer(new HtmlRenderer("")).setConverter(((RevisionsHelper)getHelper()).getRefConverter(""));
-////        getGrid().removeListener((Listener) getGrid().getListeners(ItemClickEvent.class).iterator().next());
+///
+//
+// /        getGrid().removeListener((Listener) getGrid().getListeners(ItemClickEvent.class).iterator().next());
 //        getGrid().addItemClickListener(event -> {
 //
 //            if (!"ref,author".contains(event.getColumn().getId())) {
@@ -102,9 +101,13 @@ public class RevisionsView extends QIEntityView<Revision> {
         Grid<Revision> g = this.getGrid();
         g.addColumn(Revision::getId).setId("id");
         g.addColumn(Revision::getInfo).setId("info");
-        g.addColumn(Revision::getRef).setId("ref");
-        g.addColumn(Revision::getAuthor).setId("author");
+        g.addColumn(revision ->
+                ((RevisionsHelper)getHelper()).getLink(revision.getRef(),""), new HtmlRenderer("")).setId("ref");
+        g.addColumn(revision ->
+            ((RevisionsHelper)getHelper()).getAuthorLink(revision.getAuthor().getNickAndId(),"")
+        ,new HtmlRenderer("")).setId("author");
         g.addColumn(Revision::getDate).setId("date");
+
     }
 
 }

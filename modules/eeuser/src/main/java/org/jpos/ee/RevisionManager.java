@@ -62,6 +62,8 @@ public class RevisionManager {
         CriteriaBuilder criteriaBuilder = db.session().getCriteriaBuilder();
         CriteriaQuery<Revision> query = criteriaBuilder.createQuery(Revision.class);
         Root<Revision> root = query.from(Revision.class);
+        // To avoid LazyInitializationExc
+        root.fetch("author");
         List<javax.persistence.criteria.Order> orderList = new ArrayList<>();
         //ORDERS
         for (Map.Entry<String,Boolean> entry : orders.entrySet()) {

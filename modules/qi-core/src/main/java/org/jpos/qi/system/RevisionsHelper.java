@@ -18,11 +18,10 @@
 
 package org.jpos.qi.system;
 
-import com.vaadin.v7.data.util.converter.Converter;
+import org.apache.commons.lang3.StringUtils;
 import org.jpos.ee.*;
 import org.jpos.qi.QIHelper;
 import org.jpos.qi.QINavigator;
-import org.jpos.util.UserConverter;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -80,10 +79,11 @@ public class RevisionsHelper extends QIHelper {
 
     protected String getLink(String ref, String currentRevision) {
         String[] data = ref.split("\\.");
-        if (data.length == 2) {
+        if (data.length >= 2) {
             String backRoute = "revision_history" + (!currentRevision.isEmpty() ? "." + currentRevision : "");
-            String id = data[1];
-            String route = ((QINavigator) getApp().getNavigator()).getRouteForEntity(data[0]);
+            String entity = data[0];
+            String id = StringUtils.remove(ref,entity + ".");
+            String route = ((QINavigator) getApp().getNavigator()).getRouteForEntity(entity);
             if (route != null)
                 return "<a href=\"#!/" + route + "/" + id + "?back=" +  backRoute +"\">" + ref + "</a>";
         }
@@ -97,43 +97,43 @@ public class RevisionsHelper extends QIHelper {
     }
 
 
-    protected Converter getRefConverter(String currentRevision) {
-        return new Converter<String, String>() {
-            @Override
-            public String convertToModel(String value, Class<? extends String> targetType, Locale locale) throws ConversionException {
-                if (value != null) {
-                    return value.split("<,>")[1];
-                }
-                return "";
-            }
+//    protected Converter getRefConverter(String currentRevision) {
+//        return new Converter<String, String>() {
+//            @Override
+//            public String convertToModel(String value, Class<? extends String> targetType, Locale locale) throws ConversionException {
+//                if (value != null) {
+//                    return value.split("<,>")[1];
+//                }
+//                return "";
+//            }
+//
+//            @Override
+//            public String convertToPresentation(String value, Class<? extends String> targetType, Locale locale) throws ConversionException {
+//                return getLink(value,currentRevision);
+//            }
+//
+//            @Override
+//            public Class<String> getModelType() {
+//                return String.class;
+//            }
+//
+//            @Override
+//            public Class<String> getPresentationType() {
+//                return String.class;
+//            }
+//        };
+//    }
 
-            @Override
-            public String convertToPresentation(String value, Class<? extends String> targetType, Locale locale) throws ConversionException {
-                return getLink(value,currentRevision);
-            }
-
-            @Override
-            public Class<String> getModelType() {
-                return String.class;
-            }
-
-            @Override
-            public Class<String> getPresentationType() {
-                return String.class;
-            }
-        };
-    }
-
-    protected Converter getAuthorConverter(String currentRevision) {
-        return new UserConverter() {
-            @Override
-            public String convertToPresentation(User value, Class<? extends String> targetType, Locale locale) throws ConversionException {
-                if (value == null)
-                    return null;
-                else {
-                    return getAuthorLink(value.getNickAndId(),currentRevision);
-                }
-            }
-        };
-    }
+//    protected Converter getAuthorConverter(String currentRevision) {
+//        return new UserConverter() {
+//            @Override
+//            public String convertToPresentation(User value, Class<? extends String> targetType, Locale locale) throws ConversionException {
+//                if (value == null)
+//                    return null;
+//                else {
+//                    return getAuthorLink(value.getNickAndId(),currentRevision);
+//                }
+//            }
+//        };
+//    }
 }

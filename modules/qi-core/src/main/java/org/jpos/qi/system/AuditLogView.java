@@ -19,7 +19,6 @@
 package org.jpos.qi.system;
 
 import com.vaadin.ui.Grid;
-import com.vaadin.ui.Layout;
 import org.jpos.ee.SysLog;
 import org.jpos.qi.QIEntityView;
 import org.jpos.qi.QIHelper;

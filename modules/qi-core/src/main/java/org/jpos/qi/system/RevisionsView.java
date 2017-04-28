@@ -18,11 +18,17 @@
 
 package org.jpos.qi.system;
 
+import com.vaadin.data.Binder;
+import com.vaadin.data.Validator;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.renderers.HtmlRenderer;
 import org.jpos.ee.Revision;
 import org.jpos.qi.QIEntityView;
 import org.jpos.qi.QIHelper;
+import org.jpos.qi.ReadOnlyField;
+
+import java.util.List;
 
 
 /**
@@ -34,20 +40,6 @@ public class RevisionsView extends QIEntityView<Revision> {
         super(Revision.class, "revision_history");
         setShowRevisionHistoryButton(false);
     }
-
-//    @Override
-//    public FieldGroupFieldFactory createFieldFactory() {
-//        return new QIFieldFactory() {
-//            @Override
-//            public <T extends Field> T createField(Class<?> dataType, Class<T> fieldType) {
-//                ReadOnlyField f = new ReadOnlyField();
-//                if (User.class.equals(dataType)) {
-//                    f.setConverter(((RevisionsHelper)getHelper()).getAuthorConverter(""));
-//                }
-//                return (T) f;
-//            }
-//        };
-//    }
 
     @Override
     public QIHelper createHelper() {
@@ -75,26 +67,24 @@ public class RevisionsView extends QIEntityView<Revision> {
         }
     }
 
-//    @Override
-//    public void formatGrid() {
-//        super.formatGrid();
-////        grid.getColumn("info").setRenderer(new HtmlRenderer("")).setMaximumWidth(1000);
-////
-//        grid.getColumn("author").setConverter(((RevisionsHelper)getHelper()).getAuthorConverter("")).setRenderer(new HtmlRenderer(""));
-
-
-////        grid.getColumn("ref").setRenderer(new HtmlRenderer("")).setConverter(((RevisionsHelper)getHelper()).getRefConverter(""));
-///
-//
-// /        getGrid().removeListener((Listener) getGrid().getListeners(ItemClickEvent.class).iterator().next());
-//        getGrid().addItemClickListener(event -> {
-//
-//            if (!"ref,author".contains(event.getColumn().getId())) {
-//                String url = getGeneralRoute() + "/" + getGrid().getDataProvider().getId(event.getItem());
-//                getApp().getNavigator().navigateTo(url);
-//            }
-//        });
-//    }
+    @Override
+    protected Component buildAndBindCustomComponent(String propertyId) {
+        List<Validator> validators = getValidators(propertyId);
+        ReadOnlyField field = new ReadOnlyField();
+        field.setCaption(getCaptionFromId(propertyId));
+        Binder<Revision> binder = getBinder();
+        Binder.BindingBuilder builder = binder.forField(field)
+                .withNullRepresentation("");
+        if ("author".equals(propertyId)) {
+            //todo: set converter
+        }
+        if ("date".equals(propertyId)) {
+            //todo: set converter
+        }
+        validators.forEach(builder::withValidator);
+        builder.bind(propertyId);
+        return field;
+    }
 
     @Override
     public void setGridGetters() {

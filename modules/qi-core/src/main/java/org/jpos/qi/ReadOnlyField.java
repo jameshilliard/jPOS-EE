@@ -24,7 +24,7 @@ import com.vaadin.ui.CustomField;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
-public class ReadOnlyField extends CustomField<String> {
+public class ReadOnlyField extends CustomField<Object> {
     private Label label;
 
     public ReadOnlyField() {
@@ -35,9 +35,9 @@ public class ReadOnlyField extends CustomField<String> {
     }
 
     @Override
-    protected void doSetValue(String value) {
+    protected void doSetValue(Object value) {
         if (value != null)
-            label.setValue(value);
+            label.setValue(String.valueOf(value));
     }
 
     @Override

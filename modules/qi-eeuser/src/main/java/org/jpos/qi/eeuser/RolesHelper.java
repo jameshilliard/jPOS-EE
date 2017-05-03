@@ -18,10 +18,9 @@
 
 package org.jpos.qi.eeuser;
 
-import com.vaadin.v7.data.Validator;
-import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.v7.data.fieldgroup.FieldGroup;
-import com.vaadin.v7.data.util.BeanItem;
+import com.vaadin.data.ValidationResult;
+import com.vaadin.data.Validator;
+import com.vaadin.data.ValueContext;
 import org.jpos.ee.*;
 import org.jpos.qi.QIHelper;
 
@@ -98,23 +97,16 @@ public class RolesHelper extends QIHelper {
             return null;
         }
     }
-
-    public Validator getNameTakenValidator(final Role selectedR) {
-        Validator nameTaken = new Validator() {
-            public boolean isValid(Object value) {
-                String oldName = selectedR.getName();
-                if (oldName!= null)
-                    return getRoleByName((String) value) == null || oldName.trim().equals(((String) value).trim());
-                else
-                    return getRoleByName((String) value) == null;
-            }
-            public void validate(Object value) throws InvalidValueException {
-                if (!isValid(value)) {
-                    throw new Validator.InvalidValueException(getApp().getMessage("errorMessage.fieldTaken",value));
-
-                }
-            }
-        };
-        return nameTaken;
-    }
+//
+//    public Validator getNameTakenValidator(final Role selectedR) {
+//        Validator nameTaken = (Validator) (value, context) -> {
+//            String oldName = selectedR.getName();
+//            Role role = getRoleByName((String)value);
+//            if (role == null || (oldName != null && oldName.trim().equals(((String) value).trim()))) {
+//                return ValidationResult.ok();
+//            }
+//            return ValidationResult.error(getApp().getMessage("errorMessage.fieldTaken",value));
+//        };
+//        return nameTaken;
+//    }
 }

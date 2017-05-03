@@ -18,28 +18,23 @@
 
 package org.jpos.qi.eeuser;
 
-import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.ui.*;
 
 import com.vaadin.ui.Grid;
-import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.v7.data.fieldgroup.FieldGroup;
-import com.vaadin.v7.data.fieldgroup.FieldGroupFieldFactory;
 import com.vaadin.v7.data.util.ObjectProperty;
 import com.vaadin.v7.data.util.PropertysetItem;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.v7.ui.Field;
-import com.vaadin.v7.ui.OptionGroup;
 
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.ui.PasswordField;
 import com.vaadin.v7.ui.VerticalLayout;
 import org.jpos.ee.*;
 import org.jpos.qi.*;
-import org.jpos.qi.components.QIFieldFactory;
 import org.jpos.util.PasswordGenerator;
 
-import java.util.Set;
+
 
 public class UsersView extends QIEntityView<User> {
 

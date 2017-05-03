@@ -18,7 +18,6 @@
 
 package org.jpos.qi;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.data.ValueContext;

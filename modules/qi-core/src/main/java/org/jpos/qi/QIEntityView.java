@@ -21,6 +21,7 @@ package org.jpos.qi;
 import com.vaadin.data.Binder;
 import com.vaadin.data.HasValue;
 import com.vaadin.data.Validator;
+import com.vaadin.data.ValueProvider;
 import com.vaadin.data.converter.StringToLongConverter;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.data.validator.StringLengthValidator;
@@ -42,6 +43,7 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.shared.ui.MarginInfo;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.xpath.operations.Bool;
 import org.jpos.core.Configurable;
 import org.jpos.core.Configuration;
 import org.jpos.ee.BLException;
@@ -223,13 +225,13 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         nf.setGroupingUsed(false);
 
         Iterator<Grid.Column> it = grid.getColumns().iterator();
+        DateRenderer dateRenderer = new DateRenderer(getDateFormat());
         while (it.hasNext()) {
-            Grid.Column c = it.next();
+            Grid.Column c  = it.next();
             String columnId = c.getId();
             if (!Arrays.asList(getVisibleColumns()).contains(columnId)) {
                 grid.removeColumn(columnId);
             } else {
-                //todo: read sortable from xml and set to false. Default: true
                 c.setCaption(columnId)
                         .setSortProperty(columnId)
                         .setSortable(true)
@@ -240,42 +242,46 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
                     if (config.getExpandRatio() != -1)
                         c.setExpandRatio(config.getExpandRatio());
                 }
-            //TODO: find a way to do this on vaadin8
-//        grid.setCellStyleGenerator(cellReference -> {
-//            if (cellReference.getValue() instanceof BigDecimal)
-//                return "align-right";
-//            return null;
-//        });
-
-//        //fix for when a manual resize is done, the last column takes the empty space.
-//        grid.addColumnResizeListener(event -> {
-//            int lastColumnIndex = grid.getColumns().size()-1;
-//            ((Grid.Column)grid.getColumns().get(lastColumnIndex)).setWidth(1500);
-//        });
-//        if (grid.getColumn("id") != null && !String.class.equals(grid.getContainerDataSource().getType("id")))
-//            grid.getColumn("id").setRenderer(new NumberRenderer(nf));
-
+                c.setStyleGenerator(obj -> {
+                    Object value = c.getValueProvider().apply(obj);
+                    if (value instanceof BigDecimal) {
+                        return "align-right";
+                    } else if (value instanceof Date) {
+                        c.setRenderer(dateRenderer);
+                    } else if (c.getId().equals("id") && !(value instanceof String)) {
+                        c.setRenderer(new NumberRenderer(nf));
+                    }
+                    return null;
+                });
                 if ("id".equals(c.getId())) {
                     c.setExpandRatio(0);
-//            } else if (isBooleanColumn(c)) {
-//                c.setExpandRatio(0);
-////                c.setConverter(new StringToBooleanConverter("✔", "✘"));
-//            } else if (isDateColumn(c)) {
-////                c.setRenderer(new DateRenderer(getDateFormat()));
+//                } else if (isBooleanColumn(c)) {
+//                    c.setExpandRatio(0);
+//                    c.setConverter(new StringToBooleanConverter("✔", "✘"));
                 } else {
                     c.setExpandRatio(1);
                 }
             }
 
         }
+        //fix for when a manual resize is done, the last column takes the empty space.
+        grid.addColumnResizeListener(event -> {
+            int lastColumnIndex = grid.getColumns().size()-1;
+            ((Grid.Column)grid.getColumns().get(lastColumnIndex)).setWidth(1500);
+        });
         grid.setSizeFull();
     }
-
+//
 //    private boolean isBooleanColumn (Grid.Column c) {
-//        return c.getConverter() != null && StringToBooleanConverter.class.equals(c.getConverter().getClass());
+//        Object value = c.getValueProvider().apply();
+//        return (value instanceof Boolean);
+//
+////        return c.getConverter() != null && StringToBooleanConverter.class.equals(c.getConverter().getClass());
 //    }
 //
 //    private boolean isDateColumn (Grid.Column c) {
+//        Object value = c.getValueProvider().apply(c.getStyleGenerator());
+//        return (value instanceof Date);
 ////        return c.getConverter() != null && StringToDateConverter.class.equals(c.getConverter().getClass());
 //    }
 

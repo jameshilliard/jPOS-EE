@@ -185,7 +185,10 @@ public class SysConfigManager {
     public int getItemCount() throws Exception {
         CriteriaBuilder criteriaBuilder = db.session().getCriteriaBuilder();
         CriteriaQuery<Long> query = criteriaBuilder.createQuery(Long.class);
-        query.select(criteriaBuilder.count(query.from(SysConfig.class)));
+        Root<SysConfig> root = query.from(SysConfig.class);
+        Predicate prefixLike = criteriaBuilder.like(root.get("id"), prefix + "%");
+        query.where(prefixLike);
+        query.select(criteriaBuilder.count(root));
         return db.session().createQuery(query).getSingleResult().intValue();
     }
 

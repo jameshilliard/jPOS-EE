@@ -18,6 +18,8 @@
 
 package org.jpos.qi.eeuser;
 
+import com.vaadin.data.Binder;
+import com.vaadin.data.Validator;
 import com.vaadin.ui.CheckBoxGroup;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
@@ -25,6 +27,9 @@ import com.vaadin.ui.ItemCaptionGenerator;
 import org.jpos.ee.*;
 import org.jpos.qi.QIEntityView;
 import org.jpos.qi.QIHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class RolesView extends QIEntityView {
@@ -65,15 +70,22 @@ public class RolesView extends QIEntityView {
 
     @Override
     protected Component buildAndBindCustomComponent(String propertyId) {
+        List<Validator> validators = getValidators(propertyId);
         if ("permissions".equals(propertyId)) {
-            CheckBoxGroup<SysConfig> f = new CheckBoxGroup("Permissions");
-//            f.setMultiSelect(true);
-//                f.setNullSelectionAllowed(false);
-            f.setItems(((RolesHelper)getHelper()).getPermissions());
-            f.setItemCaptionGenerator((ItemCaptionGenerator<SysConfig>) item -> item.getValue());
+            CheckBoxGroup<Permission> f = new CheckBoxGroup("Permissions");
+            SysConfig[] sysconfigs = ((RolesHelper)getHelper()).getPermissions();
+            List<Permission> allPermissions = new ArrayList<>();
+            //convert SysConfigs to Permissions
+            for (SysConfig sys : sysconfigs) {
+                Permission p = Permission.valueOf(sys.getId().substring(5));
+                allPermissions.add(p);
+            }
+            f.setItems(allPermissions);
+            f.setItemCaptionGenerator((ItemCaptionGenerator<Permission>) item -> sysconfigs[allPermissions.indexOf(item)].getValue());
+            Binder.BindingBuilder builder = getBinder().forField(f);
+            validators.forEach(builder::withValidator);
+            builder.bind(propertyId);
             return f;
-
-//                    f.setImmediate(true);
         }
         return null;
     }

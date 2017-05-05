@@ -18,9 +18,6 @@
 
 package org.jpos.qi.eeuser;
 
-import com.vaadin.data.ValidationResult;
-import com.vaadin.data.Validator;
-import com.vaadin.data.ValueContext;
 import org.jpos.ee.*;
 import org.jpos.qi.QIHelper;
 
@@ -78,6 +75,7 @@ public class RolesHelper extends QIHelper {
         try {
             return (SysConfig[]) DB.exec( (db) -> {
                 SysConfigManager mgr = new SysConfigManager(db, "perm.");
+
                 return mgr.getAll();
             });
         } catch (Exception e) {
@@ -97,16 +95,20 @@ public class RolesHelper extends QIHelper {
             return null;
         }
     }
-//
+
 //    public Validator getNameTakenValidator(final Role selectedR) {
-//        Validator nameTaken = (Validator) (value, context) -> {
-//            String oldName = selectedR.getName();
-//            Role role = getRoleByName((String)value);
-//            if (role == null || (oldName != null && oldName.trim().equals(((String) value).trim()))) {
-//                return ValidationResult.ok();
-//            }
-//            return ValidationResult.error(getApp().getMessage("errorMessage.fieldTaken",value));
-//        };
-//        return nameTaken;
+//
+//
+////        Validator nameTaken = (Validator) (value, context) -> {
+////            String oldName = selectedR.getName();
+////            Role role = getRoleByName((String)value);
+////            if (role == null || (oldName != null && oldName.trim().equals(((String) value).trim()))) {
+////                return ValidationResult.ok();
+////            }
+////            return ValidationResult.error(getApp().getMessage("errorMessage.fieldTaken",value));
+////        };
+////        return nameTaken;
+//
+//
 //    }
 }

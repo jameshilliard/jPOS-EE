@@ -21,7 +21,6 @@ package org.jpos.qi;
 import com.vaadin.data.Binder;
 import com.vaadin.data.HasValue;
 import com.vaadin.data.Validator;
-import com.vaadin.data.ValueProvider;
 import com.vaadin.data.converter.StringToLongConverter;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.data.validator.StringLengthValidator;
@@ -43,7 +42,6 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.shared.ui.MarginInfo;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.xpath.operations.Bool;
 import org.jpos.core.Configurable;
 import org.jpos.core.Configuration;
 import org.jpos.ee.BLException;
@@ -322,10 +320,9 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
                 }
             }
         };
-        binder.setReadOnly(true);
         binder.setBean((T)entity);
-
         final Layout formLayout = createLayout();
+        binder.setReadOnly(true);
         profileLayout.addComponent(formLayout);
 //        addValidators();
 

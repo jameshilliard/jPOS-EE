@@ -36,7 +36,7 @@ public class RoleManager {
           setParameter("name", name).uniqueResult();
     }
 
-    public Role getRoleById (Long id) {
+    public Role getRoleById (long id) {
         return (Role) db.session().createQuery("from Role c WHERE c.id=:id").
                 setParameter("id", id).uniqueResult();
     }

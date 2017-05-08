@@ -57,16 +57,16 @@ public class RolesHelper extends QIHelper {
         try {
             return (boolean) DB.execWithTransaction( (db) -> {
                 RoleManager mgr = new RoleManager(db);
-
-                Role oldRole = mgr.getRoleById(String.valueOf(((Role) r).getId()));
+                Role oldRole = mgr.getRoleById(((Role) r).getId());
                 db.session().merge(r);
                 return addRevisionUpdated(db, getEntityName(),
                         String.valueOf(((Role)r).getId()),
                         oldRole,
                         r,
-                        new String[]{"id", "name", "permissions"});
+                        new String[]{"name", "permissions"});
             });
         } catch (Exception e) {
+            e.printStackTrace();
             throw new BLException(e.getMessage());
         }
     }

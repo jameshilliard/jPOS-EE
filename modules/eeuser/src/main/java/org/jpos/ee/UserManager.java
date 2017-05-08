@@ -150,7 +150,7 @@ public class UserManager {
         return u;
     }
 
-    public User getUserById(String id, boolean includeDeleted) throws HibernateException {
+    public User getUserById(long id, boolean includeDeleted) throws HibernateException {
         Criteria crit = db.session().createCriteria(User.class)
                 .add(Restrictions.eq("id", id));
         if (!includeDeleted)
@@ -158,7 +158,7 @@ public class UserManager {
         return (User) crit.uniqueResult();
     }
 
-    public User getUserById(String id)
+    public User getUserById(long id)
             throws HibernateException {
         return getUserById(id,false);
     }

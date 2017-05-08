@@ -18,6 +18,7 @@
 
 package org.jpos.qi;
 
+import com.vaadin.data.Binder;
 import com.vaadin.data.provider.CallbackDataProvider;
 import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.provider.QuerySortOrder;
@@ -37,6 +38,8 @@ public abstract class QIHelper {
     private String entityName;
     protected Class clazz;
     private Configuration cfg;
+    private Object originalEntity;
+
 
     protected QIHelper(Class clazz) {
         app = (QI) UI.getCurrent();
@@ -96,7 +99,7 @@ public abstract class QIHelper {
         try {
             return (boolean) DB.execWithTransaction(db -> {
                 db.session().delete(entity);
-                addRevisionRemoved(db, getEntityName(), String.valueOf(getItemId(entity)));
+                addRevisionRemoved(db, getEntityName(), getItemId(entity));
                 return true;
             });
         } catch (Exception e) {
@@ -108,7 +111,7 @@ public abstract class QIHelper {
         try {
             return (boolean) DB.execWithTransaction(db -> {
                 db.save(entity);
-                addRevisionCreated(db, getEntityName(), String.valueOf(getItemId(entity)));
+                addRevisionCreated(db, getEntityName(), getItemId(entity));
                 return true;
             });
         } catch (Exception e) {
@@ -147,7 +150,7 @@ public abstract class QIHelper {
         }
     }
 
-    public abstract boolean updateEntity(Object entity) throws
+    public abstract boolean updateEntity(Binder binder) throws
             BLException;
 
 
@@ -192,4 +195,11 @@ public abstract class QIHelper {
         this.cfg = cfg;
     }
 
+    public Object getOriginalEntity() {
+        return originalEntity;
+    }
+
+    public void setOriginalEntity(Object originalEntity) {
+        this.originalEntity = originalEntity;
+    }
 }

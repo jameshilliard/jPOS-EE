@@ -18,6 +18,7 @@
 
 package org.jpos.qi.eeuser;
 
+import com.vaadin.data.Binder;
 import com.vaadin.ui.*;
 
 import com.vaadin.ui.Grid;
@@ -91,7 +92,7 @@ public class UsersView extends QIEntityView<User> {
     }
 
     @Override
-    public void updateEntity(User entity) throws BLException
+    public void updateEntity(Binder binder) throws BLException
     {
         String current = "";
         String repeat = "";
@@ -101,10 +102,10 @@ public class UsersView extends QIEntityView<User> {
             current = currentPass != null ? (String) currentPass.getValue() : "";
             repeat = repeatPass != null ? (String) repeatPass.getValue() : "";
         }
-        if (((UsersHelper)getHelper()).updateUser(entity, current, repeat)){
+        if (((UsersHelper)getHelper()).updateUser(getBinder(), current, repeat)){
             getApp().displayNotification(getApp().getMessage("updated", getEntityName().toUpperCase()));
-            if (getApp().getUser().equals(getBinder().getBean())) {
-                getApp().getUser().setName(getBinder().getBean().getName());
+            if (getApp().getUser().equals(getBean())) {
+                getApp().getUser().setName(getBean().getName());
                 getApp().getHeader().refresh();
             }
         }
@@ -318,7 +319,7 @@ public class UsersView extends QIEntityView<User> {
     @Override
     protected void addFields(Layout l) {
         super.addFields(l);
-        selectedU = getBinder().getBean();
+        selectedU = getBean();
         //done separately because needs extra validator.
 //        TextField email = buildAndBindTextField("email");
 //        getBinder().forField(email).withValidator(new EmailValidator(getApp().getMessage("errorMessage.invalidEmail")));
@@ -343,11 +344,11 @@ public class UsersView extends QIEntityView<User> {
 //        name.setRequiredError(getApp().getMessage("errorMessage.req",name.getCaption()));
 //        name.setWidth("60%");
 //
-        if (getBinder().getBean().getId().equals(getApp().getUser().getId())) {
+        if (getBean().equals(getApp().getUser().getId())) {
             changePassBtn = createChangePasswordButton();
             l.addComponents(changePassBtn, createPasswordPanel());
         }
-        if (getApp().getUser().hasPermission("sysadmin") && !isNewView()) {
+        if (getBean().hasPermission("sysadmin") && !isNewView()) {
             resetPassBtn = createResetPasswordButton();
             l.addComponent(resetPassBtn);
         }

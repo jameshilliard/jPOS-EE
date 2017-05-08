@@ -18,6 +18,7 @@
 
 package org.jpos.qi.eeuser;
 
+import com.vaadin.data.Binder;
 import com.vaadin.v7.data.Validator;
 import com.vaadin.v7.ui.PasswordField;
 import org.hibernate.Criteria;
@@ -69,13 +70,15 @@ public class UsersHelper extends QIHelper {
         }
     }
 
-    public boolean updateUser (User u, String currentPass, String newClearPass) throws BLException {
+    public boolean updateUser (Binder binder, String currentPass, String newClearPass) throws BLException {
         boolean userUpdated;
         try {
             userUpdated = (boolean) DB.execWithTransaction((db) -> {
                 UserManager mgr = new UserManager(db);
-                User oldUser = mgr.getUserById(String.valueOf(u.getId()));
-                User user = (User) db.session().merge(u);
+                User oldUser = (User) ((User)getOriginalEntity()).clone();
+                binder.writeBean(getOriginalEntity());
+                User user = (User) getOriginalEntity();
+                db.session().merge(user);
                 boolean updated = false;
                 if (!newClearPass.isEmpty()) {
                     boolean passwordOK = false;
@@ -90,9 +93,9 @@ public class UsersHelper extends QIHelper {
                     }
                 }
                 updated = updated || addRevisionUpdated(db, getEntityName(),
-                        String.valueOf(u.getId()),
+                        String.valueOf(user.getId()),
                         oldUser,
-                        u,
+                        user,
                         new String[]{"nick", "name", "email", "active", "roles", "password"});
                 return updated;
             });
@@ -102,7 +105,7 @@ public class UsersHelper extends QIHelper {
             getApp().getLog().error(e);
             return false;
         }
-        if (userUpdated && u.equals(getApp().getUser())) {
+        if (userUpdated && getOriginalEntity().equals(getApp().getUser())) {
             try {
                 DB.exec((db)->{
                     db.session().refresh(getApp().getUser());
@@ -162,7 +165,7 @@ public class UsersHelper extends QIHelper {
     }
 
     @Override
-    public boolean updateEntity(Object entity) throws BLException {
+    public boolean updateEntity(Binder binder) throws BLException {
         //NOT USED
         return false;
     }

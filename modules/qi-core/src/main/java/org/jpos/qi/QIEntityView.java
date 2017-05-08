@@ -78,6 +78,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
     private boolean newView;
     private Configuration cfg;
     private ViewConfig viewConfig;
+    private T bean;
 
 
     private static DateFormat dateFormat;
@@ -320,8 +321,10 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
                 }
             }
         };
-        binder.setBean((T)entity);
+        bean = (T) entity;
         final Layout formLayout = createLayout();
+        getHelper().setOriginalEntity(bean);
+        binder.readBean((T)entity);
         binder.setReadOnly(true);
         profileLayout.addComponent(formLayout);
 //        addValidators();
@@ -393,7 +396,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
     }
     protected void cancelClick(Button.ClickEvent event, Layout formLayout) {
         //todo: find how to discard
-//        binder.readBean(binder.getBean());
+        binder.readBean(bean);
         binder.setReadOnly(true);
         event.getButton().setVisible(false);
         saveBtn.setVisible(false);
@@ -406,17 +409,19 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
 
     protected boolean saveClick(Button.ClickEvent event, Layout formLayout) {
         if (binder.validate().isOk()) {
-            if (getEntity(getBinder().getBean()) == null)
+            if (getEntity(bean) == null)
                 try {
                     saveEntity(getBinder().getBean());
                 } catch (BLException e) {
+                    e.printStackTrace();
                     getApp().displayNotification(e.getDetailedMessage());
                     return false;
                 }
             else {
                 try {
-                    updateEntity(getBinder().getBean());
+                    updateEntity(getBinder());
                 } catch (BLException e) {
+                    e.printStackTrace();
                     getApp().displayNotification(e.getDetailedMessage());
                     return false;
                 }
@@ -469,7 +474,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
     }
 
     protected void addFields(Layout l) {
-        Object o = getBinder().getBean();
+        Object o = bean;
         for (String id : getVisibleFields()) {
             //Check if there's a custom builder
             Component field = buildAndBindCustomComponent(id);
@@ -640,8 +645,8 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         return getHelper().getEntityName();
     }
 
-    public void updateEntity (T entity) throws BLException {
-        if (getHelper().updateEntity(entity))
+    public void updateEntity (Binder<T> binder) throws BLException {
+        if (getHelper().updateEntity(binder))
             getApp().displayNotification(getApp().getMessage("updated", getEntityName().toUpperCase()));
         else
             getApp().displayNotification(getApp().getMessage("notchanged"));
@@ -813,5 +818,13 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
 
     public void setViewConfig(ViewConfig viewConfig) {
         this.viewConfig = viewConfig;
+    }
+
+    public T getBean() {
+        return bean;
+    }
+
+    public void setBean(T bean) {
+        this.bean = bean;
     }
 }

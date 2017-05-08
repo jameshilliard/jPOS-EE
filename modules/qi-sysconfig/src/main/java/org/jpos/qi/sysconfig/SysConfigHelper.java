@@ -18,6 +18,7 @@
 
 package org.jpos.qi.sysconfig;
 
+import com.vaadin.data.Binder;
 import org.jpos.ee.BLException;
 import org.jpos.ee.DB;
 import org.jpos.ee.SysConfig;
@@ -47,17 +48,18 @@ public class SysConfigHelper extends QIHelper {
     }
 
     @Override
-    public boolean updateEntity (Object s) throws BLException {
+    public boolean updateEntity (Binder binder) throws BLException {
         try {
             return (boolean) DB.execWithTransaction((db) -> {
-                SysConfigManager mgr = new SysConfigManager(db);
-                SysConfig oldSysConfig = mgr.getObject(((SysConfig)s).getId());
+                SysConfig oldSysConfig = (SysConfig) ((SysConfig) getOriginalEntity()).clone();
+                binder.writeBean(getOriginalEntity());
+                SysConfig s = (SysConfig) getOriginalEntity();
                 db.session().merge(s);
                 return addRevisionUpdated(db, getEntityName(),
-                        String.valueOf(((SysConfig)s).getId()),
+                        String.valueOf(s.getId()),
                         oldSysConfig,
                         s,
-                        new String[]{"id", "value"});
+                        new String[]{"value"});
             });
         } catch (Exception e) {
             QI.getQI().getLog().error(e);

@@ -18,6 +18,7 @@
 
 package org.jpos.qi.system;
 
+import com.vaadin.data.Binder;
 import org.jpos.ee.BLException;
 import org.jpos.ee.DB;
 import org.jpos.ee.SysLog;
@@ -59,7 +60,7 @@ public class AuditLogHelper extends QIHelper {
     }
 
     @Override
-    public boolean updateEntity(Object entity) throws BLException {
+    public boolean updateEntity(Binder binder) throws BLException {
         return false;
     }
 }

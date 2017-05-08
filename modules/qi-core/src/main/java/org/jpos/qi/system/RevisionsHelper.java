@@ -18,6 +18,7 @@
 
 package org.jpos.qi.system;
 
+import com.vaadin.data.Binder;
 import org.apache.commons.lang3.StringUtils;
 import org.jpos.ee.*;
 import org.jpos.qi.QIHelper;
@@ -73,7 +74,7 @@ public class RevisionsHelper extends QIHelper {
     }
 
     @Override
-    public boolean updateEntity(Object entity) throws BLException {
+    public boolean updateEntity(Binder binder) throws BLException {
         return false;
     }
 

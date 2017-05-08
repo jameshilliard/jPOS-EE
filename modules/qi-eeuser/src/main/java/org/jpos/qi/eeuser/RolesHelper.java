@@ -18,6 +18,7 @@
 
 package org.jpos.qi.eeuser;
 
+import com.vaadin.data.Binder;
 import org.jpos.ee.*;
 import org.jpos.qi.QIHelper;
 
@@ -53,14 +54,15 @@ public class RolesHelper extends QIHelper {
     }
 
     @Override
-    public boolean updateEntity (Object r) throws BLException {
+    public boolean updateEntity (Binder binder) throws BLException {
         try {
             return (boolean) DB.execWithTransaction( (db) -> {
-                RoleManager mgr = new RoleManager(db);
-                Role oldRole = mgr.getRoleById(((Role) r).getId());
+                Role oldRole = (Role) ((Role) getOriginalEntity()).clone();
+                binder.writeBean(getOriginalEntity());
+                Role r = (Role) getOriginalEntity();
                 db.session().merge(r);
                 return addRevisionUpdated(db, getEntityName(),
-                        String.valueOf(((Role)r).getId()),
+                        String.valueOf(r.getId()),
                         oldRole,
                         r,
                         new String[]{"name", "permissions"});

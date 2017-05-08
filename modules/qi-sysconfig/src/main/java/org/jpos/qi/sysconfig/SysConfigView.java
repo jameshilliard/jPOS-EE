@@ -77,21 +77,13 @@ public class SysConfigView extends QIEntityView<SysConfig> {
     }
 
     @Override
-    public void updateEntity(SysConfig entity) throws BLException {
-//        String idValue = entity.getId();
-//        idValue = addPrefix(idValue);
+    public void updateEntity(Binder binder) throws BLException {
+        SysConfig entity = getBean();
         entity.setId(addPrefix(entity.getId()));
-//        TextField idField = (TextField)fieldGroup.getField("id");
-//        idField.setReadOnly(false);
-//        idField.setValue(idValue);
-//        idField.setReadOnly(true);
-        if (getHelper().updateEntity(entity))
+        if (getHelper().updateEntity(getBinder()))
             getApp().displayNotification(getApp().getMessage("updated", getEntityName().toUpperCase()));
         else
             getApp().displayNotification(getApp().getMessage("notchanged"));
-//        idField.setReadOnly(false);
-//        idField.setValue(removePrefix(idValue));
-//        idField.setReadOnly(true);
     }
 
     @Override

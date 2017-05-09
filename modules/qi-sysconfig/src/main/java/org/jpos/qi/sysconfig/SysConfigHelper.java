@@ -54,6 +54,8 @@ public class SysConfigHelper extends QIHelper {
                 SysConfig oldSysConfig = (SysConfig) ((SysConfig) getOriginalEntity()).clone();
                 binder.writeBean(getOriginalEntity());
                 SysConfig s = (SysConfig) getOriginalEntity();
+                //need to re-set prefix to id as it gets deleted on write
+                s.setId(addPrefix(s.getId()));
                 db.session().merge(s);
                 return addRevisionUpdated(db, getEntityName(),
                         String.valueOf(s.getId()),
@@ -111,6 +113,10 @@ public class SysConfigHelper extends QIHelper {
     @Override
     public String getItemId(Object item) {
         return ((SysConfig) item).getId();
+    }
+
+    public String addPrefix (String value) {
+        return value.startsWith(prefix) ? value : prefix + value;
     }
 
 }

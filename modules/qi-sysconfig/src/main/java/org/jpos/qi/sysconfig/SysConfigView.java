@@ -79,7 +79,7 @@ public class SysConfigView extends QIEntityView<SysConfig> {
     @Override
     public void updateEntity(Binder binder) throws BLException {
         SysConfig entity = getBean();
-        entity.setId(addPrefix(entity.getId()));
+        entity.setId(((SysConfigHelper)getHelper()).addPrefix(entity.getId()));
         if (getHelper().updateEntity(getBinder()))
             getApp().displayNotification(getApp().getMessage("updated", getEntityName().toUpperCase()));
         else
@@ -113,10 +113,6 @@ public class SysConfigView extends QIEntityView<SysConfig> {
         if (value != null && !value.isEmpty())
             return prefix != null ? value.substring(prefix.length()) : value;
         return value;
-    }
-
-    private String addPrefix (String value) {
-        return value.startsWith(prefix) ? value : prefix + value;
     }
     
     @Override

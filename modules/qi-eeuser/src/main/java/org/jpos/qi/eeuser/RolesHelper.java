@@ -68,7 +68,6 @@ public class RolesHelper extends QIHelper {
                         new String[]{"name", "permissions"});
             });
         } catch (Exception e) {
-            e.printStackTrace();
             throw new BLException(e.getMessage());
         }
     }

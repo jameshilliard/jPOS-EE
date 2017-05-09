@@ -87,8 +87,6 @@ public class SysConfigHelper extends QIHelper {
                 return false;
             }
         } else {
-//            fieldGroup.getField("id").focus();
-//            fieldGroup.getItemDataSource().getItemProperty("id").setValue(null);
             throw new BLException("SysConfig " + id + " already exists.");
         }
     }

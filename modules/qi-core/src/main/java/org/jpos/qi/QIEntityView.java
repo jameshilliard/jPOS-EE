@@ -224,7 +224,6 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         nf.setGroupingUsed(false);
 
         Iterator<Grid.Column> it = grid.getColumns().iterator();
-        DateRenderer dateRenderer = new DateRenderer(getDateFormat());
         while (it.hasNext()) {
             Grid.Column c  = it.next();
             String columnId = c.getId();
@@ -245,8 +244,6 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
                     Object value = c.getValueProvider().apply(obj);
                     if (value instanceof BigDecimal) {
                         return "align-right";
-                    } else if (value instanceof Date) {
-                        c.setRenderer(dateRenderer);
                     } else if (c.getId().equals("id") && !(value instanceof String)) {
                         c.setRenderer(new NumberRenderer(nf));
                     }
@@ -327,7 +324,6 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         binder.readBean((T)entity);
         binder.setReadOnly(true);
         profileLayout.addComponent(formLayout);
-//        addValidators();
 
         HorizontalLayout footer = new HorizontalLayout();
         footer.addStyleName("footer");
@@ -395,8 +391,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         return profileLayout;
     }
     protected void cancelClick(Button.ClickEvent event, Layout formLayout) {
-        //todo: find how to discard
-        binder.readBean(bean);
+        binder.readBean(bean); //this discards the changes
         binder.setReadOnly(true);
         event.getButton().setVisible(false);
         saveBtn.setVisible(false);

@@ -20,10 +20,12 @@ package org.jpos.qi.system;
 
 import com.vaadin.data.Binder;
 import com.vaadin.data.Validator;
+import com.vaadin.server.SerializableFunction;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.renderers.HtmlRenderer;
 import org.jpos.ee.Revision;
+import org.jpos.ee.User;
 import org.jpos.qi.QIEntityView;
 import org.jpos.qi.QIHelper;
 import org.jpos.qi.ReadOnlyField;
@@ -72,14 +74,17 @@ public class RevisionsView extends QIEntityView<Revision> {
         List<Validator> validators = getValidators(propertyId);
         ReadOnlyField field = new ReadOnlyField();
         field.setCaption(getCaptionFromId(propertyId));
-        Binder<Revision> binder = getBinder();
-        Binder.BindingBuilder builder = binder.forField(field)
-                .withNullRepresentation("");
+        Binder binder = getBinder();
+        Binder.BindingBuilder builder = binder.forField(field).withNullRepresentation("");
         if ("author".equals(propertyId)) {
-            //todo: set converter
+             builder = builder.withConverter(userInput -> userInput,
+                    (SerializableFunction<User,String>) toPresentation ->
+                            ((RevisionsHelper)getHelper()).getAuthorLink(toPresentation.getNickAndId(), String.valueOf(getBean().getId())));
         }
-        if ("date".equals(propertyId)) {
-            //todo: set converter
+        if ("ref".equals(propertyId)) {
+            builder = builder.withConverter(userInput -> userInput,
+                    (SerializableFunction<String,String>) toPresentation ->
+                            ((RevisionsHelper)getHelper()).getLink(toPresentation, String.valueOf(getBean().getId())));
         }
         validators.forEach(builder::withValidator);
         builder.bind(propertyId);
@@ -90,7 +95,7 @@ public class RevisionsView extends QIEntityView<Revision> {
     public void setGridGetters() {
         Grid<Revision> g = this.getGrid();
         g.addColumn(Revision::getId).setId("id");
-        g.addColumn(Revision::getInfo).setId("info");
+        g.addColumn(Revision::getInfo,new HtmlRenderer("")).setId("info");
         g.addColumn(revision ->
                 ((RevisionsHelper)getHelper()).getLink(revision.getRef(),""), new HtmlRenderer("")).setId("ref");
         g.addColumn(revision ->

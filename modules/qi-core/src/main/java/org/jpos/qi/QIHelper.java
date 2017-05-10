@@ -95,7 +95,8 @@ public abstract class QIHelper {
         this.app = app;
     }
 
-    public boolean removeEntity(Object entity) throws BLException {
+    public boolean removeEntity() throws BLException {
+        Object entity = getOriginalEntity();
         try {
             return (boolean) DB.execWithTransaction(db -> {
                 db.session().delete(entity);

@@ -150,9 +150,9 @@ public class UsersHelper extends QIHelper {
 
 
     @Override
-    public boolean removeEntity (Object entity) {
+    public boolean removeEntity() {
         //Users have a deleted flag, they are not completely removed.
-        User t = (User) entity;
+        User t = (User) getOriginalEntity();
         try {
             return t != null && (boolean) DB.execWithTransaction((db) -> {
                 User user = db.session().get(User.class, t.getId());

@@ -350,7 +350,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
                         app.getMessage("removeConfirmationMessage"),
                         confirm -> {
                             if (confirm) {
-                                removeEntity(getBinder().getBean());
+                                removeEntity();
                             }
                         }
         )
@@ -618,8 +618,8 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
     }
     public abstract QIHelper createHelper ();
 
-    public void removeEntity (T entity) throws BLException {
-        if (getHelper().removeEntity(entity)) {
+    public void removeEntity () throws BLException {
+        if (getHelper().removeEntity()) {
             getApp().getNavigator().navigateTo(getGeneralRoute());
             getApp().displayNotification(getApp().getMessage("removed", getEntityName().toUpperCase()));
         }

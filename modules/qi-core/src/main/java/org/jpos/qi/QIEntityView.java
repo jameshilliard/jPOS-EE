@@ -406,7 +406,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         if (binder.validate().isOk()) {
             if (getEntity(bean) == null)
                 try {
-                    saveEntity(getBinder());
+                    saveEntity();
                 } catch (BLException e) {
                     e.printStackTrace();
                     getApp().displayNotification(e.getDetailedMessage());
@@ -414,7 +414,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
                 }
             else {
                 try {
-                    updateEntity(getBinder());
+                    updateEntity();
                 } catch (BLException e) {
                     e.printStackTrace();
                     getApp().displayNotification(e.getDetailedMessage());
@@ -625,8 +625,8 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         }
     }
 
-    public void saveEntity (Binder binder) throws BLException {
-        if (getHelper().saveEntity(binder)) {
+    public void saveEntity () throws BLException {
+        if (getHelper().saveEntity(getBinder())) {
             app.displayNotification(app.getMessage("created", getEntityName().toUpperCase()));
             app.getNavigator().navigateTo(getGeneralRoute());
         }
@@ -640,8 +640,8 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         return getHelper().getEntityName();
     }
 
-    public void updateEntity (Binder<T> binder) throws BLException {
-        if (getHelper().updateEntity(binder))
+    public void updateEntity () throws BLException {
+        if (getHelper().updateEntity(getBinder()))
             getApp().displayNotification(getApp().getMessage("updated", getEntityName().toUpperCase()));
         else
             getApp().displayNotification(getApp().getMessage("notchanged"));

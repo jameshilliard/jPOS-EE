@@ -77,7 +77,7 @@ public class SysConfigView extends QIEntityView<SysConfig> {
     }
 
     @Override
-    public void updateEntity(Binder binder) throws BLException {
+    public void updateEntity() throws BLException {
         SysConfig entity = getBean();
         entity.setId(((SysConfigHelper)getHelper()).addPrefix(entity.getId()));
         if (getHelper().updateEntity(getBinder()))

@@ -82,7 +82,7 @@ public class UsersView extends QIEntityView<User> {
     }
 
     @Override
-    public void saveEntity(Binder binder) throws BLException {
+    public void saveEntity() throws BLException {
         QI app = getApp();
         String generatedPassword = PasswordGenerator.generateRandomPassword();
         if (((UsersHelper) getHelper()).saveUser(getBinder(), generatedPassword)) {
@@ -93,7 +93,7 @@ public class UsersView extends QIEntityView<User> {
     }
 
     @Override
-    public void updateEntity(Binder binder) throws BLException
+    public void updateEntity() throws BLException
     {
         String current = "";
         String repeat = "";

@@ -104,8 +104,12 @@ public class UserManager {
             OrderImpl order = new OrderImpl(root.get(entry.getKey()),entry.getValue());
             orderList.add(order);
         }
+        //Get only non-deleted
+        Predicate notDeleted = criteriaBuilder.isFalse(root.get("deleted"));
+
         query.select(root);
         query.orderBy(orderList);
+        query.where(notDeleted);
         return db.session().createQuery(query)
                 .setFirstResult(offset)
                 .setMaxResults(limit)
@@ -115,7 +119,10 @@ public class UserManager {
     public int getItemCount() {
         CriteriaBuilder criteriaBuilder = db.session().getCriteriaBuilder();
         CriteriaQuery<Long> query = criteriaBuilder.createQuery(Long.class);
-        query.select(criteriaBuilder.count(query.from(User.class)));
+        Root<User> root = query.from(User.class);
+        Predicate notDeleted = criteriaBuilder.isFalse(root.get("deleted"));
+        query.where(notDeleted);
+        query.select(criteriaBuilder.count(root));
         return db.session().createQuery(query).getSingleResult().intValue();
     }
 

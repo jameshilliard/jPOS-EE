@@ -21,6 +21,7 @@ package org.jpos.qi;
 import com.vaadin.data.Binder;
 import com.vaadin.data.HasValue;
 import com.vaadin.data.Validator;
+import com.vaadin.data.converter.StringToBigDecimalConverter;
 import com.vaadin.data.converter.StringToLongConverter;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.data.validator.StringLengthValidator;
@@ -454,17 +455,6 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         layout.addStyleName("qi-form");
         layout.setMargin(new MarginInfo(false));
         addFields(layout);
-
-        boolean firstField = true;
-//        for (Field field : fieldGroup.getFields()) {
-//            layout.addComponent(field);
-//            if (firstField) {
-//                field.focus();
-//                firstField = false;
-//            }
-//        }
-        //Remove not visible fields
-
         return layout;
     }
 
@@ -480,17 +470,13 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
                     if (dataType.equals(Date.class)) {
                         l.addComponent(buildAndBindDateField(id));
                     } else if (dataType.equals(BigDecimal.class)) {
-                        //use BigDecimalField
+                        l.addComponent(buildAndBindBigDecimalField(id));
                     } else if (dataType.equals(Long.class)) {
                         l.addComponent(buildAndBindLongField(id));
-                    } else if (dataType.equals(Boolean.class)) {
+                    } else if (dataType.equals(boolean.class)) {
                         l.addComponent(buildAndBindBooleanField(id));
-                    } else if (dataType.equals(String.class)) {
+                    } else {
                         l.addComponent(buildAndBindTextField(id));
-                    } else if (dataType.equals(SysConfig.class)) {
-                        //Create an optionGroup
-                    } else if (dataType.equals(Set.class)) {
-                        //create something useful for this.
                     }
                 } catch (NoSuchFieldException e) {
                     getApp().getLog().error(e);
@@ -544,8 +530,20 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         return field;
     }
 
+//    protected CheckBoxGroup buildAndBindCheckBoxGroup(String id, Set items) {
+//        CheckBoxGroup g = new CheckBoxGroup(StringUtils.capitalize(getCaptionFromId(id)));
+//        g.setItems(items);
+//        List<Validator> v = getValidators(id);
+//        Binder.BindingBuilder builder = getBinder().forField(g);
+//        for (Validator val : v) {
+//            builder.withValidator(val);
+//        }
+//        builder.bind(id);
+//        return g;
+//    }
+
     protected CheckBox buildAndBindBooleanField(String id) {
-        CheckBox box = new CheckBox(getCaptionFromId(id),false);
+        CheckBox box = new CheckBox(StringUtils.capitalize(getCaptionFromId(id)),false);
         List<Validator> v = getValidators(id);
         Binder.BindingBuilder builder = getBinder().forField(box);
         for (Validator val : v) {
@@ -577,8 +575,16 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         return field;
     }
 
-    protected void buildAndBindBigDecimalField(String id) {
-        //todo: need to update BigDecimalField to vaadin8
+    protected TextField buildAndBindBigDecimalField(String id) {
+        TextField field = new TextField(getCaptionFromId(id));
+        List<Validator> v = getValidators(id);
+        Binder.BindingBuilder builder = getBinder().forField(field);
+        for (Validator val : v) {
+            builder.withValidator(val).
+            withConverter(new StringToBigDecimalConverter(getApp().getMessage("errorMessage.NaN",id)));
+        }
+        builder.bind(id);
+        return field;
     }
 
     protected String getCaptionFromId(String id) {

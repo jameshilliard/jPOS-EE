@@ -19,22 +19,26 @@
 package org.jpos.qi.eeuser;
 
 import com.vaadin.data.Binder;
+import com.vaadin.data.Validator;
+import com.vaadin.data.validator.EmailValidator;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.*;
 
 import com.vaadin.ui.Grid;
+
 import com.vaadin.v7.data.fieldgroup.FieldGroup;
 import com.vaadin.v7.data.util.ObjectProperty;
 import com.vaadin.v7.data.util.PropertysetItem;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.v7.ui.Field;
+import com.vaadin.v7.ui.PasswordField;
 
 import com.vaadin.ui.themes.ValoTheme;
-import com.vaadin.v7.ui.PasswordField;
-import com.vaadin.v7.ui.VerticalLayout;
+import org.apache.commons.lang3.StringUtils;
 import org.jpos.ee.*;
 import org.jpos.qi.*;
 import org.jpos.util.PasswordGenerator;
 
+import java.util.List;
 
 
 public class UsersView extends QIEntityView<User> {
@@ -133,6 +137,17 @@ public class UsersView extends QIEntityView<User> {
 //                }
 //            }
 //        };
+
+
+//
+//    CheckBoxGroup g = new CheckBoxGroup(StringUtils.capitalize(getCaptionFromId(id)));
+//    g.setItems(items);
+//    List<Validator> v = getValidators(id);
+//    Binder.BindingBuilder builder = getBinder().forField(g);
+//    for (Validator val : v) {
+//        builder.withValidator(val);
+//    }
+//    builder.bind(id);
 //    }
 
 
@@ -150,6 +165,34 @@ public class UsersView extends QIEntityView<User> {
         }
 
     }
+
+    protected Component buildAndBindCustomComponent(String propertyId) {
+        if ("roles".equals(propertyId)) {
+            CheckBoxGroup g = new CheckBoxGroup(StringUtils.capitalize(getCaptionFromId(propertyId)));
+            g.setItems(((UsersHelper)getHelper()).getRoles());
+            g.setItemCaptionGenerator((ItemCaptionGenerator<Role>) item -> StringUtils.capitalize(item.getName()));
+            List<Validator> v = getValidators(propertyId);
+            Binder.BindingBuilder builder = getBinder().forField(g);
+            for (Validator val : v) {
+                builder.withValidator(val);
+            }
+            builder.bind(propertyId);
+            return g;
+        }
+        return null;
+    }
+
+    protected List<Validator> getValidators(String propertyId) {
+        List<Validator> list = super.getValidators(propertyId);
+        if ("email".equals(propertyId)) {
+            list.add(new EmailValidator(getApp().getMessage("errorMessage.invalidEmail")));
+        }
+        if ("nick".equals(propertyId)) {
+            list.add(((UsersHelper)getHelper()).getNickTakenValidator());
+        }
+        return list;
+    }
+
 
     @Override
     public void setGridGetters() {
@@ -172,7 +215,7 @@ public class UsersView extends QIEntityView<User> {
 
     private Button createChangePasswordButton () {
         Button b = new Button(getApp().getMessage("changePassword"));
-        b.setIcon(FontAwesome.LOCK);
+        b.setIcon(VaadinIcons.LOCK);
         b.setStyleName(ValoTheme.BUTTON_LINK);
         b.addStyleName(ValoTheme.BUTTON_SMALL);
         b.setEnabled(false);
@@ -206,7 +249,7 @@ public class UsersView extends QIEntityView<User> {
 
     private Panel createPasswordPanel () {
         passwordPanel = new Panel(getApp().getMessage("changePassword"));
-        passwordPanel.setIcon(FontAwesome.LOCK);
+        passwordPanel.setIcon(VaadinIcons.LOCK);
         passwordPanel.addStyleName("color1");
         passwordPanel.addStyleName("margin-top-panel");
 
@@ -233,7 +276,7 @@ public class UsersView extends QIEntityView<User> {
             currentPass.setWidth("80%");
             currentPass.setRequired(true);
             currentPass.setRequiredError(getApp().getMessage("errorMessage.req", currentPass.getCaption()));
-            currentPass.addValidator(((UsersHelper)getHelper()).getCurrentPasswordMatchValidator(selectedU, currentPass));
+//            currentPass.addValidator(((UsersHelper)getHelper()).getCurrentPasswordMatchValidator(selectedU, currentPass));
             currentPass.setImmediate(false);
             form.addComponent(currentPass);
             passwordFieldGroup.bind(currentPass, "current");
@@ -253,8 +296,8 @@ public class UsersView extends QIEntityView<User> {
         repeatPass.setRequiredError(getApp().getMessage("errorMessage.req", repeatPass.getCaption()));
         form.addComponent(repeatPass);
         //Add validators
-        newPass.addValidator(((UsersHelper)getHelper()).getNewPasswordNotUsedValidator(selectedU, newPass));
-        repeatPass.addValidator(((UsersHelper)getHelper()).getPasswordsMatchValidator(newPass));
+//        newPass.addValidator(((UsersHelper)getHelper()).getNewPasswordNotUsedValidator(selectedU, newPass));
+//        repeatPass.addValidator(((UsersHelper)getHelper()).getPasswordsMatchValidator(newPass));
 
         passwordFieldGroup.bind(newPass, "new");
         passwordFieldGroup.bind(repeatPass, "repeat");

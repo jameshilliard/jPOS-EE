@@ -119,28 +119,32 @@ public class UsersHelper extends QIHelper {
     }
 
     //Does not override SaveEntity because it needs the String clearPass
-    public boolean saveUser (Object entity, String clearPass) throws BLException {
-        User u = (User) entity;
-        try {
-            return (boolean) DB.execWithTransaction((db) -> {
-                db.save(u);
-                if (clearPass != null && !clearPass.isEmpty()) {
-                    UserManager mgr = new UserManager(db);
-                    try {
-                        mgr.setPassword(u, clearPass);
-                    } catch (BLException e) {
-                        return false;
+    public boolean saveUser (Binder binder, String clearPass) throws BLException {
+        User u = (User) getOriginalEntity();
+        if (binder.writeBeanIfValid(getOriginalEntity())) {
+            try {
+                return (boolean) DB.execWithTransaction((db) -> {
+                    db.save(u);
+                    if (clearPass != null && !clearPass.isEmpty()) {
+                        UserManager mgr = new UserManager(db);
+                        try {
+                            mgr.setPassword(u, clearPass);
+                        } catch (BLException e) {
+                            return false;
+                        }
+                        addRevisionCreated(db, getEntityName(), u.getId().toString());
+                        u.setForcePasswordChange(true);
+                        db.session().update(u);
+                        return true;
                     }
-                    addRevisionCreated(db,getEntityName(), u.getId().toString());
-                    u.setForcePasswordChange(true);
-                    db.session().update(u);
-                    return true;
-                }
+                    return false;
+                });
+            } catch (Exception e) {
+                getApp().getLog().error(e);
                 return false;
-            });
-        } catch (Exception e) {
-            getApp().getLog().error(e);
-            return false;
+            }
+        } else {
+          throw new BLException("Invalid user");
         }
     }
 

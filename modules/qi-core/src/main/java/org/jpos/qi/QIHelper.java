@@ -107,12 +107,15 @@ public abstract class QIHelper {
         }
     }
 
-    public boolean saveEntity(Object entity) throws BLException {
+    public boolean saveEntity(Binder binder) throws BLException {
         try {
             return (boolean) DB.execWithTransaction(db -> {
-                db.save(entity);
-                addRevisionCreated(db, getEntityName(), getItemId(entity));
-                return true;
+                if (binder.writeBeanIfValid(getOriginalEntity())) {
+                    db.save(getOriginalEntity());
+                    addRevisionCreated(db, getEntityName(), getItemId(getOriginalEntity()));
+                    return true;
+                }
+                return false;
             });
         } catch (Exception e) {
             throw new BLException(e.getMessage());

@@ -70,24 +70,29 @@ public class SysConfigHelper extends QIHelper {
     }
 
     @Override
-    public boolean saveEntity (Object entity) throws BLException {
-        String id = ((SysConfig)entity).getId();
-        id = prefix != null ? prefix + id : id;
-        if (getSysConfig(id) == null) {
-            final String finalId = id;
-            try {
-                return (boolean) DB.execWithTransaction((db) -> {
-                    SysConfigManager mgr = new SysConfigManager(db,prefix);
-                    mgr.put(((SysConfig)entity).getId(), ((SysConfig)entity).getValue());
-                    addRevisionCreated(db, "SYSCONFIG", finalId);
-                    return true;
-                });
-            } catch (Exception e) {
-                QI.getQI().getLog().error(e);
-                return false;
+    public boolean saveEntity (Binder binder) throws BLException {
+        SysConfig entity = (SysConfig) getOriginalEntity();
+        if (binder.writeBeanIfValid(getOriginalEntity())) {
+            String id = entity.getId();
+            id = prefix != null ? prefix + id : id;
+            if (getSysConfig(id) == null) {
+                final String finalId = id;
+                try {
+                    return (boolean) DB.execWithTransaction((db) -> {
+                        SysConfigManager mgr = new SysConfigManager(db, prefix);
+                        mgr.put(entity.getId(), entity.getValue());
+                        addRevisionCreated(db, "SYSCONFIG", finalId);
+                        return true;
+                    });
+                } catch (Exception e) {
+                    QI.getQI().getLog().error(e);
+                    return false;
+                }
+            } else {
+                throw new BLException("SysConfig " + id + " already exists.");
             }
         } else {
-            throw new BLException("SysConfig " + id + " already exists.");
+            throw new BLException("Invalid SysConfig");
         }
     }
 

@@ -406,7 +406,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         if (binder.validate().isOk()) {
             if (getEntity(bean) == null)
                 try {
-                    saveEntity(getBinder().getBean());
+                    saveEntity(getBinder());
                 } catch (BLException e) {
                     e.printStackTrace();
                     getApp().displayNotification(e.getDetailedMessage());
@@ -625,8 +625,8 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         }
     }
 
-    public void saveEntity (T entity) throws BLException {
-        if (getHelper().saveEntity(entity)) {
+    public void saveEntity (Binder binder) throws BLException {
+        if (getHelper().saveEntity(binder)) {
             app.displayNotification(app.getMessage("created", getEntityName().toUpperCase()));
             app.getNavigator().navigateTo(getGeneralRoute());
         }

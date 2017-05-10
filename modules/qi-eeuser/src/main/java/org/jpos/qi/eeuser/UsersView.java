@@ -82,13 +82,14 @@ public class UsersView extends QIEntityView<User> {
     }
 
     @Override
-    public void saveEntity(User entity) throws BLException {
+    public void saveEntity(Binder binder) throws BLException {
         QI app = getApp();
         String generatedPassword = PasswordGenerator.generateRandomPassword();
-        ((UsersHelper) getHelper()).saveUser(getBinder().getBean(), generatedPassword);
-        showGeneratedPassword(generatedPassword);
-        app.displayNotification(app.getMessage("created", getEntityName()));
-        app.getNavigator().navigateTo(getGeneralRoute());
+        if (((UsersHelper) getHelper()).saveUser(getBinder(), generatedPassword)) {
+            showGeneratedPassword(generatedPassword);
+            app.displayNotification(app.getMessage("created", getEntityName().toUpperCase()));
+            app.getNavigator().navigateTo(getGeneralRoute());
+        }
     }
 
     @Override

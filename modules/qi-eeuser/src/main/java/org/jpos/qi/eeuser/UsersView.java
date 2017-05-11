@@ -19,6 +19,7 @@
 package org.jpos.qi.eeuser;
 
 import com.vaadin.data.Binder;
+import com.vaadin.data.HasValue;
 import com.vaadin.data.Validator;
 import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.icons.VaadinIcons;
@@ -26,11 +27,11 @@ import com.vaadin.ui.*;
 
 import com.vaadin.ui.Grid;
 
-import com.vaadin.v7.data.fieldgroup.FieldGroup;
-import com.vaadin.v7.data.util.ObjectProperty;
-import com.vaadin.v7.data.util.PropertysetItem;
-import com.vaadin.v7.ui.Field;
-import com.vaadin.v7.ui.PasswordField;
+//import com.vaadin.v7.data.fieldgroup.FieldGroup;
+//import com.vaadin.v7.data.util.ObjectProperty;
+//import com.vaadin.v7.data.util.PropertysetItem;
+//import com.vaadin.v7.ui.Field;
+//import com.vaadin.v7.ui.PasswordField;
 
 import com.vaadin.ui.themes.ValoTheme;
 import org.apache.commons.lang3.StringUtils;
@@ -44,7 +45,8 @@ import java.util.List;
 public class UsersView extends QIEntityView<User> {
 
     private User selectedU;
-    private FieldGroup passwordFieldGroup;
+//    private FieldGroup passwordFieldGroup;
+    private Binder<String> passwordBinder;
     private Panel passwordPanel;
     private Button changePassBtn;
     private Button resetPassBtn;
@@ -101,9 +103,10 @@ public class UsersView extends QIEntityView<User> {
     {
         String current = "";
         String repeat = "";
-        if (passwordFieldGroup != null) {
-            Field currentPass = passwordFieldGroup.getField("current");
-            Field repeatPass = passwordFieldGroup.getField("repeat");
+        if (passwordBinder != null) {
+            //todo: fields not accesible via binding, find another way
+            HasValue currentPass = passwordBinder.getBinding("current").get().getField();
+            HasValue repeatPass = passwordBinder.getBinding("repeat").get().getField();
             current = currentPass != null ? (String) currentPass.getValue() : "";
             repeat = repeatPass != null ? (String) repeatPass.getValue() : "";
         }
@@ -118,47 +121,14 @@ public class UsersView extends QIEntityView<User> {
             getApp().displayNotification(getApp().getMessage("notchanged"));
     }
 
-
-//    @Override
-//    public FieldGroupFieldFactory createFieldFactory() {
-//        return new QIFieldFactory() {
-//            @Override
-//            public <T extends Field> T createField(Class<?> dataType, Class<T> fieldType) {
-//                if (Set.class.equals(dataType)) {
-//                    OptionGroup f = new OptionGroup();
-//                    f.setMultiSelect(true);
-//                    for (Role r : ((UsersHelper)getHelper()).getRoles()) {
-//                        f.addItem(r);
-//                        f.setItemCaption(r, r.getName());
-//                    }
-//                    return (T) f;
-//                } else {
-//                    return super.createField(dataType, fieldType);
-//                }
-//            }
-//        };
-
-
-//
-//    CheckBoxGroup g = new CheckBoxGroup(StringUtils.capitalize(getCaptionFromId(id)));
-//    g.setItems(items);
-//    List<Validator> v = getValidators(id);
-//    Binder.BindingBuilder builder = getBinder().forField(g);
-//    for (Validator val : v) {
-//        builder.withValidator(val);
-//    }
-//    builder.bind(id);
-//    }
-
-
     @Override
     public void showSpecificView (String parameter) {
         forcePasswordChange = parameter.contains("password_change");
         super.showSpecificView(parameter);
-        if (forcePasswordChange && passwordFieldGroup != null) {
+        if (forcePasswordChange && passwordBinder != null) {
             getEditBtn().click();
-            passwordFieldGroup.setReadOnly(false);
-            passwordFieldGroup.getField("current").focus();
+            passwordBinder.setReadOnly(false);
+//            passwordFieldGroup.getField("current").focus();
             changePassBtn.setEnabled(false);
             getCancelBtn().setEnabled(false);
             getApp().scrollIntoView(passwordPanel);
@@ -221,7 +191,8 @@ public class UsersView extends QIEntityView<User> {
         b.setEnabled(false);
         b.addClickListener((Button.ClickListener) event -> {
             passwordPanel.setVisible(!passwordPanel.isVisible());
-            passwordFieldGroup.setReadOnly(!passwordFieldGroup.isReadOnly());
+            //todo:
+//            passwordFieldGroup.setReadOnly(!passwordFieldGroup.isReadOnly());
             changePassBtn.setCaption(passwordPanel.isVisible() ?
                     getApp().getMessage("cancel") : getApp().getMessage("changePassword"));
         });
@@ -263,56 +234,44 @@ public class UsersView extends QIEntityView<User> {
         panelContent.addComponent(form);
         panelContent.setExpandRatio(form, 1f);
 
-        passwordFieldGroup = new FieldGroup();
-        PropertysetItem passwordItem = new PropertysetItem();
-        passwordItem.addItemProperty("current", new ObjectProperty<>(""));
-        passwordItem.addItemProperty("new", new ObjectProperty<>(""));
-        passwordItem.addItemProperty("repeat", new ObjectProperty<>(""));
-        passwordFieldGroup.setItemDataSource(passwordItem);
-        passwordFieldGroup.setReadOnly(true);
-
+        passwordBinder = new Binder<>();
+        passwordBinder.setReadOnly(true);
         if (selectedU.getId() != null) {
             PasswordField currentPass = new PasswordField(getApp().getMessage("passwordForm.currentPassword"));
             currentPass.setWidth("80%");
-            currentPass.setRequired(true);
-            currentPass.setRequiredError(getApp().getMessage("errorMessage.req", currentPass.getCaption()));
-//            currentPass.addValidator(((UsersHelper)getHelper()).getCurrentPasswordMatchValidator(selectedU, currentPass));
-            currentPass.setImmediate(false);
+
+            passwordBinder.forField(currentPass)
+                    .asRequired(getApp().getMessage("errorMessage.req", currentPass.getCaption()))
+//                    .withValidator(((UsersHelper)getHelper()).getCurrentPasswordMatchValidator(selectedU, currentPass))
+                    .bind(string->string,null);
             form.addComponent(currentPass);
-            passwordFieldGroup.bind(currentPass, "current");
         }
 
         PasswordField newPass = new PasswordField(getApp().getMessage("passwordForm.newPassword"));
         newPass.setWidth("80%");
-        newPass.setRequired(true);
-        newPass.setRequiredError(getApp().getMessage("errorMessage.req",newPass.getCaption()));
-        newPass.setImmediate(false);
+        passwordBinder.forField(newPass)
+                .asRequired(getApp().getMessage("errorMessage.req",newPass.getCaption()))
+//                .withValidator(((UsersHelper)getHelper()).getNewPasswordNotUsedValidator(selectedU, newPass))
+                .bind(string->string,null);
         form.addComponent(newPass);
 
         PasswordField repeatPass = new PasswordField(getApp().getMessage("passwordForm.confirmPassword"));
         repeatPass.setWidth("80%");
-        repeatPass.setImmediate(false);
-        repeatPass.setRequired(true);
-        repeatPass.setRequiredError(getApp().getMessage("errorMessage.req", repeatPass.getCaption()));
+        passwordBinder.forField(repeatPass)
+                .asRequired(getApp().getMessage("errorMessage.req", repeatPass.getCaption()))
+//                .withValidator(((UsersHelper)getHelper()).getPasswordsMatchValidator(newPass))
+                .bind(string->string,null);
         form.addComponent(repeatPass);
-        //Add validators
-//        newPass.addValidator(((UsersHelper)getHelper()).getNewPasswordNotUsedValidator(selectedU, newPass));
-//        repeatPass.addValidator(((UsersHelper)getHelper()).getPasswordsMatchValidator(newPass));
-
-        passwordFieldGroup.bind(newPass, "new");
-        passwordFieldGroup.bind(repeatPass, "repeat");
         passwordPanel.setVisible(forcePasswordChange);
-
         passwordPanel.setContent(panelContent);
         return passwordPanel;
-
     }
 
     private void hidePasswordPanel () {
         if (changePassBtn != null && passwordPanel != null) {
             changePassBtn.setCaption(getApp().getMessage("changePassword"));
             passwordPanel.setVisible(false);
-            passwordFieldGroup.setReadOnly(true);
+            passwordBinder.setReadOnly(true);
         }
     }
 
@@ -327,22 +286,26 @@ public class UsersView extends QIEntityView<User> {
     }
 
     protected boolean saveClick (Button.ClickEvent event, Layout formLayout) {
-        if (passwordFieldGroup != null && !passwordFieldGroup.isReadOnly()) {
-            try {
-                passwordFieldGroup.commit();
-            } catch (FieldGroup.CommitException e) {
-                for (Field f : e.getInvalidFields().keySet()) {
-                    getErrorLabel().setValue(e.getInvalidFields().get(f).getMessage());
-                    getErrorLabel().setVisible(true);
-                }
+        if (passwordBinder != null /*&& passwordBinder.isReadOnly()*/) {
+            if (!passwordBinder.isValid()) {
                 return false;
             }
+
+//            catch (FieldGroup.CommitException e) {
+//                for (Field f : e.getInvalidFields().keySet()) {
+//                    getErrorLabel().setValue(e.getInvalidFields().get(f).getMessage());
+//                    getErrorLabel().setVisible(true);
+//                }
+//                return false;
+//            }
+
         }
         if (super.saveClick (event, formLayout)) {
             if (resetPassBtn != null)
                 resetPassBtn.setEnabled(false);
             if (changePassBtn != null) {
-                passwordFieldGroup.clear();
+//                passwordFieldGroup.clear();
+                passwordBinder.readBean("");
                 changePassBtn.setEnabled(false);
                 hidePasswordPanel();
             }
@@ -388,7 +351,7 @@ public class UsersView extends QIEntityView<User> {
 //        name.setRequiredError(getApp().getMessage("errorMessage.req",name.getCaption()));
 //        name.setWidth("60%");
 //
-        if (getBean().equals(getApp().getUser().getId())) {
+        if (getBean().getId().equals(getApp().getUser().getId())) {
             changePassBtn = createChangePasswordButton();
             l.addComponents(changePassBtn, createPasswordPanel());
         }

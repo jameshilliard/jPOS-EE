@@ -790,7 +790,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
 
 
     public T getInstance() {
-        return binder.getBean();
+        return bean;
     }
 
     public Binder<T> getBinder() {

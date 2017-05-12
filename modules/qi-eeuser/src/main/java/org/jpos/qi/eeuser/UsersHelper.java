@@ -21,7 +21,6 @@ package org.jpos.qi.eeuser;
 import com.vaadin.data.Binder;
 import com.vaadin.data.ValidationResult;
 import com.vaadin.data.Validator;
-//import com.vaadin.v7.ui.PasswordField;
 import com.vaadin.ui.PasswordField;
 import org.hibernate.Criteria;
 import org.jpos.ee.*;
@@ -80,11 +79,12 @@ public class UsersHelper extends QIHelper {
                 User oldUser = (User) ((User)getOriginalEntity()).clone();
                 if (binder.writeBeanIfValid(getOriginalEntity())) {
                     User user = (User) getOriginalEntity();
-                    db.session().merge(user);
+                    user = (User) db.session().merge(user);
                     boolean updated = false;
                     if (!newClearPass.isEmpty()) {
                         boolean passwordOK = false;
                         boolean newPasswordOK = false;
+                        user.getPasswordhistory(); //to avoid lazy
                         passwordOK = mgr.checkPassword(user, currentPass);
                         newPasswordOK = mgr.checkNewPassword(user, newClearPass);
                         if (passwordOK && newPasswordOK) {

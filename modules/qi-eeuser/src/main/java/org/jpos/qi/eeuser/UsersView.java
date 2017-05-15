@@ -43,6 +43,7 @@ public class UsersView extends QIEntityView<User> {
     private Button changePassBtn;
     private Button resetPassBtn;
     private boolean forcePasswordChange;
+    private boolean binderIsReadOnly;   //used while binder.isReadOnly not implemented by Vaadin
 
     public UsersView () {
         super(User.class, "users");
@@ -117,6 +118,7 @@ public class UsersView extends QIEntityView<User> {
         if (forcePasswordChange && passwordBinder != null) {
             getEditBtn().click();
             passwordBinder.setReadOnly(false);
+            binderIsReadOnly = false;
             changePassBtn.setEnabled(false);
             getCancelBtn().setEnabled(false);
             getApp().scrollIntoView(passwordPanel);
@@ -192,6 +194,7 @@ public class UsersView extends QIEntityView<User> {
         b.setStyleName(ValoTheme.BUTTON_LINK);
         b.addStyleName(ValoTheme.BUTTON_SMALL);
         b.setEnabled(false);
+        b.setIcon(VaadinIcons.REFRESH);
         b.addClickListener((Button.ClickListener) event -> resetPasswordClick());
         return b;
     }
@@ -224,6 +227,7 @@ public class UsersView extends QIEntityView<User> {
 
         passwordBinder = new Binder<>();
         passwordBinder.setReadOnly(true);
+        binderIsReadOnly=true;
         if (selectedU.getId() != null) {
             currentPasswordField = new PasswordField(getApp().getMessage("passwordForm.currentPassword"));
             currentPasswordField.setWidth("80%");
@@ -260,6 +264,7 @@ public class UsersView extends QIEntityView<User> {
             changePassBtn.setCaption(getApp().getMessage("changePassword"));
             passwordPanel.setVisible(false);
             passwordBinder.setReadOnly(true);
+            binderIsReadOnly = true;
         }
     }
 
@@ -274,7 +279,7 @@ public class UsersView extends QIEntityView<User> {
     }
 
     protected boolean saveClick (Button.ClickEvent event, Layout formLayout) {
-        if (passwordBinder != null /*&& passwordBinder.isReadOnly()*/) {
+        if (passwordBinder != null && !binderIsReadOnly) {
             if (!passwordBinder.isValid()) {
                 return false;
             }
@@ -325,7 +330,8 @@ public class UsersView extends QIEntityView<User> {
 //        name.setRequiredError(getApp().getMessage("errorMessage.req",name.getCaption()));
 //        name.setWidth("60%");
 //
-        if (getBean().getId().equals(getApp().getUser().getId())) {
+
+        if (getBean().getId() != null && getBean().getId().equals(getApp().getUser().getId())) {
             changePassBtn = createChangePasswordButton();
             l.addComponents(changePassBtn, createPasswordPanel());
         }

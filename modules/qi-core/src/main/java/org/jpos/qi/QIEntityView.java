@@ -405,7 +405,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
 
     protected boolean saveClick(Button.ClickEvent event, Layout formLayout) {
         if (binder.validate().isOk()) {
-            if (getEntity(bean) == null)
+            if (getEntity(bean) == null) {
                 try {
                     saveEntity();
                 } catch (BLException e) {
@@ -413,7 +413,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
                     getApp().displayNotification(e.getDetailedMessage());
                     return false;
                 }
-            else {
+            } else {
                 try {
                     updateEntity();
                 } catch (BLException e) {
@@ -422,22 +422,24 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
                     return false;
                 }
             }
+            binder.setReadOnly(true);
+            formLayout.addStyleName(ValoTheme.FORMLAYOUT_LIGHT);
+            event.getButton().setVisible(false);
+            cancelBtn.setVisible(false);
+            editBtn.setVisible(true);
+            removeBtn.setVisible(true);
+            errorLabel.setValue(null);
+            errorLabel.setVisible(false);
+            if (revisionsPanel != null && revisionsPanel.getParent() != null) {
+                Layout parent = (Layout) revisionsPanel.getParent();
+                parent.removeComponent(revisionsPanel);
+                loadRevisionHistory(parent, revisionsPanel.getRef());
+            }
+            return true;
+        } else {
+            getApp().displayNotification(getApp().getMessage("errorMessage.invalidFields"));
+            return false;
         }
-
-        binder.setReadOnly(true);
-        formLayout.addStyleName(ValoTheme.FORMLAYOUT_LIGHT);
-        event.getButton().setVisible(false);
-        cancelBtn.setVisible(false);
-        editBtn.setVisible(true);
-        removeBtn.setVisible(true);
-        errorLabel.setValue(null);
-        errorLabel.setVisible(false);
-        if (revisionsPanel != null && revisionsPanel.getParent() != null) {
-            Layout parent = (Layout) revisionsPanel.getParent();
-            parent.removeComponent(revisionsPanel);
-            loadRevisionHistory(parent, revisionsPanel.getRef());
-        }
-        return true;
     }
 
     protected void editClick(Button.ClickEvent event, Layout formLayout) {

@@ -100,8 +100,9 @@ public class UsersHelper extends QIHelper {
                             user,
                             new String[]{"nick", "name", "email", "active", "roles", "password"});
                     return updated;
+                } else {
+                    throw new BLException(getApp().getMessage("errorMessage.invalidFields"));
                 }
-                return false;
             });
         } catch (BLException e) {
             throw e;

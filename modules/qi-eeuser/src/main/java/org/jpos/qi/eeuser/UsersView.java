@@ -181,8 +181,7 @@ public class UsersView extends QIEntityView<User> {
         b.setEnabled(false);
         b.addClickListener((Button.ClickListener) event -> {
             passwordPanel.setVisible(!passwordPanel.isVisible());
-            //todo:
-//            passwordFieldGroup.setReadOnly(!passwordFieldGroup.isReadOnly());
+            passwordBinder.setReadOnly(!binderIsReadOnly);
             changePassBtn.setCaption(passwordPanel.isVisible() ?
                     getApp().getMessage("cancel") : getApp().getMessage("changePassword"));
         });

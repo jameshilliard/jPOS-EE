@@ -37,8 +37,8 @@ public class UsersView extends QIEntityView<User> {
 
     private User selectedU;
     private Binder<String> passwordBinder;
-    private TextField currentPasswordField;
-    private TextField repeatPasswordField;
+    private PasswordField currentPasswordField;
+    private PasswordField repeatPasswordField;
     private Panel passwordPanel;
     private Button changePassBtn;
     private Button resetPassBtn;
@@ -243,7 +243,7 @@ public class UsersView extends QIEntityView<User> {
             form.addComponent(currentPasswordField);
         }
 
-        TextField newPasswordField = new PasswordField(getApp().getMessage("passwordForm.newPassword"));
+        PasswordField newPasswordField = new PasswordField(getApp().getMessage("passwordForm.newPassword"));
         newPasswordField.setWidth("80%");
         passwordBinder.forField(newPasswordField)
                 .asRequired(getApp().getMessage("errorMessage.req",newPasswordField.getCaption()))
@@ -255,7 +255,7 @@ public class UsersView extends QIEntityView<User> {
         repeatPasswordField.setWidth("80%");
         passwordBinder.forField(repeatPasswordField)
                 .asRequired(getApp().getMessage("errorMessage.req", repeatPasswordField.getCaption()))
-//                .withValidator(((UsersHelper)getHelper()).getPasswordsMatchValidator(newPass))
+                .withValidator(((UsersHelper)getHelper()).getPasswordsMatchValidator(newPasswordField))
                 .bind(string->string,null);
         form.addComponent(repeatPasswordField);
         passwordPanel.setVisible(forcePasswordChange);

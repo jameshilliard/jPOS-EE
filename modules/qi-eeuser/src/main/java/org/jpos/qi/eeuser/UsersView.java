@@ -247,7 +247,7 @@ public class UsersView extends QIEntityView<User> {
         newPasswordField.setWidth("80%");
         passwordBinder.forField(newPasswordField)
                 .asRequired(getApp().getMessage("errorMessage.req",newPasswordField.getCaption()))
-//                .withValidator(((UsersHelper)getHelper()).getNewPasswordNotUsedValidator(selectedU, newPass))
+                .withValidator(((UsersHelper)getHelper()).getNewPasswordNotUsedValidator())
                 .bind(string->string,null);
         form.addComponent(newPasswordField);
 

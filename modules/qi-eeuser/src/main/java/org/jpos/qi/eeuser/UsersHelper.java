@@ -21,6 +21,7 @@ package org.jpos.qi.eeuser;
 import com.vaadin.data.Binder;
 import com.vaadin.data.ValidationResult;
 import com.vaadin.data.Validator;
+import com.vaadin.data.ValueContext;
 import com.vaadin.ui.PasswordField;
 import org.hibernate.Criteria;
 import org.jpos.ee.*;
@@ -268,32 +269,27 @@ public class UsersHelper extends QIHelper {
 //            }
 //        };
 //    }
-//    public Validator getNewPasswordNotUsedValidator (User user, final PasswordField newPass) {
-//        return new Validator() {
-//            public boolean isValid (Object value) {
-//                try {
-//                    return (boolean) DB.exec((db) -> {
-//                        db.session().refresh(user);
-//                        UserManager mgr = new UserManager(db);
-//                        try {
-//                            return mgr.checkNewPassword(user, (String) value);
-//                        } catch (BLException e) {
-//                            return false;
-//                        }
-//                    });
-//                } catch (Exception e) {
-//                    getApp().getLog().error(e);
-//                    return false;
-//                }
-//            }
-//            @Override
-//            public void validate(Object value) throws InvalidValueException {
-//                if (!isValid(value)) {
-//                    newPass.focus();
-//                    throw new Validator.InvalidValueException(getApp().getMessage("error.passwordUsed"));
-//                }
-//            }
-//        };
-//    }
+    public Validator getNewPasswordNotUsedValidator() {
+        return (Validator<String>) (value, context) -> {
+            if (getOriginalEntity() != null) {
+                try {
+                    boolean ok = (boolean) DB.exec((db) -> {
+                        db.session().refresh(getOriginalEntity());
+                        UserManager mgr = new UserManager(db);
+                        try {
+                            return mgr.checkNewPassword((User) getOriginalEntity(), (String) value);
+                        } catch (BLException e) {
+                            return false;
+                        }
+                    });
+                    return ok ? ValidationResult.ok() : ValidationResult.error(getApp().getMessage("error.passwordUsed"));
+                } catch (Exception e) {
+                    getApp().getLog().error(e);
+                }
+            }
+            return ValidationResult.ok();
+        };
+    }
+
 }
 

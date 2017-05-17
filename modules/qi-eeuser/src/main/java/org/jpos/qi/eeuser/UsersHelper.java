@@ -21,7 +21,6 @@ package org.jpos.qi.eeuser;
 import com.vaadin.data.Binder;
 import com.vaadin.data.ValidationResult;
 import com.vaadin.data.Validator;
-import com.vaadin.data.ValueContext;
 import com.vaadin.ui.PasswordField;
 import org.hibernate.Criteria;
 import org.jpos.ee.*;
@@ -243,32 +242,24 @@ public class UsersHelper extends QIHelper {
         return generatedPassword;
     }
 
-//    public Validator getCurrentPasswordMatchValidator (User user, final PasswordField currentPass) {
-//        return new Validator() {
-//            public boolean isValid (Object value) {
-//                try {
-//                    return (boolean) DB.exec((db) -> {
-//                        UserManager mgr = new UserManager(db);
-//                        try {
-//                            return mgr.checkPassword(user, (String) value);
-//                        } catch (BLException e) {
-//                            return false;
-//                        }
-//                    });
-//                } catch (Exception e) {
-//                    getApp().getLog().error(e);
-//                    return false;
-//                }
-//            }
-//            @Override
-//            public void validate(Object value) throws InvalidValueException {
-//                if (!isValid(value)) {
-//                    currentPass.focus();
-//                    throw new InvalidValueException(getApp().getMessage("error.invalidPassword"));
-//                }
-//            }
-//        };
-//    }
+    public Validator getCurrentPasswordMatchValidator() {
+        return (Validator<String>) (value, context) -> {
+            try {
+                boolean passwordOk = (boolean) DB.exec((db) -> {
+                    UserManager mgr = new UserManager(db);
+                    try {
+                        return mgr.checkPassword((User) getOriginalEntity(), (String) value);
+                    } catch (BLException e) {
+                        return false;
+                    }
+                });
+                return passwordOk ? ValidationResult.ok() : ValidationResult.error(getApp().getMessage("error.invalidPassword"));
+            } catch (Exception e) {
+                getApp().getLog().error(e);
+                return ValidationResult.error(e.getMessage());
+            }
+        };
+    }
     public Validator getNewPasswordNotUsedValidator() {
         return (Validator<String>) (value, context) -> {
             if (getOriginalEntity() != null) {

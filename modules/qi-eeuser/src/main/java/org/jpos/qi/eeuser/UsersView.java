@@ -238,7 +238,7 @@ public class UsersView extends QIEntityView<User> {
 
             passwordBinder.forField(currentPasswordField)
                     .asRequired(getApp().getMessage("errorMessage.req", currentPasswordField.getCaption()))
-//                    .withValidator(((UsersHelper)getHelper()).getCurrentPasswordMatchValidator(selectedU, currentPass))
+                    .withValidator(((UsersHelper)getHelper()).getCurrentPasswordMatchValidator())
                     .bind(string->string,null);
             form.addComponent(currentPasswordField);
         }

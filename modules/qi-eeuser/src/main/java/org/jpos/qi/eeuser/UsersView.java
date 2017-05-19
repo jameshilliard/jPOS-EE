@@ -314,20 +314,6 @@ public class UsersView extends QIEntityView<User> {
     protected void addFields(Layout l) {
         super.addFields(l);
         selectedU = getBean();
-        //done separately because needs extra validator.
-
-//        nick.setRequired(true);
-//        nick.setRequiredError(getApp().getMessage("errorMessage.req",nick.getCaption()));
-//        Validator nickTakenV = ((UsersHelper) getHelper()).getNickTakenValidator(selectedU);
-//        nick.addValidator(nickTakenV);
-//        nick.setWidth("30%");
-//        nick.setMaxLength(64);
-//
-//        name.setRequired(true);
-//        name.setRequiredError(getApp().getMessage("errorMessage.req",name.getCaption()));
-//        name.setWidth("60%");
-//
-
         if (getBean().getId() != null && getBean().getId().equals(getApp().getUser().getId())) {
             changePassBtn = createChangePasswordButton();
             l.addComponents(changePassBtn, createPasswordPanel());

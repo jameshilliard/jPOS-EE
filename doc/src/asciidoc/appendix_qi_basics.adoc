@@ -133,6 +133,10 @@ It has:
 
 	Boolean value indicating if the attribute should be editable
 
+* `required` (boolean, optional)
+
+	Indicates if the field is required. Default is false. 
+
 * `regex` (string, optional)
 
 	A string indicating the regex used for validating the field. 
@@ -140,6 +144,16 @@ It has:
 * `length` (numeric,optional) 
 
 	A number, indicating the max length for the field value. 
+
+* `expandRatio` (numeric,optional)
+
+	A number, indicating if the field's expandRatio to be used. (Check https://vaadin.com/docs/-/part/framework/layout/layout-settings.html#layout.settings.size.expanding(Vaadin docs) for more info).
+
+* `perm` (string, optional)
+
+	The permission needed to access the field. 
+
+	
 
 Example: 
 

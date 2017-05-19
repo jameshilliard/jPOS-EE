@@ -53,7 +53,7 @@ uploadArchives.enabled = false
 
 dependencies {
     compile "com.vaadin:vaadin-server:${vaadinVersion}"
-    compile "com.vaadin:vaadin-push:${vaadinVersion}" // TODO : Check alternative. Caused exception.
+    compile "com.vaadin:vaadin-push:${vaadinVersion}"
     compile 'org.vaadin.addons:d3Gauge:1.0.1'
     compile 'org.vaadin.addons:dcharts-widget:1.7.0'
     compile 'com.byteowls:vaadin-chartjs:0.3.0'

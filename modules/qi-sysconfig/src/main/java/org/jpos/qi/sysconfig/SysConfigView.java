@@ -23,6 +23,7 @@ import com.vaadin.data.Validator;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.TextField;
+import org.apache.commons.lang3.StringUtils;
 import org.jpos.ee.BLException;
 import org.jpos.ee.SysConfig;
 import org.jpos.qi.QIEntityView;
@@ -89,12 +90,14 @@ public class SysConfigView extends QIEntityView<SysConfig> {
     @Override
     protected Component buildAndBindCustomComponent(String propertyId) {
         if ("id".equals(propertyId)) {
-            List<Validator> validators = getValidators(propertyId);
             TextField id = new TextField(getCaptionFromId(propertyId));
+            List<Validator> validators = getValidators(propertyId);
             Binder<SysConfig> binder = getBinder();
             Binder.BindingBuilder builder = binder.forField(id)
+                .asRequired(getApp().getMessage("errorMessage.req", StringUtils.capitalize(getCaptionFromId(propertyId))))
                 .withNullRepresentation("")
-                .withConverter(userInputValue -> userInputValue, toPresentation -> removePrefix(toPresentation));
+                .withConverter(userInputValue -> userInputValue
+                                , toPresentation -> removePrefix(toPresentation));
             validators.forEach(builder::withValidator);
             builder.bind(propertyId);
             return id;

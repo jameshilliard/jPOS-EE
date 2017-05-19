@@ -18,9 +18,7 @@
 
 package org.jpos.qi;
 
-import com.vaadin.data.Binder;
-import com.vaadin.data.HasValue;
-import com.vaadin.data.Validator;
+import com.vaadin.data.*;
 import com.vaadin.data.converter.StringToBigDecimalConverter;
 import com.vaadin.data.converter.StringToLongConverter;
 import com.vaadin.data.validator.RegexpValidator;
@@ -436,7 +434,8 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
             }
             return true;
         } else {
-            getApp().displayNotification(getApp().getMessage("errorMessage.invalidFields"));
+            BindingValidationStatus<?> result = binder.validate().getFieldValidationErrors().get(0);
+            getApp().displayNotification(result.getResult().get().getErrorMessage());
             return false;
         }
     }
@@ -519,73 +518,57 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         return validators;
     }
 
+    protected boolean isRequired(String propertyId) {
+        return viewConfig.getFields().get(propertyId).isRequired();
+    }
+
     protected TextField buildAndBindLongField(String id) {
         TextField field = new TextField(getCaptionFromId(id));
-        List<Validator> v = getValidators(id);
-        Binder.BindingBuilder builder = getBinder().forField(field);
-        for (Validator val : v) {
-            builder.withValidator(val);
-        }
+        Binder.BindingBuilder builder = createField(id,field);
         builder.withConverter(new StringToLongConverter(getApp().getMessage("errorMessage.NaN",id)));
         builder.bind(id);
         return field;
     }
 
-//    protected CheckBoxGroup buildAndBindCheckBoxGroup(String id, Set items) {
-//        CheckBoxGroup g = new CheckBoxGroup(StringUtils.capitalize(getCaptionFromId(id)));
-//        g.setItems(items);
-//        List<Validator> v = getValidators(id);
-//        Binder.BindingBuilder builder = getBinder().forField(g);
-//        for (Validator val : v) {
-//            builder.withValidator(val);
-//        }
-//        builder.bind(id);
-//        return g;
-//    }
-
     protected CheckBox buildAndBindBooleanField(String id) {
         CheckBox box = new CheckBox(StringUtils.capitalize(getCaptionFromId(id)),false);
-        List<Validator> v = getValidators(id);
-        Binder.BindingBuilder builder = getBinder().forField(box);
-        for (Validator val : v) {
-            builder.withValidator(val);
-        }
+        Binder.BindingBuilder builder = createField(id,box);
         builder.bind(id);
         return box;
     }
 
     protected TextField buildAndBindTextField(String id) {
         TextField field = new TextField(getCaptionFromId(id));
-        List<Validator> v = getValidators(id);
-        Binder.BindingBuilder builder = getBinder().forField(field);
-        for (Validator val : v) {
-            builder.withValidator(val);
-        }
+        Binder.BindingBuilder builder = createField(id,field);
         builder.bind(id);
         return field;
     }
 
     protected DateField buildAndBindDateField(String id) {
         DateField field = new DateField(getCaptionFromId(id));
-        List<Validator> v = getValidators(id);
-        Binder.BindingBuilder builder = getBinder().forField(field);
-        for (Validator val : v) {
-            builder.withValidator(val);
-        }
+        Binder.BindingBuilder builder = createField(id, field);
         builder.bind(id);
         return field;
     }
 
     protected TextField buildAndBindBigDecimalField(String id) {
         TextField field = new TextField(getCaptionFromId(id));
+        Binder.BindingBuilder builder = createField(id,field);
+        builder.withConverter(new StringToBigDecimalConverter(getApp().getMessage("errorMessage.NaN",id)));
+        builder.bind(id);
+        return field;
+    }
+
+    protected Binder.BindingBuilder createField(String id, HasValue field) {
         List<Validator> v = getValidators(id);
         Binder.BindingBuilder builder = getBinder().forField(field);
         for (Validator val : v) {
-            builder.withValidator(val).
-            withConverter(new StringToBigDecimalConverter(getApp().getMessage("errorMessage.NaN",id)));
+            builder.withValidator(val);
         }
-        builder.bind(id);
-        return field;
+        if (isRequired(id)) {
+            builder.asRequired(getApp().getMessage("errorMessage.req",StringUtils.capitalize(getCaptionFromId(id))));
+        }
+        return builder;
     }
 
     protected String getCaptionFromId(String id) {

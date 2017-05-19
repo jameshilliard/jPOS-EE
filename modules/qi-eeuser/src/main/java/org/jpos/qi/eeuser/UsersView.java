@@ -316,13 +316,6 @@ public class UsersView extends QIEntityView<User> {
         selectedU = getBean();
         //done separately because needs extra validator.
 
-//        TextField passwordChanged = new TextField("passwordChanged");
-//        getBinder().forField(passwordChanged).withConverter(converter -> passwordChanged.getValue(),
-//                converter2 -> passwordChanged.getValue()
-//        ).bind("passwordChanged");
-//
-//        email.setWidth("60%");
-//
 //        nick.setRequired(true);
 //        nick.setRequiredError(getApp().getMessage("errorMessage.req",nick.getCaption()));
 //        Validator nickTakenV = ((UsersHelper) getHelper()).getNickTakenValidator(selectedU);

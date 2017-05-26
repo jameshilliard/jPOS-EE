@@ -265,19 +265,6 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
         });
         grid.setSizeFull();
     }
-//
-//    private boolean isBooleanColumn (Grid.Column c) {
-//        Object value = c.getValueProvider().apply();
-//        return (value instanceof Boolean);
-//
-////        return c.getConverter() != null && StringToBooleanConverter.class.equals(c.getConverter().getClass());
-//    }
-//
-//    private boolean isDateColumn (Grid.Column c) {
-//        Object value = c.getValueProvider().apply(c.getStyleGenerator());
-//        return (value instanceof Date);
-////        return c.getConverter() != null && StringToDateConverter.class.equals(c.getConverter().getClass());
-//    }
 
 
     public abstract void setGridGetters();
@@ -524,7 +511,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
 
     protected TextField buildAndBindLongField(String id) {
         TextField field = new TextField(getCaptionFromId(id));
-        Binder.BindingBuilder builder = createField(id,field);
+        Binder.BindingBuilder builder = formatField(id,field);
         builder.withConverter(new StringToLongConverter(getApp().getMessage("errorMessage.NaN",id)));
         builder.bind(id);
         return field;
@@ -532,34 +519,34 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
 
     protected CheckBox buildAndBindBooleanField(String id) {
         CheckBox box = new CheckBox(StringUtils.capitalize(getCaptionFromId(id)),false);
-        Binder.BindingBuilder builder = createField(id,box);
+        Binder.BindingBuilder builder = formatField(id,box);
         builder.bind(id);
         return box;
     }
 
     protected TextField buildAndBindTextField(String id) {
         TextField field = new TextField(getCaptionFromId(id));
-        Binder.BindingBuilder builder = createField(id,field);
+        Binder.BindingBuilder builder = formatField(id,field);
         builder.bind(id);
         return field;
     }
 
     protected DateField buildAndBindDateField(String id) {
         DateField field = new DateField(getCaptionFromId(id));
-        Binder.BindingBuilder builder = createField(id, field);
+        Binder.BindingBuilder builder = formatField(id, field);
         builder.bind(id);
         return field;
     }
 
     protected TextField buildAndBindBigDecimalField(String id) {
         TextField field = new TextField(getCaptionFromId(id));
-        Binder.BindingBuilder builder = createField(id,field);
+        Binder.BindingBuilder builder = formatField(id,field);
         builder.withConverter(new StringToBigDecimalConverter(getApp().getMessage("errorMessage.NaN",id)));
         builder.bind(id);
         return field;
     }
 
-    protected Binder.BindingBuilder createField(String id, HasValue field) {
+    protected Binder.BindingBuilder formatField(String id, HasValue field) {
         List<Validator> v = getValidators(id);
         Binder.BindingBuilder builder = getBinder().forField(field);
         for (Validator val : v) {

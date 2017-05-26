@@ -228,7 +228,7 @@ public abstract class QIEntityView<T> extends VerticalLayout implements View, Co
             if (!Arrays.asList(getVisibleColumns()).contains(columnId)) {
                 grid.removeColumn(columnId);
             } else {
-                c.setCaption(columnId)
+                c.setCaption(getCaptionFromId(columnId))
                         .setSortProperty(columnId)
                         .setSortable(true)
                         .setHidable(true);

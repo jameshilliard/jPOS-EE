@@ -240,7 +240,7 @@ public class EntityContainer<T>
         if (size == null) {
             try {
                 size = (Long) DB.exec((db) -> {
-                    Criteria crit = getBaseCriteria(db);
+                    Criteria crit = getCriteria(db);
                     if (searchRestrictions != null && searchRestrictions.size() > 0) {
                         for (Criterion c : searchRestrictions) {
                             crit.add(c);
@@ -352,7 +352,8 @@ public class EntityContainer<T>
                 Criteria crit = getCriteria(db);
                 crit.setProjection(Projections.id());
                 crit.setFirstResult(startIndex);
-                crit.setFetchSize(numberOfItems);
+                crit.setMaxResults(numberOfItems);
+//                crit.setFetchSize(numberOfItems);
                 return crit.list();
             });
         } catch (Exception e) {

@@ -23,6 +23,8 @@ ext {
     postgresJDBCVersion = '42.2.11'
     flywaydbVersion = '6.0.4'
     liquibaseVersion = '3.8.0'
+    jedisVersion = '3.0.1'
+    embeddedRedisVersion = '0.7.3'
 
     libraries = [
             //jUnit (Tests)
@@ -120,7 +122,9 @@ ext {
             guava: "com.google.guava:guava:${guavaVersion}",
             httpAsyncClient: "org.apache.httpcomponents:httpasyncclient:${httpAsyncClientVersion}",
             flywaydb: "org.flywaydb:flyway-core:${flywaydbVersion}",
-            liquibase: "org.liquibase:liquibase-core:${liquibaseVersion}"
+            liquibase: "org.liquibase:liquibase-core:${liquibaseVersion}",
+            jedis: "redis.clients:jedis:${jedisVersion}",
+            embedded_redis: "it.ozimov:embedded-redis:${embeddedRedisVersion}"
     ]
 
     jsonSchemaValidatorLibs = [

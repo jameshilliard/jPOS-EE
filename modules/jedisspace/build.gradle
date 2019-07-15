@@ -1,0 +1,7 @@
+description = 'jPOS-EE :: JedisSpace Module'
+
+dependencies {
+    compile libraries.jpos
+    implementation libraries.jedis
+    testImplementation libraries.embedded_redis
+}

@@ -4,7 +4,8 @@ dependencies {
     api libraries.jpos
     api libraries.groovy
     api libraries.groovysh
-    api group: 'org.fusesource.jansi', name: 'jansi', version: '1.11'
+    implementation libraries.jline
+    api group: 'org.fusesource.jansi', name: 'jansi', version: '1.18'
 
     api libraries.groovySql
 }

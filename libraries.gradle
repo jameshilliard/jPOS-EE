@@ -1,31 +1,32 @@
 ext {
     jposVersion = '2.1.4-SNAPSHOT'
-    slf4jVersion = '1.7.28'
+    slf4jVersion = '1.7.30'
     logbackVersion = '1.2.3'
-    hibernateVersion = '5.4.6.Final'
+    hibernateVersion = '5.4.12.Final'
     geronimoVersion = '1.1.1'
-    jettyVersion = '9.4.20.v20190813'
+    jettyVersion = '9.4.27.v20200227'
     servletApiVersion = '4.0.1'
     websocketApiVersion = '1.1'
-    jgroupsVersion = '4.1.5.Final'
+    jgroupsVersion = '4.2.1.Final'
     jaxrsVersion = '2.0.1'
-    jsonSchemaVersion = '2.2.11'
-    guavaVersion = '28.1-jre'
-    jacksonVersion = '2.10.0'
-    groovyVersion = '2.5.8'
+    jsonSchemaVersion = '2.2.13'
+    guavaVersion = '28.2-jre'
+    jacksonVersion = '2.10.3'
+    groovyVersion = '3.0.2'
+    jlineVersion = '2.14.6'
     restAssuredVersion = '2.9.0'
     vaadinVersion = '8.10.0'
-    nettyVersion = '4.1.42.Final'
+    nettyVersion = '4.1.47.Final'
     httpAsyncClientVersion = '4.1.4'
-    mysqlJDBCVersion = '8.0.17'
-    c3p0Version = '0.9.5.4'
+    mysqlJDBCVersion = '8.0.19'
+    c3p0Version = '0.9.5.5'
     postgresJDBCVersion = '42.2.11'
-    flywaydbVersion = '6.0.4'
-    liquibaseVersion = '3.8.0'
+    flywaydbVersion = '6.3.0'
+    liquibaseVersion = '3.8.7'
 
     libraries = [
             //jUnit (Tests)
-            junit: 'org.junit.jupiter:junit-jupiter:5.5.2',
+            junit: 'org.junit.jupiter:junit-jupiter:5.6.0',
 
             //jPOS
             jpos: "org.jpos:jpos:${jposVersion}",
@@ -43,7 +44,7 @@ ext {
             logback: "ch.qos.logback:logback-classic:${logbackVersion}",
 
             //JODA-Time
-            joda_time: 'joda-time:joda-time:2.10.4',
+            joda_time: 'joda-time:joda-time:2.10.5',
 
             //Hibernate
             hibernate_core: "org.hibernate:hibernate-core:${hibernateVersion}",
@@ -57,16 +58,19 @@ ext {
             jdbcH2: 'com.h2database:h2:1.4.199',
             jdbcMysql: "mysql:mysql-connector-java:${mysqlJDBCVersion}",
             jdbcPostgresql: "org.postgresql:postgresql:${postgresJDBCVersion}",
-            jdbcMssql: 'com.microsoft.sqlserver:mssql-jdbc:7.4.1.jre8',
+            jdbcMssql: 'com.microsoft.sqlserver:mssql-jdbc:8.2.1.jre8',
 
             //Freemarker
-            freemarker: 'org.freemarker:freemarker:[2.3.29,2.4)',
+            freemarker: 'org.freemarker:freemarker:2.3.30',
 
             //Mail
             javax_mail: 'javax.mail:javax.mail-api:1.6.2',
 
+            //Jakarta Activation
+            jakarta_activation: 'jakarta.activation:jakarta.activation-api:1.2.2',
+
             //SSHD
-            sshd: 'org.apache.sshd:sshd-core:2.3.0',
+            sshd: 'org.apache.sshd:sshd-core:2.4.0',
 
             //Servlet API
             servlet_api: "javax.servlet:javax.servlet-api:${servletApiVersion}",
@@ -92,7 +96,7 @@ ext {
             jetty_rewrite: "org.eclipse.jetty:jetty-rewrite:${jettyVersion}",
 
             // Quartz Scheduler
-            quartz: 'org.quartz-scheduler:quartz:2.3.1',
+            quartz: 'org.quartz-scheduler:quartz:2.3.2',
 
             // JGroups
             jgroups: "org.jgroups:jgroups:${jgroupsVersion}",
@@ -102,6 +106,9 @@ ext {
             groovysh: "org.codehaus.groovy:groovy-groovysh:${groovyVersion}",
             groovySql: "org.codehaus.groovy:groovy-sql:${groovyVersion}",
 
+            // Jline
+            jline: "jline:jline:${jlineVersion}",
+
             // Jackson
             jacksonDatabind: "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}",
 
@@ -110,7 +117,7 @@ ext {
             nettyCodecHttp: "io.netty:netty-codec-http:${nettyVersion}",
 
             // RestAssured
-            restAssured: "io.rest-assured:rest-assured:4.1.1",
+            restAssured: "io.rest-assured:rest-assured:4.3.0",
 
             jsonSchemaValidator: "com.github.java-json-tools:json-schema-validator:${jsonSchemaVersion}",
             guava: "com.google.guava:guava:${guavaVersion}",

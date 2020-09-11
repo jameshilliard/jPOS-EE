@@ -26,6 +26,7 @@ ext {
     elkVersion = '7.8.0'
     orgjsonVersion = '20200518'
     postgresqlEmbeddedVersion = '1.2.8'
+    postgresqlBinVersion = '12.3.0'
 
     libraries = [
             //jUnit (Tests)
@@ -59,6 +60,9 @@ ext {
 
             // Postgresql embedded for tests
             postgresql_embedded: "io.zonky.test:embedded-postgres:${postgresqlEmbeddedVersion}",
+
+            // Postgresql embedded binary version
+            postgresql_bin: "io.zonky.test.postgres:embedded-postgres-binaries-bom:${postgresqlBinVersion}",
 
             //Supported Databases
             jdbcH2: 'com.h2database:h2:1.4.199',

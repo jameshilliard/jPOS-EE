@@ -2,7 +2,7 @@ package org.jpos.gl.dbtpl;
 
 
 import org.junit.jupiter.api.extension.*;
-//import io.zonky.test.db.postgres.junit5.EmbeddedPostgresExtension;
+import io.zonky.test.db.postgres.junit5.EmbeddedPostgresExtension;
 import java.util.List;
 import java.util.stream.Stream;
 

@@ -1,10 +1,12 @@
 package org.jpos.gl.dbtpl;
 
+import io.zonky.test.db.postgres.embedded.EmbeddedPostgres;
 import org.jpos.ee.DB;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class DatabaseTestCase {
     private final String driver;
@@ -45,7 +47,7 @@ public class DatabaseTestCase {
                 "    </session-factory>\n" +
                 "</hibernate-configuration>\n";
     }
-    public DB getDB(File tempDir) throws IOException  {
+    public DB getDB(File tempDir) throws IOException, SQLException {
         if (this.driver.equals("postgres")) {
             File configFile = new File(tempDir.getAbsolutePath() + "/hibernate.cfg.xml");
             if (!configFile.exists()) {
@@ -54,7 +56,10 @@ public class DatabaseTestCase {
                 }
             }
             FileWriter myWriter = new FileWriter(configFile);
-            myWriter.write(buildPostgresConfig("", "", "postgres"));
+            EmbeddedPostgres pg = EmbeddedPostgres.start();
+            String url = pg.getPostgresDatabase().getConnection().getMetaData().getURL();
+            String user = pg.getPostgresDatabase().getConnection().getMetaData().getUserName();
+            myWriter.write(buildPostgresConfig(url, user, "postgres"));
             myWriter.close();
             return new DB(configFile.toURI().toURL().toString());
         } else if (this.driver.equals("h2")) {

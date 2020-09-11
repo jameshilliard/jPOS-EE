@@ -6,6 +6,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class DatabaseUnitTest {
     @TempDir
@@ -13,7 +14,7 @@ public class DatabaseUnitTest {
 
     @TestTemplate
     @ExtendWith(DatabaseTestInvocationContextProvider.class)
-    public void whenStuffHappens(DatabaseTestCase testCase) throws IOException {
+    public void whenStuffHappens(DatabaseTestCase testCase) throws IOException, SQLException {
         System.out.println(testCase.getDB(configDir));
     }
 }

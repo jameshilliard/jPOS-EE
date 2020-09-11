@@ -5,7 +5,9 @@ dependencies {
     api project(':modules:logback')
     api project(':modules:dbsupport')
     api libraries.commons_lang
+    testApi libraries.postgresql_embedded
     testImplementation project(':modules:db-h2')
+    testImplementation project(':modules:db-postgresql')
 }
 
 ext {

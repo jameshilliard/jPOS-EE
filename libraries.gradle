@@ -25,6 +25,7 @@ ext {
     liquibaseVersion = '3.8.0'
     elkVersion = '7.8.0'
     orgjsonVersion = '20200518'
+    postgresqlEmbeddedVersion = '1.2.8'
 
     libraries = [
             //jUnit (Tests)
@@ -55,6 +56,9 @@ ext {
             c3p0: "com.mchange:c3p0:${c3p0Version}",
             hibernate_ehcache: "org.hibernate:hibernate-ehcache:${hibernateVersion}",
             jta: "org.apache.geronimo.specs:geronimo-jta_1.1_spec:${geronimoVersion}",
+
+            // Postgresql embedded for tests
+            postgresql_embedded: "io.zonky.test:embedded-postgres:${postgresqlEmbeddedVersion}",
 
             //Supported Databases
             jdbcH2: 'com.h2database:h2:1.4.199',

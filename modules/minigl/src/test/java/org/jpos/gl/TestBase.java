@@ -18,11 +18,19 @@
 
 package org.jpos.gl;
 
+import org.jpos.ee.DB;
+import org.jpos.gl.dbtpl.DatabaseTestCase;
+import org.jpos.gl.dbtpl.DatabaseTestInvocationContextProvider;
 import org.jpos.gl.tools.Export;
 import org.jpos.gl.tools.Import;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestTemplate;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
+
+import java.io.File;
 
 import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 
@@ -32,7 +40,11 @@ public abstract class TestBase {
     protected static long start;
     protected static long checkpoint;
 
+    @TempDir
+    public static File configDir;
+
     @BeforeAll
+    @ExtendWith(DatabaseTestInvocationContextProvider.class)
     public static void setUpBase () throws Exception {
         try {
             String userName = System.getProperty("user.name");
@@ -44,12 +56,24 @@ public abstract class TestBase {
             e.printStackTrace();
             throw e;
         }
-        gls = new GLSession("bob");
         start = checkpoint = System.currentTimeMillis();
     }
     @AfterAll
+    @ExtendWith(DatabaseTestInvocationContextProvider.class)
     public static void tearDownBase () throws Exception {
-        gls.close();
+        if (gls != null) {
+            gls.close();
+        }
+    }
+
+
+    @ExtendWith(DatabaseTestInvocationContextProvider.class)
+    @TestTemplate
+    public static void getGls (DatabaseTestCase testCase) throws Exception {
+        DB db = testCase.getDB(configDir);
+        if (gls == null) {
+            gls = new GLSession(db, "bob");
+        }
     }
 
     public void start () {
